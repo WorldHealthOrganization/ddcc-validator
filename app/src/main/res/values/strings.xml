@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">DDCC Verifier</string>
+    <string name="action_settings">Settings</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="home_fragment_label">Home Screen</string>
+    <string name="qrscan_fragment_label">QR Scan</string>
+    <string name="qrresult_fragment_label">QR Result</string>
+
+    <string name="newQR">New QR</string>
+    <string name="cancel">Cancel</string>
+
+    <string name="pointToQR">Align the QR Code below</string>
+
+    <string name="hello_home_fragment">Hello Home Page</string>
+    <string name="hello_qrscan_fragment">Hello QR Scan. Arg: %1$s</string>
+    <string name="hello_qrresult_fragment">Hello QR Result. Arg: %1$s</string>
+</resources>
