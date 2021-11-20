@@ -5,10 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
-    tools:context=".views.QRResultFragment">
+    tools:context=".views.ResultFragment">
 
     <LinearLayout
-        android:id="@+id/tv_qrresult_header"
+        android:id="@+id/tv_result_header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="30dp"
@@ -16,7 +16,7 @@
         android:elevation="2dp"
         android:padding="13dp"
         android:background="@drawable/rounded_pill"
-        app:layout_constraintBottom_toTopOf="@id/tv_qrresult_card"
+        app:layout_constraintBottom_toTopOf="@id/tv_result_card"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -30,7 +30,7 @@
             app:solid_icon="true" />
 
         <TextView
-            android:id="@+id/tv_qrresult_title"
+            android:id="@+id/tv_result_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Signature Verified"
@@ -42,7 +42,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/tv_qrresult_card"
+        android:id="@+id/tv_result_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="30dp"
@@ -50,13 +50,13 @@
         android:padding="20dp"
         android:orientation="vertical"
         android:background="@drawable/rounded_card"
-        app:layout_constraintTop_toBottomOf="@id/tv_qrresult_header"
-        app:layout_constraintBottom_toTopOf="@id/button_qrresult"
+        app:layout_constraintTop_toBottomOf="@id/tv_result_header"
+        app:layout_constraintBottom_toTopOf="@id/bt_result_close"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
         <TextView
-            android:id="@+id/tv_qrresult_scan_date"
+            android:id="@+id/tv_result_scan_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="April 06, 1:23pm - Vaccination"
@@ -65,7 +65,7 @@
             />
 
         <TextView
-            android:id="@+id/tv_qrresult_name"
+            android:id="@+id/tv_result_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="John Anyperson"
@@ -74,7 +74,7 @@
              />
 
         <TextView
-            android:id="@+id/tv_qrresult_dob"
+            android:id="@+id/tv_result_dob"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="DoB: Feb 24, 1982"
@@ -90,7 +90,7 @@
             android:layout_marginTop="3dp"/>
 
         <TextView
-            android:id="@+id/tv_qrresult_qrcontent3"
+            android:id="@+id/tv_result_qrcontent3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Dose 1"
@@ -99,7 +99,7 @@
             />
 
         <TextView
-            android:id="@+id/tv_qrresult_qrcontent4"
+            android:id="@+id/tv_result_qrcontent4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Dose 2"
@@ -128,7 +128,7 @@
                 app:solid_icon="true" />
 
             <TextView
-                android:id="@+id/tv_qrresult_signed_by"
+                android:id="@+id/tv_result_signed_by"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="5dp"
@@ -152,7 +152,7 @@
                 app:solid_icon="true" />
 
             <TextView
-                android:id="@+id/tv_qrresult_valid_until"
+                android:id="@+id/tv_result_valid_until"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="5dp"
@@ -165,7 +165,7 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/button_qrresult"
+        android:id="@+id/bt_result_close"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="15dp"
@@ -176,7 +176,7 @@
         app:cornerRadius="32dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_qrresult_card"
+        app:layout_constraintTop_toBottomOf="@id/tv_result_card"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

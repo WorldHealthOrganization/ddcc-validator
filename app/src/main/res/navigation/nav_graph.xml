@@ -12,34 +12,34 @@
         tools:layout="@layout/fragment_home">
 
         <action
-            android:id="@+id/action_HomeFragment_to_QRScanFragment"
+            android:id="@+id/action_HomeFragment_to_ScanFragment"
             app:destination="@id/QRScanFragment" />
         <action
-            android:id="@+id/action_HomeFragment_to_QRResultFragment"
+            android:id="@+id/action_HomeFragment_to_ResultFragment"
             app:destination="@id/QRResultFragment">
         </action>
     </fragment>
 
     <fragment
         android:id="@+id/QRScanFragment"
-        android:name="org.who.ddccverifier.views.QRScanFragment"
+        android:name="org.who.ddccverifier.views.ScanFragment"
         android:label="@string/qrscan_fragment_label"
-        tools:layout="@layout/fragment_qrscan">
+        tools:layout="@layout/fragment_scan">
 
         <action
-            android:id="@+id/action_QRScanFragment_to_HomeFragment"
+            android:id="@+id/action_ScanFragment_to_HomeFragment"
             app:destination="@id/HomeFragment" />
         <action
-            android:id="@+id/action_QRScanFragment_to_QRResultFragment"
+            android:id="@+id/action_ScanFragment_to_ResultFragment"
             app:destination="@id/QRResultFragment">
         </action>
     </fragment>
 
     <fragment
         android:id="@+id/QRResultFragment"
-        android:name="org.who.ddccverifier.views.QRResultFragment"
+        android:name="org.who.ddccverifier.views.ResultFragment"
         android:label="@string/qrresult_fragment_label"
-        tools:layout="@layout/fragment_qrresult">
+        tools:layout="@layout/fragment_result">
 
         <argument
             android:name="qr"
@@ -47,7 +47,7 @@
             app:nullable="true" />
 
         <action
-            android:id="@+id/action_QRResultFragment_to_HomeFragment"
+            android:id="@+id/action_ResultFragment_to_HomeFragment"
             app:destination="@id/HomeFragment" />
     </fragment>
 </navigation>

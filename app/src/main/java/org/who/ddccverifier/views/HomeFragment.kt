@@ -32,14 +32,14 @@ class HomeFragment : Fragment() {
         ) {
             ActivityCompat.requestPermissions(this.requireActivity(), arrayOf(Manifest.permission.CAMERA), 5)
         } else {
-            findNavController().navigate(R.id.action_HomeFragment_to_QRScanFragment)
+            findNavController().navigate(R.id.action_HomeFragment_to_ScanFragment)
         }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.fab.setOnClickListener {
+        binding.faHomeAdd.setOnClickListener {
             checkPermissionAndOpenCamera()
         }
     }

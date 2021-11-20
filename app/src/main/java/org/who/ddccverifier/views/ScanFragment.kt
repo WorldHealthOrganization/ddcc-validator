@@ -17,16 +17,16 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.fragment.findNavController
 import com.google.common.util.concurrent.ListenableFuture
 import org.who.ddccverifier.services.QRCodeAnalyzer
-import org.who.ddccverifier.databinding.FragmentQrscanBinding
+import org.who.ddccverifier.databinding.FragmentScanBinding
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 /**
  * Scans a QR Code and sends the information to QR Result Fragment.
  */
-class QRScanFragment : Fragment() {
+class ScanFragment : Fragment() {
 
-    private var _binding: FragmentQrscanBinding? = null
+    private var _binding: FragmentScanBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var cameraProviderFuture: ListenableFuture<ProcessCameraProvider>
@@ -37,7 +37,7 @@ class QRScanFragment : Fragment() {
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentQrscanBinding.inflate(inflater, container, false)
+        _binding = FragmentScanBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -50,7 +50,7 @@ class QRScanFragment : Fragment() {
             .requireLensFacing(CameraSelector.LENS_FACING_BACK)
             .build()
 
-        preview.setSurfaceProvider(binding.previewView.surfaceProvider)
+        preview.setSurfaceProvider(binding.pvScanPreviewView.surfaceProvider)
 
         val imageAnalysis = ImageAnalysis.Builder()
             .setTargetResolution(Size(1280, 720))
@@ -68,7 +68,7 @@ class QRScanFragment : Fragment() {
 
     private fun onQRCodeFound(qrs: Set<String>) {
         Log.i("Found", qrs.toString());
-        val action = QRScanFragmentDirections.actionQRScanFragmentToQRResultFragment(qrs.first())
+        val action = ScanFragmentDirections.actionScanFragmentToResultFragment(qrs.first())
         findNavController().navigate(action)
     }
 
