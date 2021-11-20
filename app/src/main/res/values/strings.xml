@@ -2,7 +2,7 @@
     <string name="app_name">DDCC Verifier</string>
     <string name="action_settings">Settings</string>
     <!-- Strings used for fragments for navigation -->
-    <string name="home_fragment_label">Home Screen</string>
+    <string name="home_fragment_label">WHO DDCC Verifier</string>
     <string name="qrscan_fragment_label">QR Scan</string>
     <string name="qrresult_fragment_label">QR Result</string>
 
