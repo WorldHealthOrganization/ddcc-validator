@@ -5,14 +5,18 @@
       <map>
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.4171875" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.4171875" />
+        <entry key="app/src/main/res/drawable/qr_rect.xml" value="0.4171875" />
         <entry key="app/src/main/res/drawable/rounded_card.xml" value="0.4171875" />
+        <entry key="app/src/main/res/drawable/rounded_card_blank.xml" value="0.4171875" />
         <entry key="app/src/main/res/drawable/rounded_pill.xml" value="0.44166666666666665" />
+        <entry key="app/src/main/res/drawable/straight_card_blank.xml" value="0.4171875" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.4010416666666667" />
         <entry key="app/src/main/res/layout/content_main.xml" value="0.4010416666666667" />
         <entry key="app/src/main/res/layout/fragment_first.xml" value="0.33541666666666664" />
         <entry key="app/src/main/res/layout/fragment_home.xml" value="0.4010416666666667" />
         <entry key="app/src/main/res/layout/fragment_qrresult.xml" value="0.33541666666666664" />
         <entry key="app/src/main/res/layout/fragment_qrscan.xml" value="0.4010416666666667" />
+        <entry key="app/src/main/res/layout/fragment_result.xml" value="0.4010416666666667" />
         <entry key="app/src/main/res/layout/fragment_scan.xml" value="0.4010416666666667" />
         <entry key="app/src/main/res/menu/menu_main.xml" value="0.4010416666666667" />
       </map>

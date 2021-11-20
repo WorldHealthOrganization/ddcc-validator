@@ -11,6 +11,7 @@
     <string name="close">Close</string>
 
     <string name="pointToQR">Align the QR Code below</string>
+    <string name="emptyCardDesc">Passports you scan will appear here.</string>
 
     <string name="hello_home_fragment">Hello Home Page</string>
     <string name="hello_qrscan_fragment">Hello QR Scan. Arg: %1$s</string>
