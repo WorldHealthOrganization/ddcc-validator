@@ -9,9 +9,9 @@
         android:color="#424242">
     </stroke>
     <corners
-        android:topLeftRadius="100dip"
-        android:topRightRadius="100dip"
-        android:bottomLeftRadius="100dip"
-        android:bottomRightRadius="100dip">
+        android:topLeftRadius="20dip"
+        android:topRightRadius="20dip"
+        android:bottomLeftRadius="20dip"
+        android:bottomRightRadius="20dip">
     </corners>
 </shape>

@@ -47,35 +47,120 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
+        android:padding="20dp"
         android:orientation="vertical"
+        android:background="@drawable/rounded_card"
         app:layout_constraintTop_toBottomOf="@id/tv_qrresult_header"
         app:layout_constraintBottom_toTopOf="@id/button_qrresult"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
         <TextView
-            android:id="@+id/tv_qrresult_qrcontent"
+            android:id="@+id/tv_qrresult_scan_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="April 06, 1:23pm - Vaccination"
+            android:textSize="16dp"
+            android:textColor="#ffffff"
+            />
+
+        <TextView
+            android:id="@+id/tv_qrresult_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="John Anyperson"
+            android:textSize="26dp"
+            android:textColor="#ffffff"
              />
 
         <TextView
-            android:id="@+id/tv_qrresult_qrcontent2"
+            android:id="@+id/tv_qrresult_dob"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="DoB: Feb 24, 1982"
+            android:textSize="16dp"
+            android:textColor="#ffffff"
             />
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="#BBBBBB"
+            android:layout_marginBottom="3dp"
+            android:layout_marginTop="3dp"/>
 
         <TextView
             android:id="@+id/tv_qrresult_qrcontent3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="Dose 1"
+            android:textSize="16dp"
+            android:textColor="#ffffff"
             />
 
         <TextView
             android:id="@+id/tv_qrresult_qrcontent4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="Dose 2"
+            android:textSize="16dp"
+            android:textColor="#ffffff"
             />
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:background="#BBBBBB"
+            android:layout_marginBottom="3dp"
+            android:layout_marginTop="3dp"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <info.androidhive.fontawesome.FontTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/fa_check_circle_solid"
+                android:textSize="16dp"
+                android:textColor="#fff"
+                app:solid_icon="true" />
+
+            <TextView
+                android:id="@+id/tv_qrresult_signed_by"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="5dp"
+                android:textSize="16dp"
+                android:text="Signed by CVS Health on Sep 26, 2021"
+                android:textColor="#ffffff"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <info.androidhive.fontawesome.FontTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/fa_check_circle_solid"
+                android:textSize="16dp"
+                android:textColor="#fff"
+                app:solid_icon="true" />
+
+            <TextView
+                android:id="@+id/tv_qrresult_valid_until"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="5dp"
+                android:text="Valid Until on Jun 13, 2023"
+                android:textSize="16dp"
+                android:textColor="#ffffff"
+                />
+        </LinearLayout>
 
     </LinearLayout>
 

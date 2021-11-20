@@ -31,7 +31,7 @@ class QRResultFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.tvQrresultQrcontent.text = args.qr
+        binding.tvQrresultName.text = args.qr?.subSequence(0,30)
         binding.buttonQrresult.setOnClickListener {
             findNavController().navigate(R.id.action_QRResultFragment_to_HomeFragment)
         }
