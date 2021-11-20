@@ -1,4 +1,4 @@
-package org.who.ddccverifier
+package org.who.ddccverifier.views
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import org.who.ddccverifier.R
 import org.who.ddccverifier.databinding.FragmentQrresultBinding
 
 /**

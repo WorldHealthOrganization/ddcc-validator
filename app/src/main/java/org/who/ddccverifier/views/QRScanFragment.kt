@@ -1,4 +1,4 @@
-package org.who.ddccverifier
+package org.who.ddccverifier.views
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.fragment.findNavController
 import com.google.common.util.concurrent.ListenableFuture
+import org.who.ddccverifier.services.QRCodeAnalyzer
 import org.who.ddccverifier.databinding.FragmentQrscanBinding
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
