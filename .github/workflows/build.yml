@@ -39,7 +39,7 @@ jobs:
           name: Debug APK
           path: app/build/outputs/apk/debug/app-debug.apk
 
-      - name: Upload APK
+      - name: Upload Test Results
         uses: actions/upload-artifact@v2
         with:
           name: Build Reports
