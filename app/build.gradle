@@ -45,13 +45,16 @@ dependencies {
     implementation 'com.google.mlkit:barcode-scanning:17.0.0'
 
     // The following line is optional, as the core library is included indirectly by camera-camera2
-    implementation("androidx.camera:camera-camera2:1.0.2")
+    implementation 'androidx.camera:camera-camera2:1.0.2'
     // If you want to additionally use the CameraX Lifecycle library
-    implementation("androidx.camera:camera-lifecycle:1.0.2")
+    implementation 'androidx.camera:camera-lifecycle:1.0.2'
     // If you want to additionally use the CameraX View class
-    implementation("androidx.camera:camera-view:1.0.0-alpha31")
+    implementation 'androidx.camera:camera-view:1.0.0-alpha31'
 
     implementation 'info.androidhive:fontawesome:0.0.5'
+
+    implementation 'io.github.ehn-digital-green-development:base45:0.0.3'
+    implementation 'com.augustcellars.cose:cose-java:1.1.0'
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
