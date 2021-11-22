@@ -12,19 +12,19 @@
 - [x] 2.2. Add a camera component to the Camera View
 - [x] 2.3. QRs Finding and processing
 - [x] 2.4. Showing QR Text on Screen
-- [ ] 3. QR Unpacking
-- [ ] 3.1. Generate Test Credentials
-- [ ] 3.2. Convert to Test Classes
-- [ ] 3.3. Unpack And Display Results
-- [ ] 4. Credential Verification (Off-line)
-- [ ] 4.1. Public Key Resolver (Key Management)
-- [ ] 4.2. Check Trust of Public Key
-- [ ] 4.3. Cryptographic verfication
-- [ ] 4.4. Error handling
-- [ ] 5. Displaying Card Info on Screen
-- [ ] 5.1. Display Patient Info
-- [ ] 5.2. Display Vaccine Info
-- [ ] 5.3. Display Test Result Info
+- [x] 3. QR Unpacking
+- [x] 3.1. Generate Test Credentials
+- [x] 3.2. Convert to Test Classes
+- [x] 3.3. Unpack And Display Results
+- [x] 4. Credential Verification (Off-line)
+- [x] 4.1. Public Key Resolver (Key Management)
+- [x] 4.2. Check Trust of Public Key
+- [x] 4.3. Cryptographic verfication
+- [x] 4.4. Error handling
+- [x] 5. Displaying Card Info on Screen
+- [x] 5.1. Display Patient Info
+- [x] 5.2. Display Vaccine Info
+- [x] 5.3. Display Test Result Info
 - [ ] 5.4. Display Error Messages
 - [ ] 6. Credential Status Verification (On-line)
 - [ ] 6.1. Call issuer to check status of the credential
