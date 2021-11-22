@@ -64,6 +64,36 @@ class ResultFragment : Fragment() {
 
         if (args.qr != null) {
             val DDCC = DDCCVerifier().unpackAndVerify(args.qr!!);
+
+            when (DDCC.status) {
+                DDCCVerifier.Status.INVALID_BASE45 -> binding.tvResultTitle.text = "Invalid QR"
+                DDCCVerifier.Status.INVALID_ZIP -> binding.tvResultTitle.text = "Invalid QR"
+                DDCCVerifier.Status.INVALID_COSE -> binding.tvResultTitle.text = "Invalid QR"
+                DDCCVerifier.Status.KID_NOT_INCLUDED -> binding.tvResultTitle.text = "Issuer Not Found"
+                DDCCVerifier.Status.ISSUER_NOT_TRUSTED -> binding.tvResultTitle.text = "Issuer Not Trusted"
+                DDCCVerifier.Status.TERMINATED_KEYS -> binding.tvResultTitle.text = "Terminated Keys"
+                DDCCVerifier.Status.EXPIRED_KEYS -> binding.tvResultTitle.text = "Expired Keys"
+                DDCCVerifier.Status.REVOKED_KEYS -> binding.tvResultTitle.text = "Revoked Keys"
+                DDCCVerifier.Status.NOT_VERIFIED -> binding.tvResultTitle.text = "Invalid Signature"
+                DDCCVerifier.Status.VERIFIED -> binding.tvResultTitle.text = "Signature Verified"
+            }
+
+            if (binding.tvResultTitle.text == "Signature Verified") {
+                binding.tvResultHeader.setBackground(resources.getDrawable(R.drawable.rounded_pill));
+                binding.tvResultTitleIcon.text = resources.getString(R.string.fa_check_circle_solid);
+            } else {
+                binding.tvResultHeader.setBackground(resources.getDrawable(R.drawable.rounded_pill_invalid));
+                binding.tvResultTitleIcon.text = resources.getString(R.string.fa_times_circle_solid);
+            }
+
+            if (DDCC.issuer != null) {
+                binding.tvResultSignedBy.text = "Signed by " + DDCC.issuer!!.displayName;
+                binding.tvResultSignedByIcon.text = resources.getString(R.string.fa_check_circle_solid);
+            } else {
+                binding.tvResultSignedByIcon.text = resources.getString(R.string.fa_times_circle_solid);
+                binding.tvResultSignedBy.text = "Invalid Signature "
+            }
+
             if (DDCC.contents != null) {
                 val card : ResultCard = DDCCFormatter().run(DDCC.contents!!);
                 setTextView(binding.tvResultScanDate, card.cardTitle)

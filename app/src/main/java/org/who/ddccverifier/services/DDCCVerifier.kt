@@ -76,7 +76,7 @@ class DDCCVerifier {
         INVALID_ZIP,
         INVALID_COSE,
         KID_NOT_INCLUDED,
-        ISSUER_NOT_FOUND,
+        ISSUER_NOT_TRUSTED,
         TERMINATED_KEYS,
         EXPIRED_KEYS,
         REVOKED_KEYS,
@@ -102,7 +102,7 @@ class DDCCVerifier {
         val contents = getContent(signedMessage)
 
         val kid = getKID(signedMessage) ?: return VerificationResult(Status.KID_NOT_INCLUDED, contents, null, qr)
-        val issuer = resolveIssuer(kid) ?: return VerificationResult(Status.ISSUER_NOT_FOUND, contents, null, qr)
+        val issuer = resolveIssuer(kid) ?: return VerificationResult(Status.ISSUER_NOT_TRUSTED, contents, null, qr)
 
         when (issuer.status) {
             TrustRegistry.Status.TERMINATED -> return VerificationResult(Status.TERMINATED_KEYS, contents, issuer, qr)

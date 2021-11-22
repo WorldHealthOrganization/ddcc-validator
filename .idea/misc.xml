@@ -8,7 +8,9 @@
         <entry key="app/src/main/res/drawable/qr_rect.xml" value="0.4171875" />
         <entry key="app/src/main/res/drawable/rounded_card.xml" value="0.4171875" />
         <entry key="app/src/main/res/drawable/rounded_card_blank.xml" value="0.4171875" />
+        <entry key="app/src/main/res/drawable/rounded_card_invalid.xml" value="0.5765625" />
         <entry key="app/src/main/res/drawable/rounded_pill.xml" value="0.44166666666666665" />
+        <entry key="app/src/main/res/drawable/rounded_pill_invalid.xml" value="0.5765625" />
         <entry key="app/src/main/res/drawable/straight_card_blank.xml" value="0.4171875" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.4010416666666667" />
         <entry key="app/src/main/res/layout/content_main.xml" value="0.4010416666666667" />

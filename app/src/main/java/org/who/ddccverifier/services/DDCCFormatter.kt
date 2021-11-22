@@ -11,7 +11,7 @@ class DDCCFormatter {
     private var dfISO: DateFormat = SimpleDateFormat("yyyy-MM-dd")
     private val fmt = SimpleDateFormat("MMM d, yyyy")
 
-    private val fmtComplete = SimpleDateFormat("MMM d, yyyy hh:mm aaa")
+    private val fmtComplete = SimpleDateFormat("MMM d, h:mma")
 
     private fun parseDate(date: CBORObject?): Date? {
         if (date == null) return null
@@ -145,7 +145,7 @@ class DDCCFormatter {
     }
 
     private fun formatCardTitle(targetDisease: CBORObject?): String? {
-        val scanTime = fmtComplete.format(Calendar.getInstance().time)
+        val scanTime = fmtComplete.format(Calendar.getInstance().time).replace("AM", "am").replace("PM","pm")
         val disease = formatVaccineAgainst(targetDisease)
         val procedure = "Vaccination"
 
