@@ -1,14 +1,15 @@
 package org.who.ddccverifier.services
 
-import android.os.Build
-import android.util.Log
-import androidx.annotation.RequiresApi
 import java.security.PublicKey
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime
-import java.time.ZonedDateTime
 import java.util.*
 
 object TrustRegistry {
+    // Using old java.time to keep compatibility down to Android SDK 22.
+    var df: DateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+
     enum class Status {
         CURRENT, EXPIRED, TERMINATED, REVOKED
     }
@@ -22,15 +23,14 @@ object TrustRegistry {
         val entityType: Type,
         val status: Status,
         val statusDetail: String,
-        val validFrom: LocalDateTime,
-        val validUntil: LocalDateTime,
+        val validFrom: Date,
+        val validUntil: Date,
         val displayName: String,
         val displayLogo: String,
         val pubKey: PublicKey
     )
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    val registry = mapOf(
+    private val registry = mapOf(
         "MTE=" to TrustedEntity(
             "MTE=",
             "WHO_DDCC",
@@ -38,8 +38,8 @@ object TrustRegistry {
             Type.ISSUER,
             Status.CURRENT,
             "Test Keys for the WHO\'s DDCC",
-            LocalDateTime.parse("2021-01-01T08:00:00"),
-            LocalDateTime.parse("2021-12-01T08:00:00"),
+            df.parse("2021-01-01T08:00:00.000Z"),
+            df.parse("2021-12-01T08:00:00.000Z"),
             "WHO Test Keys",
             "",
             KeyLoader().ecPublicKeyFromPrivateKey(
@@ -47,9 +47,9 @@ object TrustRegistry {
                     .map { it.toInt(16).toByte() }
                     .toByteArray())
             )
-    );
+    )
 
     fun resolve(kid: String): TrustedEntity? {
-        return registry.get(kid);
+        return registry[kid]
     }
 }

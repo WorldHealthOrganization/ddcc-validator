@@ -7,10 +7,11 @@ import COSE.MessageTag
 import COSE.OneKey
 import COSE.Sign1Message
 import android.os.Build
+import android.util.Base64
 import androidx.annotation.RequiresApi
 import com.upokecenter.cbor.CBORObject
+import java.security.PublicKey
 import java.time.Instant
-import java.util.*
 
 class DDCCVerifier {
     private val HC1 = "HC1:"
@@ -22,63 +23,97 @@ class DDCCVerifier {
         };
     }
 
-    private fun base45Decode(base45: String): ByteArray {
-        return Base45.getDecoder().decode(base45);
-    }
-
-    private fun deflate(input: ByteArray): ByteArray {
-        return InflaterInputStream(input.inputStream()).readBytes()
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun verify(input: ByteArray): ByteArray? {
-        return try {
-            val signature: Sign1Message = Sign1Message.DecodeFromBytes(input, MessageTag.Sign1) as Sign1Message
-            println(signature.protectedAttributes);
-            println(signature.unprotectedAttributes);
-
-            val kid: ByteArray = signature.protectedAttributes[COSE.HeaderKeys.KID.AsCBOR()]?.GetByteString()
-                              ?: signature.unprotectedAttributes[COSE.HeaderKeys.KID.AsCBOR()]?.GetByteString()
-                              ?: return null // TODO: Error message: Signer has not been declared.
-
-            val issuer: TrustRegistry.TrustedEntity = TrustRegistry.resolve(Base64.getEncoder().encodeToString(kid))
-                ?: return null // TODO: Error message: Trust Registry doesn't know the signer.
-
-            val pubKey = OneKey(issuer.pubKey, null)
-            signature.validate(pubKey)
-
-            when (issuer.status) {
-                TrustRegistry.Status.CURRENT -> return signature.GetContent()
-                // TODO: Error message: Issuer has broken the trust. Key was terminated by the registry.
-                TrustRegistry.Status.TERMINATED -> return null;
-                // TODO: Error message: Key is expired. Please get a new Credential from the issuer.
-                TrustRegistry.Status.EXPIRED -> return null;
-                // TODO: Error message: Key is has leaked. Issuer has revoked the keys.
-                TrustRegistry.Status.REVOKED -> return null;
-                // TODO: Error message: Unkown Status
-                else -> return null;
-            }
+    private fun base45Decode(base45: String): ByteArray? {
+        try {
+            return Base45.getDecoder().decode(base45);
         } catch (e: Throwable) {
-            e.printStackTrace();
-            null
+            return null;
         }
     }
 
-    private fun cborDecode(input: ByteArray): CBORObject {
-        return CBORObject.DecodeFromBytes(input);
+    private fun deflate(input: ByteArray): ByteArray? {
+        try {
+            return InflaterInputStream(input.inputStream()).readBytes()
+        } catch (e: Throwable) {
+            return null;
+        }
     }
 
-    fun unpackAndVerify(qr: String): CBORObject? {
+    private fun decodeSignedMessage(input: ByteArray): Sign1Message? {
+        try {
+            return Sign1Message.DecodeFromBytes(input, MessageTag.Sign1) as Sign1Message
+        } catch (e: Throwable) {
+            return null;
+        }
+    }
+
+    private fun getKID(input: Sign1Message): String? {
+        val kid = input.protectedAttributes[COSE.HeaderKeys.KID.AsCBOR()]?.GetByteString()
+               ?: input.unprotectedAttributes[COSE.HeaderKeys.KID.AsCBOR()]?.GetByteString()
+               ?: return null;
+        return Base64.encodeToString(kid, Base64.NO_WRAP)
+    }
+
+    private fun resolveIssuer(kid: String): TrustRegistry.TrustedEntity? {
+        return TrustRegistry.resolve(kid)
+    }
+
+    private fun getContent(signedMessage: Sign1Message): CBORObject {
+        return CBORObject.DecodeFromBytes(signedMessage.GetContent())
+    }
+
+    private fun verify(signedMessage: Sign1Message, pubKey: PublicKey): Boolean {
+        return try {
+            val key = OneKey(pubKey, null)
+            return signedMessage.validate(key)
+        } catch (e: Throwable) {
+            return false;
+        }
+    }
+
+    enum class Status {
+        INVALID_BASE45,
+        INVALID_ZIP,
+        INVALID_COSE,
+        KID_NOT_INCLUDED,
+        ISSUER_NOT_FOUND,
+        TERMINATED_KEYS,
+        EXPIRED_KEYS,
+        REVOKED_KEYS,
+        NOT_VERIFIED,
+        VERIFIED,
+    }
+
+    data class VerificationResult (
+        var status: Status?,
+        var contents: CBORObject?,
+        var issuer: TrustRegistry.TrustedEntity?,
+        var qr: String,
+    )
+
+    fun unpackAndVerify(qr: String): VerificationResult {
         println("QR: " + qr);
-        val hc1Decoded: String = prefixDecode(qr);
-        val decodedBytes: ByteArray = base45Decode(hc1Decoded)
-        val deflatedBytes: ByteArray = deflate(decodedBytes)
-        val verified: ByteArray? = verify(deflatedBytes);
 
-        if (verified == null) return null
+        val hc1Decoded = prefixDecode(qr)
+        val decodedBytes = base45Decode(hc1Decoded) ?: return VerificationResult(Status.INVALID_BASE45, null, null, qr)
+        val deflatedBytes = deflate(decodedBytes) ?: return VerificationResult(Status.INVALID_ZIP, null, null, qr)
+        val signedMessage = decodeSignedMessage(deflatedBytes) ?: return VerificationResult(Status.INVALID_COSE, null, null, qr)
 
-        val cborDecoded: CBORObject = cborDecode(verified!!);
-        println("CBOR Decoded: " + cborDecoded);
-        return cborDecoded
+        val contents = getContent(signedMessage)
+
+        val kid = getKID(signedMessage) ?: return VerificationResult(Status.KID_NOT_INCLUDED, contents, null, qr)
+        val issuer = resolveIssuer(kid) ?: return VerificationResult(Status.ISSUER_NOT_FOUND, contents, null, qr)
+
+        when (issuer.status) {
+            TrustRegistry.Status.TERMINATED -> return VerificationResult(Status.TERMINATED_KEYS, contents, issuer, qr)
+            TrustRegistry.Status.EXPIRED -> return VerificationResult(Status.EXPIRED_KEYS, contents, issuer, qr)
+            TrustRegistry.Status.REVOKED -> return VerificationResult(Status.REVOKED_KEYS, contents, issuer, qr)
+        }
+
+        if (verify(signedMessage, issuer.pubKey)) {
+            return VerificationResult(Status.VERIFIED, contents, issuer, qr)
+        }
+
+        return VerificationResult(Status.NOT_VERIFIED, contents, issuer, qr)
     }
 }

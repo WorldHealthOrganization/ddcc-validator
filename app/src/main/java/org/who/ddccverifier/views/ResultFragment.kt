@@ -1,23 +1,23 @@
 package org.who.ddccverifier.views
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.upokecenter.cbor.CBORObject
 import org.who.ddccverifier.R
 import org.who.ddccverifier.databinding.FragmentResultBinding
+import org.who.ddccverifier.services.DDCCFormatter
 import org.who.ddccverifier.services.DDCCVerifier
 
 /**
  * Displays a Verifiable Credential after being Scanned by the QRScan Fragment
  */
 class ResultFragment : Fragment() {
-
     private var _binding: FragmentResultBinding? = null
     private val args: ResultFragmentArgs by navArgs()
 
@@ -31,65 +31,59 @@ class ResultFragment : Fragment() {
         return binding.root
     }
 
+    private fun setTextView(view: TextView, text: String?) {
+        if (text != null && !text.isEmpty()) {
+            view.text = text
+            view.visibility = TextView.VISIBLE
+        } else
+            view.visibility = TextView.GONE
+    }
+
+    data class ResultCard(
+        val cardTitle: String?,
+        val personName: String?,
+        val personDetails: String?,
+        val dose: String?,
+        val doseDate: String?,
+        val nextDose: String?,
+        val vaccineValid: String?,
+        val vaccineAgainst: String?,
+        val vaccineType: String?,
+        val vaccineInfo: String?,
+        val vaccineInfo2: String?,
+        val location: String?,
+        val hcid: String?,
+        val pha: String?,
+        val identifier: String?,
+        val hw: String?,
+        val validUntil: String?
+    )
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         if (args.qr != null) {
-            val DDCC : CBORObject? = DDCCVerifier().unpackAndVerify(args.qr!!);
-            if (DDCC != null) {
-                binding.tvResultDob.text = DDCC["birthDate"].toString();
-                binding.tvResultName.text = DDCC["name"].toString();
-                binding.tvResultValidUntil.text = DDCC["valid_until"].toString();
+            val DDCC = DDCCVerifier().unpackAndVerify(args.qr!!);
+            if (DDCC.contents != null) {
+                val card : ResultCard = DDCCFormatter().run(DDCC.contents!!);
+                setTextView(binding.tvResultScanDate, card.cardTitle)
+                setTextView(binding.tvResultName, card.personName)
+                setTextView(binding.tvResultPersonDetails, card.personDetails)
+                setTextView(binding.tvResultValidUntil, card.validUntil)
+                setTextView(binding.tvResultDoseTitle, card.dose)
+                setTextView(binding.tvResultDoseDate, card.doseDate)
+                setTextView(binding.tvResultNextDose, card.nextDose)
+                setTextView(binding.tvResultVaccineValid, card.vaccineValid)
+                setTextView(binding.tvResultVaccineType, card.vaccineType)
+                setTextView(binding.tvResultVaccineInfo, card.vaccineInfo)
+                setTextView(binding.tvResultVaccineInfo2, card.vaccineInfo2)
+                setTextView(binding.tvResultCentre, card.location)
+                setTextView(binding.tvResultHcid, card.hcid)
+                setTextView(binding.tvResultPha, card.pha)
+                setTextView(binding.tvResultIdentifier, card.identifier)
+                setTextView(binding.tvResultHw, card.hw)
             }
         }
-
-        /**
-         * {
-        "manufacturer": {
-        "code": "TEST",
-        "system": "http://worldhealthorganization.github.io/ddcc/CodeSystem/DDCC-Example-Test-CodeSystem"
-        },
-        "hw": "http://www.acme.org/practitioners/23",
-        "centre": "Vaccination Site",
-        "due_date": "2021-07-29",
-        "lot": "PT123F",
-        "dose": 1,
-        "valid_from": "2021-07-08",
-        "name": "Eddie Murphy",
-        "disease": {
-        "code": "840539006",
-        "system": "http://snomed.info/sct"
-        },
-        "sex": {
-        "code": "male",
-        "system": "http://hl7.org/fhir/administrative-gender"
-        },
-        "brand": {
-        "code": "TEST",
-        "system": "http://worldhealthorganization.github.io/ddcc/CodeSystem/DDCC-Example-Test-CodeSystem"
-        },
-        "vaccine_valid": "2021-07-22",
-        "hcid": "US111222333444555666",
-        "pha": "wA69g8VD512TfTTdkTNSsG",
-        "identifier": "1234567890",
-        "vaccine": {
-        "code": "1119349007",
-        "system": "http://snomed.info/sct"
-        },
-        "ma_holder": {
-        "code": "TEST",
-        "system": "http://worldhealthorganization.github.io/ddcc/CodeSystem/DDCC-Example-Test-CodeSystem"
-        },
-        "total_doses": 2,
-        "valid_until": "2022-07-08",
-        "birthDate": "1986-09-19",
-        "country": {
-        "code": "USA",
-        "system": "urn:iso:std:iso:3166"
-        },
-        "date": "2021-07-08"
-        }
-         */
 
         binding.btResultClose.setOnClickListener {
             findNavController().navigate(R.id.action_ResultFragment_to_HomeFragment)
