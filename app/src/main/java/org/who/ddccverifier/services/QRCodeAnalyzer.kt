@@ -9,7 +9,7 @@ import com.google.mlkit.vision.common.InputImage
 
 class QRCodeAnalyzer(private val onQRCodeFound: (Set<String>)->Unit): ImageAnalysis.Analyzer {
 
-    var onlyTheFirstFrame: Boolean = false;
+    private var onlyTheFirstFrame: Boolean = false
 
     override fun analyze(imageProxy: ImageProxy) {
         scanBarcode(imageProxy)
@@ -33,10 +33,10 @@ class QRCodeAnalyzer(private val onQRCodeFound: (Set<String>)->Unit): ImageAnaly
     }
  
     private fun readBarcodeData(barcodes: List<Barcode>) {
-        if (barcodes.isEmpty()) return;
+        if (barcodes.isEmpty()) return
         synchronized (this) {
-            if (onlyTheFirstFrame) return;
-            onlyTheFirstFrame = true;
+            if (onlyTheFirstFrame) return
+            onlyTheFirstFrame = true
         }
 
         val qrStrings = barcodes.groupBy { it.rawValue }.keys

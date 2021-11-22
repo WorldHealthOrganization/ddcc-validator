@@ -3,12 +3,11 @@ package org.who.ddccverifier.services
 import java.security.PublicKey
 import java.text.DateFormat
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
 import java.util.*
 
 object TrustRegistry {
     // Using old java.time to keep compatibility down to Android SDK 22.
-    var df: DateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    private var df: DateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 
     enum class Status {
         CURRENT, EXPIRED, TERMINATED, REVOKED
@@ -23,8 +22,8 @@ object TrustRegistry {
         val entityType: Type,
         val status: Status,
         val statusDetail: String,
-        val validFrom: Date,
-        val validUntil: Date,
+        val validFrom: Date?,
+        val validUntil: Date?,
         val displayName: String,
         val displayLogo: String,
         val pubKey: PublicKey

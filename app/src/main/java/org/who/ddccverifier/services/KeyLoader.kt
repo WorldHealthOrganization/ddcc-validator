@@ -2,7 +2,6 @@ package org.who.ddccverifier.services
 
 import java.math.BigInteger
 import java.security.*
-import java.security.interfaces.ECPrivateKey
 import java.security.interfaces.ECPublicKey
 import java.security.spec.*
 
@@ -32,11 +31,7 @@ class KeyLoader {
      * Assumes curve P-256.
      */
     fun ecPublicKeyFromCoordinate(x: ByteArray, y: ByteArray): PublicKey {
-        // x, y are unsigned (recall that they are just field elements)
-        val x = BigInteger(1, x)
-        val y = BigInteger(1, y)
-
-        val ecPoint = ECPoint(x, y)
+        val ecPoint = ECPoint(BigInteger(1, x), BigInteger(1, y))
         val ecKeySpec = ECPublicKeySpec(ecPoint, ecParameterSpec)
 
         val keyFactory = KeyFactory.getInstance("EC")

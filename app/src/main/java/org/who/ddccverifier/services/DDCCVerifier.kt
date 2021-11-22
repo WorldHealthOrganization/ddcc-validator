@@ -6,28 +6,25 @@ import java.util.zip.InflaterInputStream
 import COSE.MessageTag
 import COSE.OneKey
 import COSE.Sign1Message
-import android.os.Build
 import android.util.Base64
-import androidx.annotation.RequiresApi
 import com.upokecenter.cbor.CBORObject
 import java.security.PublicKey
-import java.time.Instant
 
 class DDCCVerifier {
-    private val HC1 = "HC1:"
+    private val prefix = "HC1:"
 
     private fun prefixDecode(qr: String): String {
         return when {
-            qr.startsWith(HC1) -> qr.drop(HC1.length)
+            qr.startsWith(prefix) -> qr.drop(prefix.length)
             else -> qr
-        };
+        }
     }
 
     private fun base45Decode(base45: String): ByteArray? {
         try {
-            return Base45.getDecoder().decode(base45);
+            return Base45.getDecoder().decode(base45)
         } catch (e: Throwable) {
-            return null;
+            return null
         }
     }
 
@@ -35,7 +32,7 @@ class DDCCVerifier {
         try {
             return InflaterInputStream(input.inputStream()).readBytes()
         } catch (e: Throwable) {
-            return null;
+            return null
         }
     }
 
@@ -43,14 +40,14 @@ class DDCCVerifier {
         try {
             return Sign1Message.DecodeFromBytes(input, MessageTag.Sign1) as Sign1Message
         } catch (e: Throwable) {
-            return null;
+            return null
         }
     }
 
     private fun getKID(input: Sign1Message): String? {
         val kid = input.protectedAttributes[COSE.HeaderKeys.KID.AsCBOR()]?.GetByteString()
                ?: input.unprotectedAttributes[COSE.HeaderKeys.KID.AsCBOR()]?.GetByteString()
-               ?: return null;
+               ?: return null
         return Base64.encodeToString(kid, Base64.NO_WRAP)
     }
 
@@ -63,11 +60,11 @@ class DDCCVerifier {
     }
 
     private fun verify(signedMessage: Sign1Message, pubKey: PublicKey): Boolean {
-        return try {
+        try {
             val key = OneKey(pubKey, null)
             return signedMessage.validate(key)
         } catch (e: Throwable) {
-            return false;
+            return false
         }
     }
 
@@ -92,8 +89,6 @@ class DDCCVerifier {
     )
 
     fun unpackAndVerify(qr: String): VerificationResult {
-        println("QR: " + qr);
-
         val hc1Decoded = prefixDecode(qr)
         val decodedBytes = base45Decode(hc1Decoded) ?: return VerificationResult(Status.INVALID_BASE45, null, null, qr)
         val deflatedBytes = deflate(decodedBytes) ?: return VerificationResult(Status.INVALID_ZIP, null, null, qr)

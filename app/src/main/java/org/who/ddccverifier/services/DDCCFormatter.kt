@@ -13,15 +13,8 @@ class DDCCFormatter {
 
     private val fmtComplete = SimpleDateFormat("MMM d, h:mma")
 
-    private fun parseDate(date: CBORObject?): Date? {
-        if (date == null) return null
-        if (date.AsString().isEmpty()) return null
-        return dfISO.parse(date.AsString())
-    }
-
-    private fun label(label: String, text: String?): String? {
-        if (text == null || text.isEmpty()) return null
-        return "$label: $text"
+    private fun parseDate(date: CBORObject): Date {
+        return dfISO.parse(date.AsString())!!
     }
 
     private fun formatText(text: CBORObject?): String? {
@@ -31,59 +24,62 @@ class DDCCFormatter {
     }
 
     private fun formatPersonDetails(dob: CBORObject?, gender: CBORObject?): String? {
-        when {
-            dob != null && gender != null -> return "" + fmt.format(parseDate(dob)) + " - " + GENDERS[gender["code"].AsString()]
-            dob != null && gender == null -> return "" + fmt.format(parseDate(dob))
-            dob == null && gender != null -> return "" + GENDERS[gender["code"].AsString()]
-            else -> return null
+        return when {
+            dob != null && gender != null -> fmt.format(parseDate(dob)) + " - " + GENDERS[gender["code"].AsString()]
+            dob != null && gender == null -> fmt.format(parseDate(dob))
+            dob == null && gender != null -> GENDERS[gender["code"].AsString()]
+            else -> null
         }
     }
 
     private fun formatDoseDate(date: CBORObject?): String? {
+        if (date == null) return null
         return fmt.format(parseDate(date))
     }
 
     private fun formatNextDose(date: CBORObject?): String? {
+        if (date == null) return null
         return fmt.format(parseDate(date))
     }
 
     private fun formatVaccineValid(date: CBORObject?): String? {
+        if (date == null) return null
         return fmt.format(parseDate(date))
     }
 
     private fun formatValidPeriod(from: CBORObject?, until: CBORObject?): String? {
-        when {
-            from != null && until != null -> return "Valid from " + fmt.format(parseDate(from)) + " to " + fmt.format(parseDate(until))
-            from != null && until == null -> return "Valid from " + fmt.format(parseDate(from))
-            from == null && until != null -> return "Valid until " + fmt.format(parseDate(until))
-            else -> return null
+        return when {
+            from != null && until != null -> "Valid from " + fmt.format(parseDate(from)) + " to " + fmt.format(parseDate(until))
+            from != null && until == null -> "Valid from " + fmt.format(parseDate(from))
+            from == null && until != null -> "Valid until " + fmt.format(parseDate(until))
+            else -> null
         }
     }
 
     private fun formatDose(dose: CBORObject?, totalDoses: CBORObject?): String? {
-        when {
-            dose != null && totalDoses != null -> return "Dose: " + dose.AsInt32() + " of " + totalDoses.AsInt32()
-            dose != null && totalDoses == null -> return "Dose: " + dose.AsInt32()
-            dose == null && totalDoses != null -> return "Dose: " + "1+ of " + totalDoses.AsInt32()
-            else -> return null
+        return when {
+            dose != null && totalDoses != null -> "Dose: " + dose.AsInt32() + " of " + totalDoses.AsInt32()
+            dose != null && totalDoses == null -> "Dose: " + dose.AsInt32()
+            dose == null && totalDoses != null -> "Dose: " + "1+ of " + totalDoses.AsInt32()
+            else -> null
         }
     }
 
-    val DISEASES = mapOf("840539006" to "COVID-19")
-    val VACCINE_PROPH = mapOf(
+    private val DISEASES = mapOf("840539006" to "COVID-19")
+    private val VACCINE_PROPH = mapOf(
         "1119349007" to "SARS-CoV-2 mRNA Vaccine" ,
         "1119305005" to "SARS-CoV-2 Antigen Vaccine",
         "J07BX03" to "COVID-19 Vaccine"
     )
-    val GENDERS = mapOf(
+    private val GENDERS = mapOf(
         "male" to "Male" ,
         "female" to "Female",
         "other" to "Other"
     )
 
     private fun formatVaccineAgainst(disease: CBORObject?): String? {
-        val diseaseDesc = disease?.get("code")?.AsString();
-        return DISEASES.get(diseaseDesc);
+        val diseaseDesc = disease?.get("code")?.AsString()
+        return DISEASES.get(diseaseDesc)
     }
 
     private fun formatVaccineType(vaccine: CBORObject?): String? {
@@ -91,36 +87,36 @@ class DDCCFormatter {
     }
 
     private fun formatLocation(centre: CBORObject?, country: CBORObject?): String? {
-        when {
-            centre != null && country != null -> return centre.AsString() + ", " + country.get("code").AsString()
-            centre != null && country == null -> return centre.AsString()
-            centre == null && country != null -> return country.get("code").AsString()
-            else -> return null
+        return when {
+            centre != null && country != null -> centre.AsString() + ", " + country.get("code").AsString()
+            centre != null && country == null -> centre.AsString()
+            centre == null && country != null -> country.get("code").AsString()
+            else -> null
         }
     }
 
     private fun formatLotNumber(lot: CBORObject?): String? {
         if (lot == null) return null
-        return "#"+formatText(lot);
+        return "#"+formatText(lot)
     }
 
     private fun formatVaccineInfo(lot: CBORObject?, brand: CBORObject?, manuf: CBORObject?): String? {
-        val lotNumber = formatLotNumber(lot);
-        val brandStr = formatText(brand?.get("code"));
-        val manufStr = formatText(manuf?.get("code"));
+        val lotNumber = formatLotNumber(lot)
+        val brandStr = formatText(brand?.get("code"))
+        val manufStr = formatText(manuf?.get("code"))
 
-        when {
-            lotNumber != null && brandStr != null && manufStr != null -> return "$brandStr ($lotNumber), $manufStr"
+        return when {
+            lotNumber != null && brandStr != null && manufStr != null -> "$brandStr ($lotNumber), $manufStr"
 
-            lotNumber != null && brandStr != null && manufStr == null -> return "$brandStr ($lotNumber)"
-            lotNumber != null && brandStr == null && manufStr != null -> return "$manufStr ($lotNumber)"
-            lotNumber == null && brandStr != null && manufStr != null -> return "$brandStr, $manufStr"
+            lotNumber != null && brandStr != null && manufStr == null -> "$brandStr ($lotNumber)"
+            lotNumber != null && brandStr == null && manufStr != null -> "$manufStr ($lotNumber)"
+            lotNumber == null && brandStr != null && manufStr != null -> "$brandStr, $manufStr"
 
-            lotNumber != null && brandStr == null && manufStr == null -> return "Lot $lotNumber"
-            lotNumber == null && brandStr != null && manufStr == null -> return "$brandStr"
-            lotNumber == null && brandStr == null && manufStr != null -> return "$manufStr"
+            lotNumber != null && brandStr == null && manufStr == null -> "Lot $lotNumber"
+            lotNumber == null && brandStr != null && manufStr == null -> "$brandStr"
+            lotNumber == null && brandStr == null && manufStr != null -> "$manufStr"
 
-            else -> return null
+            else -> null
         }
     }
 
@@ -144,7 +140,7 @@ class DDCCFormatter {
         return formatText(text)
     }
 
-    private fun formatCardTitle(targetDisease: CBORObject?): String? {
+    private fun formatCardTitle(targetDisease: CBORObject?): String {
         val scanTime = fmtComplete.format(Calendar.getInstance().time).replace("AM", "am").replace("PM","pm")
         val disease = formatVaccineAgainst(targetDisease)
         val procedure = "Vaccination"

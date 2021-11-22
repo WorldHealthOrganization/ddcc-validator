@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.upokecenter.cbor.CBORObject
 import org.who.ddccverifier.R
 import org.who.ddccverifier.databinding.FragmentResultBinding
 import org.who.ddccverifier.services.DDCCFormatter
