@@ -43,18 +43,6 @@ class KeyLoader {
         return keyFactory.generatePublic(ecKeySpec)
     }
 
-    fun ecPublicKeyFromPrivateKey(d: ByteArray ): PublicKey {
-        val d = BigInteger(1, d)
-        val ecKeySpec = ECPrivateKeySpec(d, ecParameterSpec)
-        val keyFactory = KeyFactory.getInstance("EC")
-        val privKey = keyFactory.generatePrivate(ecKeySpec) as ECPrivateKey;
-
-        val ecPubPoint = ECPoint(privKey.params.generator.affineX, privKey.params.generator.affineY)
-        val ecPubKeySpec = ECPublicKeySpec(ecPubPoint, ecParameterSpec)
-
-        return keyFactory.generatePublic(ecPubKeySpec)
-    }
-
     /**
      * Creates a {@link java.security.PublicKey} from an RSA modulus n exponent e
      */
