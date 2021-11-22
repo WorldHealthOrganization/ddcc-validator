@@ -37,6 +37,7 @@ class ScanFragment : Fragment() {
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View {
+        Log.i("CAM", "OnCreateView");
         _binding = FragmentScanBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -75,6 +76,8 @@ class ScanFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        Log.i("CAM", "OnViewCreated");
+
         analyzer = QRCodeAnalyzer(::onQRCodeFound)
         cameraExecutor = Executors.newSingleThreadExecutor()
         cameraProviderFuture = ProcessCameraProvider.getInstance(this.requireActivity())
@@ -86,7 +89,9 @@ class ScanFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        Log.i("CAM", "OnDestroyView");
         cameraExecutor.shutdown()
+        cameraProviderFuture.get().unbindAll();
         _binding = null
     }
 }
