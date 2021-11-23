@@ -29,7 +29,7 @@ COVID-19 Credential Verifier app for Android using the WHO's Digital Documentati
 - [x] 5.1. Display Patient Info
 - [x] 5.2. Display Vaccine Info
 - [x] 5.3. Display Test Result Info
-- [ ] 5.4. Display Error Messages
+- [x] 5.4. Display Error Messages
 - [ ] 6. Credential Status Verification (On-line)
 - [ ] 6.1. Call issuer to check status of the credential
 - [ ] 6.2. Call issuer to download a new version of the Credential.
