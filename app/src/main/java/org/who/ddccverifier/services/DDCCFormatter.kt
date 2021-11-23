@@ -1,6 +1,7 @@
 package org.who.ddccverifier.services
 
 import com.upokecenter.cbor.CBORObject
+import com.upokecenter.cbor.CBORType
 import org.who.ddccverifier.views.ResultFragment
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -19,6 +20,7 @@ class DDCCFormatter {
 
     private fun formatText(text: CBORObject?): String? {
         if (text == null) return null
+        if (text.isUndefined) return null
         if (text.AsString().isEmpty()) return null
         return text.AsString()
     }
@@ -34,16 +36,19 @@ class DDCCFormatter {
 
     private fun formatDoseDate(date: CBORObject?): String? {
         if (date == null) return null
+        if (date.isUndefined) return null
         return fmt.format(parseDate(date))
     }
 
     private fun formatNextDose(date: CBORObject?): String? {
         if (date == null) return null
+        if (date.isUndefined) return null
         return fmt.format(parseDate(date))
     }
 
     private fun formatVaccineValid(date: CBORObject?): String? {
         if (date == null) return null
+        if (date.isUndefined) return null
         return fmt.format(parseDate(date))
     }
 
@@ -56,11 +61,15 @@ class DDCCFormatter {
         }
     }
 
+    private fun isNumber(obj: CBORObject?): Boolean {
+        return obj != null && !obj.isUndefined
+    }
+
     private fun formatDose(dose: CBORObject?, totalDoses: CBORObject?): String? {
         return when {
-            dose != null && totalDoses != null -> "Dose: " + dose.AsInt32() + " of " + totalDoses.AsInt32()
-            dose != null && totalDoses == null -> "Dose: " + dose.AsInt32()
-            dose == null && totalDoses != null -> "Dose: " + "1+ of " + totalDoses.AsInt32()
+             isNumber(dose) &&  isNumber(totalDoses) -> "Dose: " + dose!!.AsInt32() + " of " + totalDoses!!.AsInt32()
+             isNumber(dose) && !isNumber(totalDoses) -> "Dose: " + dose!!.AsInt32()
+            !isNumber(dose) &&  isNumber(totalDoses) -> "Dose: " + "1+ of " + totalDoses!!.AsInt32()
             else -> null
         }
     }
@@ -88,9 +97,9 @@ class DDCCFormatter {
 
     private fun formatLocation(centre: CBORObject?, country: CBORObject?): String? {
         return when {
-            centre != null && country != null -> centre.AsString() + ", " + country.get("code").AsString()
+            centre != null && country != null -> centre.AsString() + ", " + getCodeOrText(country)?.AsString()
             centre != null && country == null -> centre.AsString()
-            centre == null && country != null -> country.get("code").AsString()
+            centre == null && country != null -> getCodeOrText(country)?.AsString()
             else -> null
         }
     }
@@ -100,10 +109,19 @@ class DDCCFormatter {
         return "#"+formatText(lot)
     }
 
+    private fun getCodeOrText(obj: CBORObject?): CBORObject? {
+        if (obj == null) return null;
+        if (obj.type == CBORType.Map) {
+            return obj?.get("code")
+        } else {
+            return obj
+        }
+    }
+
     private fun formatVaccineInfo(lot: CBORObject?, brand: CBORObject?, manuf: CBORObject?): String? {
         val lotNumber = formatLotNumber(lot)
-        val brandStr = formatText(brand?.get("code"))
-        val manufStr = formatText(manuf?.get("code"))
+        val brandStr = formatText(getCodeOrText(brand))
+        val manufStr = formatText(getCodeOrText(manuf))
 
         return when {
             lotNumber != null && brandStr != null && manufStr != null -> "$brandStr ($lotNumber), $manufStr"
@@ -121,7 +139,7 @@ class DDCCFormatter {
     }
 
     private fun formatVaccineInfo2(ma: CBORObject?): String? {
-        return formatText(ma?.get("code"))
+        return formatText(getCodeOrText(ma))
     }
 
     private fun formatHCID(text: CBORObject?): String? {
