@@ -114,6 +114,7 @@
             />
 
         <LinearLayout
+            android:id="@+id/ll_result_dose_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -140,6 +141,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/ll_result_next_dose"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -165,6 +167,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/ll_result_vaccine_valid"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -190,6 +193,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/ll_result_vaccine_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -215,6 +219,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/ll_result_vaccine_info2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -240,6 +245,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/ll_result_centre"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -265,6 +271,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/ll_result_hcid"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -290,6 +297,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/ll_result_pha"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -315,6 +323,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/ll_result_identifier"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -340,6 +349,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/ll_result_hw"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -372,6 +382,7 @@
             android:layout_marginTop="3dp"/>
 
         <LinearLayout
+            android:id="@+id/ll_result_signed_by"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -397,6 +408,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/ll_result_valid_until"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal">

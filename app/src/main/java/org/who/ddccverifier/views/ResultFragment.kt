@@ -30,12 +30,12 @@ class ResultFragment : Fragment() {
         return binding.root
     }
 
-    private fun setTextView(view: TextView, text: String?) {
+    private fun setTextView(view: TextView, text: String?, line: View) {
         if (text != null && !text.isEmpty()) {
             view.text = text
-            view.visibility = TextView.VISIBLE
+            line.visibility = TextView.VISIBLE
         } else
-            view.visibility = TextView.GONE
+            line.visibility = TextView.GONE
     }
 
     data class ResultCard(
@@ -95,22 +95,22 @@ class ResultFragment : Fragment() {
 
             if (DDCC.contents != null) {
                 val card : ResultCard = DDCCFormatter().run(DDCC.contents!!);
-                setTextView(binding.tvResultScanDate, card.cardTitle)
-                setTextView(binding.tvResultName, card.personName)
-                setTextView(binding.tvResultPersonDetails, card.personDetails)
-                setTextView(binding.tvResultValidUntil, card.validUntil)
-                setTextView(binding.tvResultDoseTitle, card.dose)
-                setTextView(binding.tvResultDoseDate, card.doseDate)
-                setTextView(binding.tvResultNextDose, card.nextDose)
-                setTextView(binding.tvResultVaccineValid, card.vaccineValid)
-                setTextView(binding.tvResultVaccineType, card.vaccineType)
-                setTextView(binding.tvResultVaccineInfo, card.vaccineInfo)
-                setTextView(binding.tvResultVaccineInfo2, card.vaccineInfo2)
-                setTextView(binding.tvResultCentre, card.location)
-                setTextView(binding.tvResultHcid, card.hcid)
-                setTextView(binding.tvResultPha, card.pha)
-                setTextView(binding.tvResultIdentifier, card.identifier)
-                setTextView(binding.tvResultHw, card.hw)
+                setTextView(binding.tvResultScanDate, card.cardTitle, binding.tvResultScanDate)
+                setTextView(binding.tvResultName, card.personName, binding.tvResultName)
+                setTextView(binding.tvResultPersonDetails, card.personDetails, binding.tvResultPersonDetails)
+                setTextView(binding.tvResultVaccineType, card.vaccineType, binding.tvResultVaccineType)
+                setTextView(binding.tvResultDoseTitle, card.dose, binding.tvResultDoseTitle)
+                setTextView(binding.tvResultDoseDate, card.doseDate, binding.llResultDoseDate)
+                setTextView(binding.tvResultNextDose, card.nextDose, binding.llResultNextDose)
+                setTextView(binding.tvResultVaccineValid, card.vaccineValid, binding.llResultVaccineValid)
+                setTextView(binding.tvResultVaccineInfo, card.vaccineInfo, binding.llResultVaccineInfo)
+                setTextView(binding.tvResultVaccineInfo2, card.vaccineInfo2, binding.llResultVaccineInfo2)
+                setTextView(binding.tvResultCentre, card.location, binding.llResultCentre)
+                setTextView(binding.tvResultHcid, card.hcid, binding.llResultHcid)
+                setTextView(binding.tvResultPha, card.pha, binding.llResultPha)
+                setTextView(binding.tvResultIdentifier, card.identifier, binding.llResultIdentifier)
+                setTextView(binding.tvResultHw, card.hw, binding.llResultHw)
+                setTextView(binding.tvResultValidUntil, card.validUntil, binding.llResultValidUntil)
             }
         }
 
