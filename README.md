@@ -74,10 +74,10 @@ Use one of the Android Studio builds to install and run the app in your device o
 keytool -genkey -v -keystore <my-release-key.keystore> -alias <alias_name> -keyalg RSA -keysize 2048 -validity 10000
 ```
 2. Create 4 Secret Key variables on your GitHub repository and fill in with the signing key information
-   - `KEY_ALIAS=<alias_name>`
-   - `KEY_PASSWORD=<your password>`
-   - `KEY_STORE_PASSWORD=<your key store password>`
-   - `SIGNING_KEY=` the data from `<my-release-key.keystore>`
+   - `KEY_ALIAS` <- `<alias_name>`
+   - `KEY_PASSWORD` <- `<your password>`
+   - `KEY_STORE_PASSWORD` <- `<your key store password>`
+   - `SIGNING_KEY` <- the data from `<my-release-key.keystore>`
 3. Change the `versionCode` and `versionName` on `app/build.gradle`
 4. Commit and push. 
 5. Tag the commit with `v{versionName}`
