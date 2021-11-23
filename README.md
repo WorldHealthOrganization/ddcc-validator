@@ -70,16 +70,20 @@ Use one of the Android Studio builds to install and run the app in your device o
 ## How to Deploy
 
 1. Generate a new signing key 
-1. Create 4 Secret Key variables on your GitHub repository and fill in with the signing key information
-   - `KEY_ALIAS`
-   - `KEY_PASSWORD`
-   - `KEY_STORE_PASSWORD`
-   - `SIGNING_KEY`
-1. Change the `versionCode` and `versionName` on `app/build.gradle`
-1. Commit and push. 
-1. Tag the commit with `v{versionName}`
-1. Let the GitHub actions create a new `aab` Release. 
-1. Download the `aab` file and upload it to the` PlayStore. 
+```
+keytool -genkey -v -keystore <my-release-key.keystore> -alias <alias_name> -keyalg RSA -keysize 2048 -validity 10000
+```
+2. Create 4 Secret Key variables on your GitHub repository and fill in with the signing key information
+   - `KEY_ALIAS=<alias_name>`
+   - `KEY_PASSWORD=<your password>`
+   - `KEY_STORE_PASSWORD=<your key store password>`
+   - `SIGNING_KEY=` the data from `<my-release-key.keystore>`
+3. Change the `versionCode` and `versionName` on `app/build.gradle`
+4. Commit and push. 
+5. Tag the commit with `v{versionName}`
+6. Let the [Create Release GitHub Action](https://github.com/Path-Check/who-verifier-app/actions/workflows/create-release.yml) build a new `aab` file. 
+7. Add your CHANGE LOG to the description of the new release
+8. Download the `aab` file and upload it to the` PlayStore. 
 
 # Contributing
 
