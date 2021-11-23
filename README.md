@@ -1,4 +1,8 @@
-# WorldHealth Organization Verifier App
+# World Health Organization's DDCC Verifier App
+
+<img align="right" src="./docs/screenshots/3.Results.png" data-canonical-src="./docs/screenshots/3.Results.png" width="350px"/>
+
+COVID-19 Credential Verifier app for Android using the WHO's Digital Documentation of COVID-19 Certificates. The app scans a QR code for a credential/pass, cryptographically verifies it and displays the results on the phone. No information is transmitted anywhere. Our goal is to make a Verifier App with the widest possible verification capabilities.
 
 # Current Features
 
@@ -49,3 +53,50 @@
 - [ ] 11.1. Unpack and Verify
 - [ ] 11.2. Trust Registry check
 - [ ] 11.3. Display Info on Screen
+
+# Development Overview
+
+Make sure to have the following pre-requisites installed:
+1. Java 11
+2. Android Studio
+
+Fork and clone this repository and import into Android Studio
+```bash
+git clone git@github.com:Path-Check/who-verifier-app.git
+```
+
+Use one of the Android Studio builds to install and run the app in your device or a simulator.
+
+## How to Deploy
+
+0. Generate a new signing key and create 4 Secret Key variables on your GitHub repository.
+- `KEY_ALIAS=`
+- `KEY_PASSWORD=`
+- `KEY_STORE_PASSWORD=`
+- `SIGNING_KEY=`
+
+1. Change the versionCode and versionName on app/build.gradle`
+2. Commit and push. 
+3. Tag the commit with `v{versionName}`
+4. Let the GitHub actions create a new `aab` Release. 
+5. Download the `aab` file and upload it to the` PlayStore. 
+
+# Contributing
+
+[Issues](https://github.com/Path-Check/who-verifier-app/issues) and [pull requests](https://github.com/Path-Check/who-verifier-app/pulls) are very welcome.
+
+# License
+
+Copyright 2021 PathCheck Inc
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
