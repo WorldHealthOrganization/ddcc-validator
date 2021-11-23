@@ -65,19 +65,19 @@ class ResultFragment : Fragment() {
             val DDCC = DDCCVerifier().unpackAndVerify(args.qr!!);
 
             when (DDCC.status) {
-                DDCCVerifier.Status.INVALID_BASE45 -> binding.tvResultTitle.text = "Invalid QR"
-                DDCCVerifier.Status.INVALID_ZIP -> binding.tvResultTitle.text = "Invalid QR"
-                DDCCVerifier.Status.INVALID_COSE -> binding.tvResultTitle.text = "Invalid QR"
-                DDCCVerifier.Status.KID_NOT_INCLUDED -> binding.tvResultTitle.text = "Issuer Not Found"
-                DDCCVerifier.Status.ISSUER_NOT_TRUSTED -> binding.tvResultTitle.text = "Issuer Not Trusted"
-                DDCCVerifier.Status.TERMINATED_KEYS -> binding.tvResultTitle.text = "Terminated Keys"
-                DDCCVerifier.Status.EXPIRED_KEYS -> binding.tvResultTitle.text = "Expired Keys"
-                DDCCVerifier.Status.REVOKED_KEYS -> binding.tvResultTitle.text = "Revoked Keys"
-                DDCCVerifier.Status.NOT_VERIFIED -> binding.tvResultTitle.text = "Invalid Signature"
-                DDCCVerifier.Status.VERIFIED -> binding.tvResultTitle.text = "Signature Verified"
+                DDCCVerifier.Status.INVALID_BASE45 -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_base45)
+                DDCCVerifier.Status.INVALID_ZIP -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_zip)
+                DDCCVerifier.Status.INVALID_COSE -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_cose)
+                DDCCVerifier.Status.KID_NOT_INCLUDED -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_kid_not_included)
+                DDCCVerifier.Status.ISSUER_NOT_TRUSTED -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_issuer_not_trusted)
+                DDCCVerifier.Status.TERMINATED_KEYS -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_terminated_keys)
+                DDCCVerifier.Status.EXPIRED_KEYS -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_expired_keys)
+                DDCCVerifier.Status.REVOKED_KEYS -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_revoked_keys)
+                DDCCVerifier.Status.INVALID_SIGNATURE -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_signature)
+                DDCCVerifier.Status.VERIFIED -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_verified)
             }
 
-            if (binding.tvResultTitle.text == "Signature Verified") {
+            if (binding.tvResultTitle.text == resources.getString(R.string.verification_status_verified)) {
                 binding.tvResultHeader.setBackground(resources.getDrawable(R.drawable.rounded_pill));
                 binding.tvResultTitleIcon.text = resources.getString(R.string.fa_check_circle_solid);
             } else {
@@ -90,7 +90,7 @@ class ResultFragment : Fragment() {
                 binding.tvResultSignedByIcon.text = resources.getString(R.string.fa_check_circle_solid);
             } else {
                 binding.tvResultSignedByIcon.text = resources.getString(R.string.fa_times_circle_solid);
-                binding.tvResultSignedBy.text = "Invalid Signature "
+                binding.tvResultSignedBy.text = resources.getString(R.string.verification_status_invalid_signature)
             }
 
             if (DDCC.contents != null) {

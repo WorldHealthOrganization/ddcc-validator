@@ -37,7 +37,7 @@
             android:id="@+id/tv_result_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Signature Verified"
+            android:text="@string/verification_status_verified"
             android:textSize="28dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
@@ -123,7 +123,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Date of Vaccination"
+                android:text="@string/dose_date_label"
                 android:textSize="16dp"
                 android:textColor="#ffffff"
                 />
@@ -149,7 +149,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Next Dose"
+                android:text="@string/dose_next_dose_label"
                 android:textSize="16dp"
                 android:textColor="#ffffff"
                 />
@@ -174,7 +174,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Protected Until"
+                android:text="@string/dose_valid_label"
                 android:textSize="16dp"
                 android:textColor="#ffffff"
                 />
@@ -199,7 +199,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Product"
+                android:text="@string/dose_product_label"
                 android:textSize="16dp"
                 android:textColor="#ffffff"
                 />
@@ -224,7 +224,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Registered as"
+                android:text="@string/dose_ma_holder_label"
                 android:textSize="16dp"
                 android:textColor="#ffffff"
                 />
@@ -249,7 +249,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Location "
+                android:text="@string/dose_location_label"
                 android:textSize="16dp"
                 android:textColor="#ffffff"
                 />
@@ -274,7 +274,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="HCPI "
+                android:text="@string/dose_hcpi_label"
                 android:textSize="16dp"
                 android:textColor="#ffffff"
                 />
@@ -299,7 +299,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="PHA "
+                android:text="@string/dose_pha_label"
                 android:textSize="16dp"
                 android:textColor="#ffffff"
                 />
@@ -324,7 +324,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Identifier "
+                android:text="@string/dose_identifier_label"
                 android:textSize="16dp"
                 android:textColor="#ffffff"
                 />
@@ -349,7 +349,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="HW "
+                android:text="@string/dose_hw_label"
                 android:textSize="16dp"
                 android:textColor="#ffffff"
                 />

@@ -77,7 +77,7 @@ class DDCCVerifier {
         TERMINATED_KEYS,
         EXPIRED_KEYS,
         REVOKED_KEYS,
-        NOT_VERIFIED,
+        INVALID_SIGNATURE,
         VERIFIED,
     }
 
@@ -109,6 +109,6 @@ class DDCCVerifier {
             return VerificationResult(Status.VERIFIED, contents, issuer, qr)
         }
 
-        return VerificationResult(Status.NOT_VERIFIED, contents, issuer, qr)
+        return VerificationResult(Status.INVALID_SIGNATURE, contents, issuer, qr)
     }
 }

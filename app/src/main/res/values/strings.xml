@@ -11,9 +11,31 @@
     <string name="close">Close</string>
 
     <string name="pointToQR">Align the QR Code below</string>
-    <string name="emptyCardDesc">Passports you scan will appear here.</string>
+    <string name="emptyCardDesc">Saved credentials will appear here.</string>
 
     <string name="hello_home_fragment">Hello Home Page</string>
     <string name="hello_qrscan_fragment">Hello QR Scan. Arg: %1$s</string>
     <string name="hello_qrresult_fragment">Hello QR Result. Arg: %1$s</string>
+
+    <string name="dose_date_label">Date of Vaccination</string>
+    <string name="dose_next_dose_label">Next Dose</string>
+    <string name="dose_valid_label">Protected Until</string>
+    <string name="dose_product_label">Product</string>
+    <string name="dose_ma_holder_label">Registered as</string>
+    <string name="dose_location_label">Location</string>
+    <string name="dose_identifier_label">Identifier</string>
+    <string name="dose_hcpi_label">HCPI</string>
+    <string name="dose_pha_label">PHA</string>
+    <string name="dose_hw_label">HW</string>
+
+    <string name="verification_status_invalid_base45">Invalid QR</string>
+    <string name="verification_status_invalid_zip">Invalid QR</string>
+    <string name="verification_status_invalid_cose">Invalid QR</string>
+    <string name="verification_status_kid_not_included">Issuer Not Found</string>
+    <string name="verification_status_issuer_not_trusted">Issuer Not Trusted</string>
+    <string name="verification_status_terminated_keys">Terminated Credential</string>
+    <string name="verification_status_expired_keys">Expired Credential</string>
+    <string name="verification_status_revoked_keys">Revoked Credential</string>
+    <string name="verification_status_invalid_signature">Invalid Signature</string>
+    <string name="verification_status_verified">Signature Verified</string>
 </resources>
