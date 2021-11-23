@@ -69,17 +69,16 @@ Use one of the Android Studio builds to install and run the app in your device o
 
 ## How to Deploy
 
-0. Generate a new signing key and create 4 Secret Key variables on your GitHub repository.
-- `KEY_ALIAS=`
-- `KEY_PASSWORD=`
-- `KEY_STORE_PASSWORD=`
-- `SIGNING_KEY=`
-
-1. Change the versionCode and versionName on app/build.gradle`
-2. Commit and push. 
-3. Tag the commit with `v{versionName}`
-4. Let the GitHub actions create a new `aab` Release. 
-5. Download the `aab` file and upload it to the` PlayStore. 
+1. Generate a new signing key and create 4 Secret Key variables on your GitHub repository.
+  - `KEY_ALIAS=`
+  - `KEY_PASSWORD=`
+  - `KEY_STORE_PASSWORD=`
+  - `SIGNING_KEY=`
+1. Change the `versionCode` and `versionName` on `app/build.gradle`
+1. Commit and push. 
+1. Tag the commit with `v{versionName}`
+1. Let the GitHub actions create a new `aab` Release. 
+1. Download the `aab` file and upload it to the` PlayStore. 
 
 # Contributing
 
