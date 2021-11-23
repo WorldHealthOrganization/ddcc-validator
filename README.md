@@ -56,6 +56,7 @@ COVID-19 Credential Verifier app for Android using the WHO's Digital Documentati
 
 # Development Overview
 
+## Setup
 Make sure to have the following pre-requisites installed:
 1. Java 11
 2. Android Studio
@@ -66,6 +67,23 @@ git clone git@github.com:Path-Check/who-verifier-app.git
 ```
 
 Use one of the Android Studio builds to install and run the app in your device or a simulator.
+
+## Building
+Build the app:
+```bash
+./gradlew assembleDebug
+```
+
+## Testing
+```bash
+./gradlew test
+./gradlew connectedAndroidTest
+```
+
+## Installing on device
+```bash
+./gradlew installDebug
+```
 
 ## How to Deploy
 
