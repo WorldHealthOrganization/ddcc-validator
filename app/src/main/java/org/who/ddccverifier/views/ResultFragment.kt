@@ -94,7 +94,9 @@ class ResultFragment : Fragment() {
             }
 
             if (DDCC.contents != null) {
-                val card : ResultCard = DDCCFormatter().run(DDCC.contents!!);
+                val card : ResultCard = DDCCFormatter().run(DDCC.contents!!)
+                //CBOR2FHIR().run(DDCC.contents!!, requireActivity())
+
                 setTextView(binding.tvResultScanDate, card.cardTitle, binding.tvResultScanDate)
                 setTextView(binding.tvResultName, card.personName, binding.tvResultName)
                 setTextView(binding.tvResultPersonDetails, card.personDetails, binding.tvResultPersonDetails)

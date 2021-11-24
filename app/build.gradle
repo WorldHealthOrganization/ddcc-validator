@@ -33,6 +33,10 @@ android {
     buildFeatures {
         viewBinding true
     }
+    packagingOptions {
+        pickFirst("META-INF/ASL-2.0.txt")
+        pickFirst("META-INF/LGPL-3.0.txt")
+    }
 }
 
 dependencies {
@@ -55,6 +59,8 @@ dependencies {
 
     implementation 'io.github.ehn-digital-green-development:base45:0.0.3'
     implementation 'com.augustcellars.cose:cose-java:1.1.0'
+
+    implementation 'com.google.android.fhir:engine:0.1.0-alpha03'
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
