@@ -12,6 +12,10 @@ import org.who.ddccverifier.views.ResultFragment
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import org.hl7.fhir.r4.model.IdType
+
+
+
 
 class CBOR2FHIR {
     // Using old java.time to keep compatibility down to Android SDK 22.
@@ -47,6 +51,7 @@ class CBOR2FHIR {
         if (obj == null || obj.isUndefined) return null
         return Immunization.ImmunizationPerformerComponent().apply {
             actor = parseReference(obj)
+            actor?.setType("Practitioner")
         }
     }
 
@@ -89,20 +94,13 @@ class CBOR2FHIR {
         }
     }
 
-    private fun parseRecommendation(obj: CBORObject?): ImmunizationRecommendation? {
-        if (obj == null || obj.isUndefined == null) return null
-        return ImmunizationRecommendation().apply {
-            date = parseDate(obj)
-        }
-    }
-
     private fun parseGender(obj: CBORObject?): Enumerations.AdministrativeGender? {
-        if (obj == null || obj.isUndefined == null) return null
+        if (obj == null || obj.isUndefined) return null
         return Enumerations.AdministrativeGender.fromCode(obj["code"].AsString())
     }
 
     private fun parseHumanName(obj: CBORObject?): HumanName? {
-        if (obj == null || obj.isUndefined == null) return null
+        if (obj == null || obj.isUndefined) return null
         return HumanName().apply {
             val names = obj.AsString().split(" ")
             val givenNames = names.subList(0,names.size-1)
@@ -113,19 +111,52 @@ class CBOR2FHIR {
         }
     }
 
-    fun run(DDCC: CBORObject, c: Context) {
+    private fun createId(id: Long, theVersionId: Long): IdType? {
+        return IdType("Patient", "" + id, "" + theVersionId)
+    }
+
+    private fun createRecommendationBasedOn(due_date: CBORObject?, immunization: Immunization): ImmunizationRecommendation? {
+        if (due_date == null || due_date.isUndefined) return null
+        return ImmunizationRecommendation().apply {
+            patient = immunization.patient
+            recommendation = listOf(ImmunizationRecommendation.ImmunizationRecommendationRecommendationComponent().apply {
+                vaccineCode = listOfNotNull(immunization.vaccineCode)
+                targetDisease = immunization.protocolAppliedFirstRep.targetDiseaseFirstRep
+                doseNumber = PositiveIntType().setValue(immunization.protocolAppliedFirstRep.doseNumberPositiveIntType.value +1)
+                seriesDoses = immunization.protocolAppliedFirstRep.seriesDoses
+                forecastStatus = CodeableConcept().apply {
+                    this.coding = listOf(Coding().apply {
+                        system = "http://terminology.hl7.org/2.1.0/CodeSystem-immunization-recommendation-status.html"
+                        code = "due"
+                    })
+                }
+                dateCriterion = listOf(ImmunizationRecommendation.ImmunizationRecommendationRecommendationDateCriterionComponent().apply {
+                    code = CodeableConcept().apply {
+                        this.coding = listOf(Coding().apply {
+                            system = "http://loinc.org"
+                            code = "30980-7"
+                        })
+                    }
+                    value = parseDate(due_date)
+                })
+            })
+        }
+    }
+
+    fun run(DDCC: CBORObject, c: Context): Bundle {
         val fhirEngine: FhirEngine by lazy { FhirEngineBuilder(c).build() }
 
-        val patient = Patient().apply{
+        val _patient = Patient().apply{
             id = DDCC["identifier"]?.AsString()
             birthDate = parseDate(DDCC["birthDate"])
             gender = parseGender(DDCC["sex"])
             name = listOf(parseHumanName(DDCC["name"]))
         }
 
-        val recommendation = parseRecommendation(DDCC["due_date"])
-
-        val immunization = Immunization().apply{
+        val _immunization = Immunization().apply{
+            patient = Reference().apply {
+                id = "Patient/" + _patient.id
+            }
             vaccineCode = parseCodableConcept(DDCC["vaccine"])
             occurrence = parseDateTimeType(DDCC["date"]);
             lotNumber = DDCC["lot"]?.AsString()
@@ -134,6 +165,7 @@ class CBOR2FHIR {
                 doseNumber = parsePositiveIntType(DDCC["dose"])
                 seriesDoses = parsePositiveIntType(DDCC["total_doses"])
                 authority = parseReference(DDCC["pha"])
+                authority?.setType("Organization")
             })
             location = parseLocation(DDCC["centre"])
             performer = listOfNotNull(parsePerformer(DDCC["hw"]))
@@ -144,6 +176,15 @@ class CBOR2FHIR {
                 parseExtension(parseCoding(DDCC["country"]), "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCCountryOfVaccination"),
                 parseExtension(parseDateTimeType(DDCC["vaccine_valid"]), "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineValidFrom"),
             )
+        }
+
+        val _recommendation = createRecommendationBasedOn(DDCC["due_date"], _immunization)
+
+        return Bundle().apply {
+            type = Bundle.BundleType.TRANSACTION
+            addEntry().setResource(_patient)
+            addEntry().setResource(_immunization)
+            if (_recommendation != null) addEntry().setResource(_recommendation)
         }
     }
 }
