@@ -27,18 +27,4 @@ class QRUnpackingTest {
         assertEquals(DDCCVerifier.Status.VERIFIED, verified.status)
         assertEquals("{\"manufacturer\": \"Organization/973\", \"centre\": \"Location/971\", \"lot\": \"PT123F.9\", \"dose\": 1, \"name\": \"EddieMurphy\", \"disease\": {\"code\": \"840539006\", \"system\": \"http://snomed.info/sct\", \"display\": \"COVID 19\"}, \"sex\": {\"code\": \"male\", \"system\": \"http://hl7.org/fhir/administrative-gender\"}, \"hcid\": \"111000111\", \"identifier\": \"111000111\", \"vaccine\": {\"code\": \"1119349007\", \"system\": \"http://snomed.info/sct\", \"display\": \"SARSCoV2  mRNA vaccine\"}, \"total_doses\": undefined, \"birthDate\": \"1986-09-19\", \"date\": undefined}",verified.contents.toString())
     }
-
-    @Test
-    fun cardResultBuilderQR1() {
-        val verified = DDCCVerifier().unpackAndVerify(qr1)
-        val card = DDCCFormatter().run(verified.contents!!)
-        assertNotNull(card)
-    }
-
-    @Test
-    fun cardResultBuilderQR2() {
-        val verified = DDCCVerifier().unpackAndVerify(qr2)
-        val card = DDCCFormatter().run(verified.contents!!)
-        assertNotNull(card)
-    }
 }
