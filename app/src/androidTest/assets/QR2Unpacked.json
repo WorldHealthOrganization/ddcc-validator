@@ -1,0 +1,26 @@
+{
+  "name": "EddieMurphy",
+  "sex": {
+    "code": "male",
+    "system": "http://hl7.org/fhir/administrative-gender"
+  },
+  "disease": {
+    "code": "840539006",
+    "system": "http://snomed.info/sct",
+    "display": "COVID 19"
+  },
+  "total_doses": null,
+  "date": null,
+  "vaccine": {
+    "code": "1119349007",
+    "system": "http://snomed.info/sct",
+    "display": "SARSCoV2  mRNA vaccine"
+  },
+  "birthDate": "1986-09-19",
+  "lot": "PT123F.9",
+  "centre": "Location/971",
+  "dose": 1,
+  "hcid": "111000111",
+  "manufacturer": "Organization/973",
+  "identifier": "111000111"
+}

@@ -1,0 +1,45 @@
+{
+  "due_date": "2021-07-29",
+  "vaccine_valid": "2021-07-22",
+  "name": "Eddie Murphy",
+  "hw": "http://www.acme.org/practitioners/23",
+  "sex": {
+    "code": "male",
+    "system": "http://hl7.org/fhir/administrative-gender"
+  },
+  "valid_from": "2021-07-08",
+  "disease": {
+    "code": "840539006",
+    "system": "http://snomed.info/sct"
+  },
+  "total_doses": 2,
+  "date": "2021-07-08",
+  "vaccine": {
+    "code": "1119349007",
+    "system": "http://snomed.info/sct"
+  },
+  "birthDate": "1986-09-19",
+  "lot": "PT123F",
+  "centre": "Vaccination Site",
+  "brand": {
+    "code": "TEST",
+    "system": "http://worldhealthorganization.github.io/ddcc/CodeSystem/DDCC-Example-Test-CodeSystem"
+  },
+  "pha": "wA69g8VD512TfTTdkTNSsG",
+  "dose": 1,
+  "ma_holder": {
+    "code": "TEST",
+    "system": "http://worldhealthorganization.github.io/ddcc/CodeSystem/DDCC-Example-Test-CodeSystem"
+  },
+  "hcid": "US111222333444555666",
+  "manufacturer": {
+    "code": "TEST",
+    "system": "http://worldhealthorganization.github.io/ddcc/CodeSystem/DDCC-Example-Test-CodeSystem"
+  },
+  "identifier": "1234567890",
+  "valid_until": "2022-07-08",
+  "country": {
+    "code": "USA",
+    "system": "urn:iso:std:iso:3166"
+  }
+}

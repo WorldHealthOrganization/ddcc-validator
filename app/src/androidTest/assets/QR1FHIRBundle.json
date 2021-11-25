@@ -1,0 +1,155 @@
+{
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "1234567890",
+        "name": [
+          {
+            "family": "Murphy",
+            "given": [
+              "Eddie"
+            ]
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1986-09-19"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Immunization",
+        "extension": [
+          {
+            "url": "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineBrand",
+            "valueCoding": {
+              "system": "http://worldhealthorganization.github.io/ddcc/CodeSystem/DDCC-Example-Test-CodeSystem",
+              "code": "TEST"
+            }
+          },
+          {
+            "url": "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineMarketAuthorization",
+            "valueCoding": {
+              "system": "http://worldhealthorganization.github.io/ddcc/CodeSystem/DDCC-Example-Test-CodeSystem",
+              "code": "TEST"
+            }
+          },
+          {
+            "url": "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCCountryOfVaccination",
+            "valueCoding": {
+              "system": "urn:iso:std:iso:3166",
+              "code": "USA"
+            }
+          },
+          {
+            "url": "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineValidFrom",
+            "valueDateTime": "2021"
+          }
+        ],
+        "vaccineCode": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "1119349007"
+            }
+          ]
+        },
+        "patient": {
+          "id": "Patient/1234567890"
+        },
+        "occurrenceDateTime": "2021",
+        "location": {
+          "display": "Vaccination Site"
+        },
+        "lotNumber": "PT123F",
+        "performer": [
+          {
+            "actor": {
+              "type": "Practitioner",
+              "identifier": {
+                "value": "http://www.acme.org/practitioners/23"
+              }
+            }
+          }
+        ],
+        "protocolApplied": [
+          {
+            "authority": {
+              "type": "Organization",
+              "identifier": {
+                "value": "wA69g8VD512TfTTdkTNSsG"
+              }
+            },
+            "targetDisease": [
+              {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "840539006"
+                  }
+                ]
+              }
+            ],
+            "doseNumberPositiveInt": 1,
+            "seriesDosesPositiveInt": 2
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "ImmunizationRecommendation",
+        "patient": {
+          "id": "Patient/1234567890"
+        },
+        "recommendation": [
+          {
+            "vaccineCode": [
+              {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "1119349007"
+                  }
+                ]
+              }
+            ],
+            "targetDisease": {
+              "coding": [
+                {
+                  "system": "http://snomed.info/sct",
+                  "code": "840539006"
+                }
+              ]
+            },
+            "forecastStatus": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/2.1.0/CodeSystem-immunization-recommendation-status.html",
+                  "code": "due"
+                }
+              ]
+            },
+            "dateCriterion": [
+              {
+                "code": {
+                  "coding": [
+                    {
+                      "system": "http://loinc.org",
+                      "code": "30980-7"
+                    }
+                  ]
+                },
+                "value": "2021-07-29T00:00:00-04:00"
+              }
+            ],
+            "doseNumberPositiveInt": 2,
+            "seriesDosesPositiveInt": 2
+          }
+        ]
+      }
+    }
+  ]
+}
