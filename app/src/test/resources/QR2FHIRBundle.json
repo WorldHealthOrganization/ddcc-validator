@@ -10,11 +10,7 @@
             "value": "111000111"
           }
         ],
-        "name": [
-          {
-            "family": "EddieMurphy"
-          }
-        ],
+        "name": [{"text":"EddieMurphy"}],
         "gender": "male",
         "birthDate": "1986-09-19"
       }

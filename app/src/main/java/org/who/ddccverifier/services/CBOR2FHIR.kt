@@ -97,13 +97,16 @@ class CBOR2FHIR {
     private fun parseHumanName(obj: CBORObject?): HumanName? {
         if (obj == null || obj.isUndefined) return null
         return HumanName().apply {
+            text = obj.AsString();
+        }/*
+        return HumanName().apply {
             val names = obj.AsString().split(" ")
             val givenNames = names.subList(0,names.size-1)
             givenNames.forEach {
                     name -> addGiven(name)
             }
             family = names.last()
-        }
+        }*/
     }
 
     private fun createRecommendationBasedOn(due_date: CBORObject?, immunization: Immunization): ImmunizationRecommendation? {
