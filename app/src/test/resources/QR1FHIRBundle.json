@@ -5,7 +5,11 @@
     {
       "resource": {
         "resourceType": "Patient",
-        "id": "1234567890",
+        "identifier": [
+          {
+            "value": "1234567890"
+          }
+        ],
         "name": [
           {
             "family": "Murphy",
@@ -45,7 +49,7 @@
           },
           {
             "url": "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineValidFrom",
-            "valueDateTime": "2021"
+            "valueDateTime": "2021-07-22T00:00:00-04:00"
           }
         ],
         "vaccineCode": {
@@ -57,11 +61,19 @@
           ]
         },
         "patient": {
-          "id": "Patient/1234567890"
+          "identifier": {
+            "value": "1234567890"
+          }
         },
-        "occurrenceDateTime": "2021",
+        "occurrenceDateTime": "2021-07-08T00:00:00-04:00",
         "location": {
           "display": "Vaccination Site"
+        },
+        "manufacturer": {
+          "identifier": {
+            "system": "http://worldhealthorganization.github.io/ddcc/CodeSystem/DDCC-Example-Test-CodeSystem",
+            "value": "TEST"
+          }
         },
         "lotNumber": "PT123F",
         "performer": [
@@ -102,7 +114,9 @@
       "resource": {
         "resourceType": "ImmunizationRecommendation",
         "patient": {
-          "id": "Patient/1234567890"
+          "identifier": {
+            "value": "1234567890"
+          }
         },
         "recommendation": [
           {
@@ -138,7 +152,8 @@
                   "coding": [
                     {
                       "system": "http://loinc.org",
-                      "code": "30980-7"
+                      "code": "30980-7",
+                      "display": "Date vaccine due"
                     }
                   ]
                 },
@@ -147,6 +162,72 @@
             ],
             "doseNumberPositiveInt": 2,
             "seriesDosesPositiveInt": 2
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Composition",
+        "type": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "82593-5",
+              "display": "Immunization summary report"
+            }
+          ]
+        },
+        "category": [
+          {
+            "coding": [
+              {
+                "code": "ddcc-vs"
+              }
+            ]
+          }
+        ],
+        "subject": {
+          "identifier": {
+            "value": "1234567890"
+          }
+        },
+        "author": [
+          {
+            "type": "Organization",
+            "identifier": {
+              "value": "wA69g8VD512TfTTdkTNSsG"
+            }
+          }
+        ],
+        "title": "International Certificate of Vaccination or Prophylaxis",
+        "event": [
+          {
+            "period": {
+              "start": "2021-07-08T00:00:00-04:00",
+              "end": "2022-07-08T00:00:00-04:00"
+            }
+          }
+        ],
+        "section": [
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "http://loinc.org",
+                  "code": "11369-6",
+                  "display": "History of Immunization Narrative"
+                }
+              ]
+            },
+            "author": [
+              {
+                "type": "Organization",
+                "identifier": {
+                  "value": "wA69g8VD512TfTTdkTNSsG"
+                }
+              }
+            ]
           }
         ]
       }

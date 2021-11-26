@@ -5,6 +5,7 @@ import android.util.Log
 import com.google.android.fhir.FhirEngine
 import com.google.android.fhir.FhirEngineBuilder
 import com.upokecenter.cbor.CBORObject
+import com.upokecenter.cbor.CBORType
 import org.hl7.fhir.instance.model.api.IBaseDatatype
 import org.hl7.fhir.r4.model.*
 import org.hl7.fhir.r4.utils.CodingUtilities
@@ -13,9 +14,6 @@ import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 import org.hl7.fhir.r4.model.IdType
-
-
-
 
 class CBOR2FHIR {
     // Using old java.time to keep compatibility down to Android SDK 22.
@@ -27,7 +25,9 @@ class CBOR2FHIR {
 
     private fun parseDateTimeType(date: CBORObject?): DateTimeType? {
         if (date == null || date.isUndefined) return null
-        return DateTimeType.parseV3(date.AsString())
+        return DateTimeType().apply {
+            value = parseDate(date)
+        }
     }
 
     private fun parsePositiveIntType(positiveInt: CBORObject?): PositiveIntType? {
@@ -37,12 +37,23 @@ class CBOR2FHIR {
         }
     }
 
+    private fun parseIdentifier(obj: CBORObject?): Identifier? {
+        if (obj == null || obj.isUndefined) return null
+        return Identifier().apply {
+            value = obj.AsString()
+        }
+    }
+
     private fun parseIdentifierReference(obj: CBORObject?): Reference? {
         if (obj == null || obj.isUndefined) return null
         return Reference().apply {
-            identifier = Identifier().apply {
-                value = obj["code"]?.AsString()
-                system = obj["system"]?.AsString()
+            if (obj.type == CBORType.Map) {
+                identifier = Identifier().apply {
+                    value = obj["code"]?.AsString()
+                    system = obj["system"]?.AsString()
+                }
+            } else {
+                this.setId(obj?.AsString())
             }
         }
     }
@@ -72,9 +83,7 @@ class CBOR2FHIR {
 
     private fun parseCodableConcept(obj: CBORObject?): CodeableConcept? {
         if (obj == null || obj.isUndefined) return null
-        return CodeableConcept().apply {
-            coding = listOf(parseCoding(obj))
-        }
+        return CodeableConcept(parseCoding(obj))
     }
 
     private fun parseReference(obj: CBORObject?): Reference? {
@@ -111,10 +120,6 @@ class CBOR2FHIR {
         }
     }
 
-    private fun createId(id: Long, theVersionId: Long): IdType? {
-        return IdType("Patient", "" + id, "" + theVersionId)
-    }
-
     private fun createRecommendationBasedOn(due_date: CBORObject?, immunization: Immunization): ImmunizationRecommendation? {
         if (due_date == null || due_date.isUndefined) return null
         return ImmunizationRecommendation().apply {
@@ -124,38 +129,30 @@ class CBOR2FHIR {
                 targetDisease = immunization.protocolAppliedFirstRep.targetDiseaseFirstRep
                 doseNumber = PositiveIntType().setValue(immunization.protocolAppliedFirstRep.doseNumberPositiveIntType.value +1)
                 seriesDoses = immunization.protocolAppliedFirstRep.seriesDoses
-                forecastStatus = CodeableConcept().apply {
-                    this.coding = listOf(Coding().apply {
-                        system = "http://terminology.hl7.org/2.1.0/CodeSystem-immunization-recommendation-status.html"
-                        code = "due"
-                    })
-                }
+                forecastStatus = CodeableConcept(Coding("http://terminology.hl7.org/2.1.0/CodeSystem-immunization-recommendation-status.html", "due", ""))
                 dateCriterion = listOf(ImmunizationRecommendation.ImmunizationRecommendationRecommendationDateCriterionComponent().apply {
-                    code = CodeableConcept().apply {
-                        this.coding = listOf(Coding().apply {
-                            system = "http://loinc.org"
-                            code = "30980-7"
-                        })
-                    }
+                    code = CodeableConcept(Coding("http://loinc.org", "30980-7", "Date vaccine due"))
                     value = parseDate(due_date)
                 })
             })
         }
     }
 
-    fun run(DDCC: CBORObject, c: Context): Bundle {
-        val fhirEngine: FhirEngine by lazy { FhirEngineBuilder(c).build() }
-
-        val _patient = Patient().apply{
-            id = DDCC["identifier"]?.AsString()
+    fun parsePatient(DDCC: CBORObject): Patient {
+        return Patient().apply{
+            name = listOf(parseHumanName(DDCC["name"]))
+            identifier = listOfNotNull(parseIdentifier(DDCC["identifier"]))
             birthDate = parseDate(DDCC["birthDate"])
             gender = parseGender(DDCC["sex"])
-            name = listOf(parseHumanName(DDCC["name"]))
         }
+    }
+
+    fun run(DDCC: CBORObject): Bundle {
+        val _patient = parsePatient(DDCC);
 
         val _immunization = Immunization().apply{
             patient = Reference().apply {
-                id = "Patient/" + _patient.id
+                this.identifier = parseIdentifier(DDCC["identifier"])
             }
             vaccineCode = parseCodableConcept(DDCC["vaccine"])
             occurrence = parseDateTimeType(DDCC["date"]);
@@ -169,7 +166,7 @@ class CBOR2FHIR {
             })
             location = parseLocation(DDCC["centre"])
             performer = listOfNotNull(parsePerformer(DDCC["hw"]))
-            manufacturer = parseIdentifierReference(DDCC["manuf"])
+            manufacturer = parseIdentifierReference(DDCC["manufacturer"])
             extension = listOfNotNull(
                 parseExtension(parseCoding(DDCC["brand"]), "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineBrand"),
                 parseExtension(parseCoding(DDCC["ma_holder"]), "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineMarketAuthorization"),
@@ -180,11 +177,39 @@ class CBOR2FHIR {
 
         val _recommendation = createRecommendationBasedOn(DDCC["due_date"], _immunization)
 
+        val _composition = Composition().apply {
+            type = CodeableConcept(Coding("http://loinc.org", "82593-5", "Immunization summary report"))
+            category = listOf(CodeableConcept(Coding().apply {
+                code = "ddcc-vs"
+            }))
+            subject = Reference().apply {
+                this.identifier = parseIdentifier(DDCC["identifier"])
+            }
+            title = "International Certificate of Vaccination or Prophylaxis"
+            event = listOf(Composition.CompositionEventComponent().apply {
+                period = Period().apply {
+                    start = parseDate(DDCC["valid_from"])
+                    end = parseDate(DDCC["valid_until"])
+                }
+            })
+            author = listOfNotNull(_immunization.protocolAppliedFirstRep.authority)
+            section = listOf(Composition.SectionComponent().apply {
+                code = CodeableConcept(Coding("http://loinc.org", "11369-6", "History of Immunization Narrative"))
+                author = listOfNotNull(_immunization.protocolAppliedFirstRep.authority)
+                focus = Reference(_immunization.id)
+                entry = listOfNotNull(
+                    Reference(_immunization.id),
+                    _recommendation?.let { Reference(_recommendation?.id) }
+                )
+            })
+        }
+
         return Bundle().apply {
             type = Bundle.BundleType.TRANSACTION
             addEntry().setResource(_patient)
             addEntry().setResource(_immunization)
             if (_recommendation != null) addEntry().setResource(_recommendation)
+            addEntry().setResource(_composition)
         }
     }
 }

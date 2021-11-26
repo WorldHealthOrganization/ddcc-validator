@@ -1,0 +1,118 @@
+{
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "identifier": [
+          {
+            "value": "111000111"
+          }
+        ],
+        "name": [
+          {
+            "family": "EddieMurphy"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1986-09-19"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Immunization",
+        "vaccineCode": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "1119349007"
+            }
+          ]
+        },
+        "patient": {
+          "identifier": {
+            "value": "111000111"
+          }
+        },
+        "location": {
+          "display": "Location/971"
+        },
+        "manufacturer": {
+          "id": "Organization/973"
+        },
+        "lotNumber": "PT123F.9",
+        "protocolApplied": [
+          {
+            "authority": {
+              "type": "Organization"
+            },
+            "targetDisease": [
+              {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "840539006"
+                  }
+                ]
+              }
+            ],
+            "doseNumberPositiveInt": 1
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Composition",
+        "type": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "82593-5",
+              "display": "Immunization summary report"
+            }
+          ]
+        },
+        "category": [
+          {
+            "coding": [
+              {
+                "code": "ddcc-vs"
+              }
+            ]
+          }
+        ],
+        "subject": {
+          "identifier": {
+            "value": "111000111"
+          }
+        },
+        "author": [
+          {
+            "type": "Organization"
+          }
+        ],
+        "title": "International Certificate of Vaccination or Prophylaxis",
+        "section": [
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "http://loinc.org",
+                  "code": "11369-6",
+                  "display": "History of Immunization Narrative"
+                }
+              ]
+            },
+            "author": [
+              {
+                "type": "Organization"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

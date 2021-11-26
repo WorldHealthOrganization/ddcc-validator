@@ -6,9 +6,6 @@ import org.junit.Test
 import org.junit.Assert.*
 import org.who.ddccverifier.services.DDCCFormatter
 import org.who.ddccverifier.services.DDCCVerifier
-import java.nio.file.Files
-import java.nio.file.Path
-import kotlin.io.path.Path
 
 class QR2ResultCardTest {
 
@@ -19,7 +16,7 @@ class QR2ResultCardTest {
     }
 
     fun open(assetName: String): String {
-        return Files.newBufferedReader(Path("./", "src/androidTest/assets/").resolve(assetName))
+        return javaClass.classLoader.getResourceAsStream(assetName).bufferedReader()
             .use { bufferReader -> bufferReader?.readText() } ?: ""
     }
 
