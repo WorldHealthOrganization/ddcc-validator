@@ -4,23 +4,16 @@ import com.upokecenter.cbor.CBORObject
 import com.upokecenter.cbor.CBORType
 import org.hl7.fhir.instance.model.api.IBaseDatatype
 import org.hl7.fhir.r4.model.*
-import java.text.DateFormat
-import java.text.SimpleDateFormat
-import java.util.*
 
 class CBOR2FHIR {
-    // Using old java.time to keep compatibility down to Android SDK 22.
-    private var dfISO: DateFormat = SimpleDateFormat("yyyy-MM-dd")
-    private fun parseDate(date: CBORObject?): Date? {
+    private fun parseDateType(date: CBORObject?): DateType? {
         if (date == null || date.isUndefined) return null
-        return dfISO.parse(date.AsString())!!
+        return DateType(date.AsString())
     }
 
     private fun parseDateTimeType(date: CBORObject?): DateTimeType? {
         if (date == null || date.isUndefined) return null
-        return DateTimeType().apply {
-            value = parseDate(date)
-        }
+        return DateTimeType(date.AsString())
     }
 
     private fun parsePositiveIntType(positiveInt: CBORObject?): PositiveIntType? {
@@ -125,7 +118,7 @@ class CBOR2FHIR {
                 forecastStatus = CodeableConcept(Coding("http://terminology.hl7.org/2.1.0/CodeSystem-immunization-recommendation-status.html", "due", ""))
                 dateCriterion = listOf(ImmunizationRecommendation.ImmunizationRecommendationRecommendationDateCriterionComponent().apply {
                     code = CodeableConcept(Coding("http://loinc.org", "30980-7", "Date vaccine due"))
-                    value = parseDate(due_date)
+                    valueElement = parseDateTimeType(due_date)
                 })
             })
         }
@@ -135,7 +128,7 @@ class CBOR2FHIR {
         val myPatient = Patient().apply{
             name = listOf(parseHumanName(DDCC["name"]))
             identifier = listOfNotNull(parseIdentifier(DDCC["identifier"]))
-            birthDate = parseDate(DDCC["birthDate"])
+            birthDateElement = parseDateType(DDCC["birthDate"])
             gender = parseGender(DDCC["sex"])
         }
 
@@ -177,8 +170,8 @@ class CBOR2FHIR {
             title = "International Certificate of Vaccination or Prophylaxis"
             event = listOf(Composition.CompositionEventComponent().apply {
                 period = Period().apply {
-                    start = parseDate(DDCC["valid_from"])
-                    end = parseDate(DDCC["valid_until"])
+                    startElement = parseDateTimeType(DDCC["valid_from"])
+                    endElement = parseDateTimeType(DDCC["valid_until"])
                 }
             })
             author = listOfNotNull(myImmunization.protocolAppliedFirstRep.authority)
