@@ -10,15 +10,15 @@ import com.fasterxml.jackson.databind.ObjectMapper
 
 class QR2FHIRTest {
 
-    val mapper = ObjectMapper();
-    val jsonParser = FhirContext.forR4().newJsonParser();
+    private val mapper = ObjectMapper()
+    private val jsonParser = FhirContext.forR4().newJsonParser()
 
-    fun jsonEquals(v1: String, v2: String) {
+    private fun jsonEquals(v1: String, v2: String) {
         return assertEquals(mapper.readTree(v1), mapper.readTree(v2))
     }
 
-    fun open(assetName: String): String {
-        return javaClass.classLoader.getResourceAsStream(assetName).bufferedReader()
+    private fun open(assetName: String): String {
+        return javaClass.classLoader?.getResourceAsStream(assetName)?.bufferedReader()
             .use { bufferReader -> bufferReader?.readText() } ?: ""
     }
 

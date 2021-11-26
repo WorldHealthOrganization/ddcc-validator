@@ -9,14 +9,14 @@ import org.who.ddccverifier.services.DDCCVerifier
 
 class QR2ResultCardTest {
 
-    val mapper = ObjectMapper()
+    private val mapper = ObjectMapper()
 
-    fun jsonEquals(v1: String, v2: String) {
+    private fun jsonEquals(v1: String, v2: String) {
         return assertEquals(mapper.readTree(v1), mapper.readTree(v2))
     }
 
-    fun open(assetName: String): String {
-        return javaClass.classLoader.getResourceAsStream(assetName).bufferedReader()
+    private fun open(assetName: String): String {
+        return javaClass.classLoader?.getResourceAsStream(assetName)?.bufferedReader()
             .use { bufferReader -> bufferReader?.readText() } ?: ""
     }
 
