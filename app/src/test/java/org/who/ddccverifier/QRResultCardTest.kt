@@ -7,7 +7,7 @@ import org.junit.Assert.*
 import org.who.ddccverifier.services.DDCCFormatter
 import org.who.ddccverifier.services.DDCCVerifier
 
-class QR2ResultCardTest {
+class QRResultCardTest {
 
     private val mapper = ObjectMapper()
 

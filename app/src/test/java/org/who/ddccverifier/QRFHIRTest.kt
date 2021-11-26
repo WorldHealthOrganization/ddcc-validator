@@ -8,13 +8,13 @@ import ca.uhn.fhir.context.FhirContext
 import org.who.ddccverifier.services.CBOR2FHIR
 import com.fasterxml.jackson.databind.ObjectMapper
 
-class QR2FHIRTest {
+class QRFHIRTest {
 
     private val mapper = ObjectMapper()
     private val jsonParser = FhirContext.forR4().newJsonParser()
 
     private fun jsonEquals(v1: String, v2: String) {
-        return assertEquals(mapper.readTree(v1), mapper.readTree(v2))
+        assertEquals(mapper.readTree(v1), mapper.readTree(v2))
     }
 
     private fun open(assetName: String): String {
