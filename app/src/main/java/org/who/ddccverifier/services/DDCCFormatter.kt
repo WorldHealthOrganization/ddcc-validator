@@ -110,9 +110,9 @@ class DDCCFormatter {
     }
 
     private fun getCodeOrText(obj: CBORObject?): CBORObject? {
-        if (obj == null) return null;
+        if (obj == null) return null
         if (obj.type == CBORType.Map) {
-            return obj?.get("code")
+            return obj.get("code")
         } else {
             return obj
         }

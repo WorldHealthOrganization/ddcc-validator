@@ -21,26 +21,26 @@ class DDCCVerifier {
     }
 
     private fun base45Decode(base45: String): ByteArray? {
-        try {
-            return Base45.getDecoder().decode(base45)
+        return try {
+            Base45.getDecoder().decode(base45)
         } catch (e: Throwable) {
-            return null
+            null
         }
     }
 
     private fun deflate(input: ByteArray): ByteArray? {
-        try {
-            return InflaterInputStream(input.inputStream()).readBytes()
+        return try {
+            InflaterInputStream(input.inputStream()).readBytes()
         } catch (e: Throwable) {
-            return null
+            null
         }
     }
 
     private fun decodeSignedMessage(input: ByteArray): Sign1Message? {
-        try {
-            return Sign1Message.DecodeFromBytes(input, MessageTag.Sign1) as Sign1Message
+        return try {
+            Sign1Message.DecodeFromBytes(input, MessageTag.Sign1) as Sign1Message
         } catch (e: Throwable) {
-            return null
+            null
         }
     }
 
@@ -60,11 +60,11 @@ class DDCCVerifier {
     }
 
     private fun verify(signedMessage: Sign1Message, pubKey: PublicKey): Boolean {
-        try {
+        return try {
             val key = OneKey(pubKey, null)
-            return signedMessage.validate(key)
+            signedMessage.validate(key)
         } catch (e: Throwable) {
-            return false
+            false
         }
     }
 
