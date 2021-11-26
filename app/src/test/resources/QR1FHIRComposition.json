@@ -18,8 +18,17 @@
       "birthDate": "1986-09-19"
     },
     {
-      "resourceType": "Immunization",
+      "resourceType": "Organization",
       "id": "2",
+      "identifier": [
+        {
+          "value": "wA69g8VD512TfTTdkTNSsG"
+        }
+      ]
+    },
+    {
+      "resourceType": "Immunization",
+      "id": "3",
       "extension": [
         {
           "url": "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineBrand",
@@ -74,20 +83,14 @@
       "performer": [
         {
           "actor": {
-            "type": "Practitioner",
-            "identifier": {
-              "value": "http://www.acme.org/practitioners/23"
-            }
+            "reference": "#4"
           }
         }
       ],
       "protocolApplied": [
         {
           "authority": {
-            "type": "Organization",
-            "identifier": {
-              "value": "wA69g8VD512TfTTdkTNSsG"
-            }
+            "reference": "#2"
           },
           "targetDisease": [
             {
@@ -105,8 +108,17 @@
       ]
     },
     {
+      "resourceType": "Practitioner",
+      "id": "4",
+      "identifier": [
+        {
+          "value": "http://www.acme.org/practitioners/23"
+        }
+      ]
+    },
+    {
       "resourceType": "ImmunizationRecommendation",
-      "id": "3",
+      "id": "5",
       "patient": {
         "identifier": {
           "value": "1234567890"
@@ -183,10 +195,7 @@
   },
   "author": [
     {
-      "type": "Organization",
-      "identifier": {
-        "value": "wA69g8VD512TfTTdkTNSsG"
-      }
+      "reference": "#2"
     }
   ],
   "title": "International Certificate of Vaccination or Prophylaxis",
@@ -211,21 +220,18 @@
       },
       "author": [
         {
-          "type": "Organization",
-          "identifier": {
-            "value": "wA69g8VD512TfTTdkTNSsG"
-          }
+          "reference": "#2"
         }
       ],
       "focus": {
-        "reference": "#2"
+        "reference": "#3"
       },
       "entry": [
         {
-          "reference": "#2"
+          "reference": "#3"
         },
         {
-          "reference": "#3"
+          "reference": "#5"
         }
       ]
     }

@@ -47,8 +47,11 @@ class CBOR2FHIR {
     private fun parsePerformer(obj: CBORObject?) : Immunization.ImmunizationPerformerComponent? {
         if (obj == null || obj.isUndefined) return null
         return Immunization.ImmunizationPerformerComponent().apply {
-            actor = parseReference(obj)
-            actor?.type = "Practitioner"
+            actor = Reference(Practitioner().apply {
+                identifier = listOf(Identifier().apply {
+                    value = obj.AsString()
+                })
+            })
         }
     }
 
@@ -70,6 +73,15 @@ class CBOR2FHIR {
     private fun parseCodableConcept(obj: CBORObject?): CodeableConcept? {
         if (obj == null || obj.isUndefined) return null
         return CodeableConcept(parseCoding(obj))
+    }
+
+    private fun parseOrganization(obj: CBORObject?): Organization? {
+        if (obj == null || obj.isUndefined) return null
+        return Organization().apply {
+            identifier = listOf(Identifier().apply {
+                value = obj.AsString()
+            })
+        }
     }
 
     private fun parseReference(obj: CBORObject?): Reference? {
@@ -146,8 +158,7 @@ class CBOR2FHIR {
                 targetDisease = listOfNotNull(parseCodableConcept(DDCC["disease"]))
                 doseNumber = parsePositiveIntType(DDCC["dose"])
                 seriesDoses = parsePositiveIntType(DDCC["total_doses"])
-                authority = parseReference(DDCC["pha"])
-                authority?.type = "Organization"
+                authority = Reference(parseOrganization(DDCC["pha"]))
             })
             location = parseLocation(DDCC["centre"])
             performer = listOfNotNull(parsePerformer(DDCC["hw"]))
@@ -182,7 +193,7 @@ class CBOR2FHIR {
                 focus = Reference(myImmunization)
                 entry = listOfNotNull(
                     Reference(myImmunization),
-                    Reference(myRecommendation)
+                    myRecommendation?.let { Reference(myRecommendation) }
                 )
             })
         }

@@ -10,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import org.who.ddccverifier.R
 import org.who.ddccverifier.databinding.FragmentResultBinding
+import org.who.ddccverifier.services.CBOR2FHIR
 import org.who.ddccverifier.services.DDCCFormatter
 import org.who.ddccverifier.services.DDCCVerifier
 
@@ -94,8 +95,7 @@ class ResultFragment : Fragment() {
             }
 
             if (DDCC.contents != null) {
-                val card : ResultCard = DDCCFormatter().run(DDCC.contents!!)
-                //CBOR2FHIR().run(DDCC.contents!!, requireActivity())
+                var card = DDCCFormatter().run(CBOR2FHIR().run(DDCC.contents!!))
 
                 setTextView(binding.tvResultScanDate, card.cardTitle, binding.tvResultScanDate)
                 setTextView(binding.tvResultName, card.personName, binding.tvResultName)

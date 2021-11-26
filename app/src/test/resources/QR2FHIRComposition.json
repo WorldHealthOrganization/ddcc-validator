@@ -42,9 +42,6 @@
       "lotNumber": "PT123F.9",
       "protocolApplied": [
         {
-          "authority": {
-            "type": "Organization"
-          },
           "targetDisease": [
             {
               "coding": [
@@ -81,11 +78,6 @@
   "subject": {
     "reference": "#1"
   },
-  "author": [
-    {
-      "type": "Organization"
-    }
-  ],
   "title": "International Certificate of Vaccination or Prophylaxis",
   "section": [
     {
@@ -98,11 +90,6 @@
           }
         ]
       },
-      "author": [
-        {
-          "type": "Organization"
-        }
-      ],
       "focus": {
         "reference": "#2"
       },
