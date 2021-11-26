@@ -1,0 +1,116 @@
+{
+  "resourceType": "Composition",
+  "contained": [
+    {
+      "resourceType": "Patient",
+      "id": "1",
+      "identifier": [
+        {
+          "value": "111000111"
+        }
+      ],
+      "name": [
+        {
+          "text": "EddieMurphy"
+        }
+      ],
+      "gender": "male",
+      "birthDate": "1986-09-19"
+    },
+    {
+      "resourceType": "Immunization",
+      "id": "2",
+      "vaccineCode": {
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "1119349007"
+          }
+        ]
+      },
+      "patient": {
+        "identifier": {
+          "value": "111000111"
+        }
+      },
+      "location": {
+        "display": "Location/971"
+      },
+      "manufacturer": {
+        "id": "Organization/973"
+      },
+      "lotNumber": "PT123F.9",
+      "protocolApplied": [
+        {
+          "authority": {
+            "type": "Organization"
+          },
+          "targetDisease": [
+            {
+              "coding": [
+                {
+                  "system": "http://snomed.info/sct",
+                  "code": "840539006"
+                }
+              ]
+            }
+          ],
+          "doseNumberPositiveInt": 1
+        }
+      ]
+    }
+  ],
+  "type": {
+    "coding": [
+      {
+        "system": "http://loinc.org",
+        "code": "82593-5",
+        "display": "Immunization summary report"
+      }
+    ]
+  },
+  "category": [
+    {
+      "coding": [
+        {
+          "code": "ddcc-vs"
+        }
+      ]
+    }
+  ],
+  "subject": {
+    "reference": "#1"
+  },
+  "author": [
+    {
+      "type": "Organization"
+    }
+  ],
+  "title": "International Certificate of Vaccination or Prophylaxis",
+  "section": [
+    {
+      "code": {
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "11369-6",
+            "display": "History of Immunization Narrative"
+          }
+        ]
+      },
+      "author": [
+        {
+          "type": "Organization"
+        }
+      ],
+      "focus": {
+        "reference": "#2"
+      },
+      "entry": [
+        {
+          "reference": "#2"
+        }
+      ]
+    }
+  ]
+}

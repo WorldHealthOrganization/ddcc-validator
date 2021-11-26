@@ -32,10 +32,10 @@ class QRFHIRTest {
 
         jsonEquals(open("QR1Unpacked.json"), verified.contents.toString())
 
-        val bundle = CBOR2FHIR().run(verified.contents!!)
-        val json = jsonParser.encodeResourceToString(bundle)
+        val composition = CBOR2FHIR().run(verified.contents!!)
+        val json = jsonParser.encodeResourceToString(composition)
 
-        jsonEquals(open("QR1FHIRBundle.json"), json)
+        jsonEquals(open("QR1FHIRComposition.json"), json)
     }
 
     @Test
@@ -47,9 +47,9 @@ class QRFHIRTest {
 
         jsonEquals(open("QR2Unpacked.json"), verified.contents.toString().replace(": undefined", ": null"))
 
-        val bundle = CBOR2FHIR().run(verified.contents!!)
-        val json = jsonParser.encodeResourceToString(bundle)
+        val composition = CBOR2FHIR().run(verified.contents!!)
+        val json = jsonParser.encodeResourceToString(composition)
 
-        jsonEquals(open("QR2FHIRBundle.json"), json)
+        jsonEquals(open("QR2FHIRComposition.json"), json)
     }
 }

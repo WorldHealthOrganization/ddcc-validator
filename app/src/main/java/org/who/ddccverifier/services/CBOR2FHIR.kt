@@ -127,7 +127,7 @@ class CBOR2FHIR {
         }
     }
 
-    fun run(DDCC: CBORObject): Bundle {
+    fun run(DDCC: CBORObject): Composition {
         val myPatient = Patient().apply{
             name = listOf(parseHumanName(DDCC["name"]))
             identifier = listOfNotNull(parseIdentifier(DDCC["identifier"]))
@@ -167,9 +167,7 @@ class CBOR2FHIR {
             category = listOf(CodeableConcept(Coding().apply {
                 code = "ddcc-vs"
             }))
-            subject = Reference().apply {
-                identifier = parseIdentifier(DDCC["identifier"])
-            }
+            subject = Reference(myPatient)
             title = "International Certificate of Vaccination or Prophylaxis"
             event = listOf(Composition.CompositionEventComponent().apply {
                 period = Period().apply {
@@ -181,20 +179,22 @@ class CBOR2FHIR {
             section = listOf(Composition.SectionComponent().apply {
                 code = CodeableConcept(Coding("http://loinc.org", "11369-6", "History of Immunization Narrative"))
                 author = listOfNotNull(myImmunization.protocolAppliedFirstRep.authority)
-                focus = Reference(myImmunization.id)
+                focus = Reference(myImmunization)
                 entry = listOfNotNull(
-                    Reference(myImmunization.id),
-                    myRecommendation?.let { Reference(myRecommendation.id) }
+                    Reference(myImmunization),
+                    Reference(myRecommendation)
                 )
             })
         }
 
+        return myComposition
+        /*
         return Bundle().apply {
-            type = Bundle.BundleType.TRANSACTION
+            type = Bundle.BundleType.DOCUMENT
+            addEntry().resource = myComposition
             addEntry().resource = myPatient
             addEntry().resource = myImmunization
             if (myRecommendation != null) addEntry().resource = myRecommendation
-            addEntry().resource = myComposition
-        }
+        }*/
     }
 }
