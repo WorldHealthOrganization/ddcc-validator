@@ -157,6 +157,7 @@ class CBOR2FHIR {
         val myRecommendation = createRecommendationBasedOn(DDCC["due_date"], myImmunization)
 
         val myComposition = Composition().apply {
+            id = DDCC["hcid"]?.AsString()
             type = CodeableConcept(Coding("http://loinc.org", "82593-5", "Immunization summary report"))
             category = listOf(CodeableConcept(Coding().apply {
                 code = "ddcc-vs"

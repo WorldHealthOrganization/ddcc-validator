@@ -142,7 +142,7 @@ class DDCCFormatter {
             formatVaccineInfo(immunization?.lotNumber, immunization?.getExtensionsByUrl(EXT_BRAND)?.firstOrNull()?.value, immunization?.manufacturer),
             getCodeOrText(immunization?.getExtensionsByUrl(EXT_MA_HOLDER)?.firstOrNull()?.value),
             formatLocation(immunization?.location, immunization?.getExtensionsByUrl(EXT_COUNTRY)?.firstOrNull()?.value),
-            "",//formatHCID(DDCC["hcid"]),
+            DDCC.id,
             (immunization?.protocolApplied?.firstOrNull()?.authority?.resource as? Organization)?.identifierFirstRep?.value,
             patient.identifierFirstRep?.value,
             (immunization?.performer?.firstOrNull()?.actor?.resource as? Practitioner)?.identifierFirstRep?.value,

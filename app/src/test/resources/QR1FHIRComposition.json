@@ -1,5 +1,6 @@
 {
   "resourceType": "Composition",
+  "id":"US111222333444555666",
   "contained": [
     {
       "resourceType": "Patient",
