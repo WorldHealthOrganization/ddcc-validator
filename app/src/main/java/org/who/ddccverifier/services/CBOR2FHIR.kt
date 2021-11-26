@@ -84,15 +84,6 @@ class CBOR2FHIR {
         }
     }
 
-    private fun parseReference(obj: CBORObject?): Reference? {
-        if (obj == null || obj.isUndefined) return null
-        return Reference().apply {
-            identifier = Identifier().apply {
-                value = obj.AsString()
-            }
-        }
-    }
-
     private fun parseExtension(value: IBaseDatatype?, url: String): Extension? {
         if (value == null) return null
         return Extension().apply {
@@ -109,16 +100,8 @@ class CBOR2FHIR {
     private fun parseHumanName(obj: CBORObject?): HumanName? {
         if (obj == null || obj.isUndefined) return null
         return HumanName().apply {
-            text = obj.AsString();
-        }/*
-        return HumanName().apply {
-            val names = obj.AsString().split(" ")
-            val givenNames = names.subList(0,names.size-1)
-            givenNames.forEach {
-                    name -> addGiven(name)
-            }
-            family = names.last()
-        }*/
+            text = obj.AsString()
+        }
     }
 
     private fun createRecommendationBasedOn(due_date: CBORObject?, immunization: Immunization): ImmunizationRecommendation? {
@@ -199,13 +182,5 @@ class CBOR2FHIR {
         }
 
         return myComposition
-        /*
-        return Bundle().apply {
-            type = Bundle.BundleType.DOCUMENT
-            addEntry().resource = myComposition
-            addEntry().resource = myPatient
-            addEntry().resource = myImmunization
-            if (myRecommendation != null) addEntry().resource = myRecommendation
-        }*/
     }
 }
