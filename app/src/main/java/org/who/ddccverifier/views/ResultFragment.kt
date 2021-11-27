@@ -40,23 +40,28 @@ class ResultFragment : Fragment() {
     }
 
     data class ResultCard(
+        val hcid: String?,
         val cardTitle: String?,
+        val validUntil: String?,
+
         val personName: String?,
         val personDetails: String?,
+        val identifier: String?,
+
+        // immunization
         val dose: String?,
         val doseDate: String?,
-        val nextDose: String?,
         val vaccineValid: String?,
         val vaccineAgainst: String?,
         val vaccineType: String?,
         val vaccineInfo: String?,
         val vaccineInfo2: String?,
         val location: String?,
-        val hcid: String?,
         val pha: String?,
-        val identifier: String?,
         val hw: String?,
-        val validUntil: String?
+
+        // recommendations
+        val nextDose: String?,
     )
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -97,22 +102,29 @@ class ResultFragment : Fragment() {
             if (DDCC.contents != null) {
                 var card = DDCCFormatter().run(CBOR2FHIR().run(DDCC.contents!!))
 
+                // Credential
                 setTextView(binding.tvResultScanDate, card.cardTitle, binding.tvResultScanDate)
+                setTextView(binding.tvResultValidUntil, card.validUntil, binding.llResultValidUntil)
+
+                // Patient
                 setTextView(binding.tvResultName, card.personName, binding.tvResultName)
                 setTextView(binding.tvResultPersonDetails, card.personDetails, binding.tvResultPersonDetails)
+                setTextView(binding.tvResultIdentifier, card.identifier, binding.tvResultIdentifier)
+
+                // Immunization
                 setTextView(binding.tvResultVaccineType, card.vaccineType, binding.tvResultVaccineType)
                 setTextView(binding.tvResultDoseTitle, card.dose, binding.tvResultDoseTitle)
                 setTextView(binding.tvResultDoseDate, card.doseDate, binding.llResultDoseDate)
-                setTextView(binding.tvResultNextDose, card.nextDose, binding.llResultNextDose)
                 setTextView(binding.tvResultVaccineValid, card.vaccineValid, binding.llResultVaccineValid)
                 setTextView(binding.tvResultVaccineInfo, card.vaccineInfo, binding.llResultVaccineInfo)
                 setTextView(binding.tvResultVaccineInfo2, card.vaccineInfo2, binding.llResultVaccineInfo2)
                 setTextView(binding.tvResultCentre, card.location, binding.llResultCentre)
                 setTextView(binding.tvResultHcid, card.hcid, binding.llResultHcid)
                 setTextView(binding.tvResultPha, card.pha, binding.llResultPha)
-                setTextView(binding.tvResultIdentifier, card.identifier, binding.llResultIdentifier)
                 setTextView(binding.tvResultHw, card.hw, binding.llResultHw)
-                setTextView(binding.tvResultValidUntil, card.validUntil, binding.llResultValidUntil)
+
+                // Recommendation
+                setTextView(binding.tvResultNextDose, card.nextDose, binding.llResultNextDose)
             }
         }
 

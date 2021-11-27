@@ -16,52 +16,27 @@ class DDCCFormatter {
         "J07BX03" to "COVID-19 Vaccine"
     )
 
-    private fun formatPersonDetails(dob: Date?, gender: Enumerations.AdministrativeGender?): String? {
-        return when {
-            dob != null && gender != null -> fmt.format(dob) + " - " + gender.display
-            dob != null && gender == null -> fmt.format(dob)
-            dob == null && gender != null -> gender.display
-            else -> null
-        }
-    }
-
-    private fun isNumber(obj: PositiveIntType?): Boolean {
-        return obj != null && obj.value != null
-    }
-
-    private fun formatDose(dose: PositiveIntType?, totalDoses: PositiveIntType?): String? {
-        return when {
-            isNumber(dose) &&  isNumber(totalDoses) -> "Dose: " + dose!!.value + " of " + totalDoses!!.value
-            isNumber(dose) && !isNumber(totalDoses) -> "Dose: " + dose!!.value
-            !isNumber(dose) &&  isNumber(totalDoses) -> "Dose: " + "1+ of " + totalDoses!!.value
-            else -> null
-        }
-    }
-
-    private fun formatCardTitle(targetDisease: Coding?): String {
-        val scanTime = fmtComplete.format(Calendar.getInstance().time).replace("AM", "am").replace("PM","pm")
-        val disease = formatVaccineAgainst(targetDisease)
-        val procedure = "Vaccination"
-
-        return "$scanTime - $disease $procedure"
-    }
-
-    private fun formatVaccineAgainst(disease: Coding?): String? {
-        if (disease == null) return null
-        if (disease.code == null) return null
-        return DISEASES.get(disease.code)
-    }
-
-    private fun formatVaccineType(vaccine: Coding?): String? {
-        if (vaccine == null) return null
-        if (vaccine.code == null) return null
-        return VACCINE_PROPH.get(vaccine.code)
-    }
+    val EXT_BRAND = "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineBrand"
+    val EXT_MA_HOLDER = "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineMarketAuthorization"
+    val EXT_COUNTRY = "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCCountryOfVaccination"
+    val EXT_VACCINE_VALID = "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineValidFrom"
 
     private fun formatDate(date: DateTimeType?): String? {
         if (date == null) return null
         if (date.value == null) return null
         return fmt.format(date.value)
+    }
+
+    // Credential Information
+
+    private fun formatCardTitle(targetDisease: List<CodeableConcept>?): String {
+        val scanTime = fmtComplete.format(Calendar.getInstance().time)
+                                  .replace("AM", "am")
+                                  .replace("PM","pm")
+        val disease = formatVaccineAgainst(targetDisease)
+        val procedure = "Vaccination"
+
+        return "$scanTime - $disease $procedure"
     }
 
     private fun formatValidPeriod(from: Date?, until: Date?): String? {
@@ -73,10 +48,85 @@ class DDCCFormatter {
         }
     }
 
-    val EXT_BRAND = "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineBrand"
-    val EXT_MA_HOLDER = "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineMarketAuthorization"
-    val EXT_COUNTRY = "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCCountryOfVaccination"
-    val EXT_VACCINE_VALID = "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineValidFrom"
+    // Patient Info
+    private fun formatName(names: List<HumanName>): String? {
+        return names.groupBy { it.text }.keys.joinToString(", ")
+    }
+
+    private fun formatPersonDetails(dob: Date?, gender: Enumerations.AdministrativeGender?): String? {
+        return when {
+            dob != null && gender != null -> fmt.format(dob) + " - " + gender.display
+            dob != null && gender == null -> fmt.format(dob)
+            dob == null && gender != null -> gender.display
+            else -> null
+        }
+    }
+
+    private fun formatIDs(identifiers: List<Identifier>): String? {
+        return "ID: " + identifiers.groupBy { it.value }.keys.joinToString(", ")
+    }
+
+    // Immunization Info
+    private fun isNumber(obj: PositiveIntType?): Boolean {
+        return obj != null && obj.value != null
+    }
+
+    private fun formatDose(dose: PositiveIntType?, totalDoses: PositiveIntType?): String? {
+        return when {
+            isNumber(dose) &&  isNumber(totalDoses) -> "Dose: " + dose!!.value + " of " + totalDoses!!.value
+            isNumber(dose) && !isNumber(totalDoses) -> "Dose: " + dose!!.value
+            !isNumber(dose) && isNumber(totalDoses) -> "Dose: " + "1+ of " + totalDoses!!.value
+            else -> null
+        }
+    }
+
+    private fun formatVaccineAgainst(diseases: List<CodeableConcept>?): String? {
+        if (diseases == null) return null
+        return diseases.groupBy {
+            it.coding.groupBy {
+                DISEASES.get(it.code)
+            }.keys.joinToString(", ")
+        }.keys.joinToString(", ")
+    }
+
+    private fun formatVaccineType(vaccines: CodeableConcept?): String? {
+        if (vaccines == null) return null
+        return vaccines.coding.groupBy {
+            VACCINE_PROPH.get(it.code)
+        }.keys.joinToString(", ")
+    }
+
+    private fun formatPractioner(practitioner: Practitioner?): String? {
+        if (practitioner?.identifier == null) return null
+        return practitioner?.identifier.groupBy {
+            it.value
+        }.keys.joinToString(", ")
+    }
+
+    private fun formatPractioners(performer: List<Immunization.ImmunizationPerformerComponent>?): String? {
+        if (performer == null || performer.isEmpty()) return null
+        return performer.filter { it.hasActor() }.groupBy {
+            formatPractioner(it.actor.resource as? Practitioner)
+        }.keys.joinToString(", ")
+    }
+
+    private fun formatOrganization(org: Organization?): String? {
+        if (org?.identifier == null) return null
+        return org?.identifier.groupBy {
+            it.value
+        }.keys.joinToString(", ")
+    }
+
+    private fun formatDueDate(recommendations: List<ImmunizationRecommendation.ImmunizationRecommendationRecommendationComponent>?): String? {
+        if (recommendations == null) return null
+        return recommendations
+            .filter { it.hasDateCriterion() }
+            .groupBy {
+                it.dateCriterion.groupBy {
+                    formatDate(it.valueElement)
+                }.keys.joinToString(", ")
+            }.keys.joinToString(", ")
+    }
 
     private fun getCodeOrText(obj: Type?): String? {
         if (obj == null) return null
@@ -95,9 +145,9 @@ class DDCCFormatter {
         }
     }
 
-    private fun formatVaccineInfo(lot: String?, brand: Type?, manuf: Reference?): String? {
+    private fun formatVaccineInfo(lot: String?, brand: String?, manuf: Reference?): String? {
         val lotNumber = lot?.let { "#" + lot }
-        val brandStr = getCodeOrText(brand)
+        val brandStr = brand
         val manufStr = getCodeOrText(manuf)
 
         return when {
@@ -115,38 +165,65 @@ class DDCCFormatter {
         }
     }
 
-    private fun formatLocation(centre: Reference?, country: Type?): String? {
+    private fun formatLocation(centre: Reference?, country: String?): String? {
         return when {
-            centre != null && country != null -> centre.display + ", " + getCodeOrText(country)
+            centre != null && country != null -> centre.display + ", " + country
             centre != null && country == null -> centre.display
-            centre == null && country != null -> getCodeOrText(country)
+            centre == null && country != null -> country
             else -> null
         }
     }
 
+    private fun formatAuthorizationHolder(extensions: List<Extension>?): String? {
+        if (extensions == null || extensions.isEmpty()) return null
+        return extensions.groupBy { getCodeOrText(it.value) }.keys.joinToString(", ")
+    }
+
+    private fun formatBrand(extensions: List<Extension>?): String? {
+        if (extensions == null || extensions.isEmpty()) return null
+        return extensions.groupBy { getCodeOrText(it.value) }.keys.joinToString(", ")
+    }
+
+    private fun formatVaccineValidTo(extensions: List<Extension>?): String? {
+        if (extensions == null || extensions.isEmpty()) return null
+        return extensions.groupBy { formatDate(it.value as? DateTimeType) }.keys.joinToString(", ")
+    }
+
+    private fun formatCountry(extensions: List<Extension>?): String? {
+        if (extensions == null || extensions.isEmpty()) return null
+        return extensions.groupBy { getCodeOrText(it.value) }.keys.joinToString(", ")
+    }
+
     fun run(DDCC: Composition): ResultFragment.ResultCard {
         val patient = DDCC.subject.resource as Patient
-        val immunization = DDCC.section[0].entry.filter { it.resource.fhirType() == "Immunization" }.first()?.resource as? Immunization
+        val immunization = DDCC.section[0].entry.filter { it.resource.fhirType() == "Immunization" }.firstOrNull()?.resource as? Immunization
         val recommendation = DDCC.section[0].entry.filter { it.resource.fhirType() == "ImmunizationRecommendation" }.firstOrNull()?.resource as? ImmunizationRecommendation
 
         return ResultFragment.ResultCard(
-            formatCardTitle(immunization?.protocolAppliedFirstRep?.targetDiseaseFirstRep?.codingFirstRep),
-            patient.name[0].text,
-            formatPersonDetails(patient.birthDate, patient.gender),
-            formatDose(immunization?.protocolAppliedFirstRep?.doseNumberPositiveIntType, immunization?.protocolAppliedFirstRep?.seriesDosesPositiveIntType),
-            formatDate(immunization?.occurrenceDateTimeType),
-            formatDate(recommendation?.recommendationFirstRep?.dateCriterionFirstRep?.valueElement),
-            formatDate(immunization?.getExtensionsByUrl(EXT_VACCINE_VALID)?.firstOrNull()?.value as? DateTimeType),
-            formatVaccineAgainst(immunization?.protocolAppliedFirstRep?.targetDiseaseFirstRep?.codingFirstRep),
-            formatVaccineType(immunization?.vaccineCode?.codingFirstRep),
-            formatVaccineInfo(immunization?.lotNumber, immunization?.getExtensionsByUrl(EXT_BRAND)?.firstOrNull()?.value, immunization?.manufacturer),
-            getCodeOrText(immunization?.getExtensionsByUrl(EXT_MA_HOLDER)?.firstOrNull()?.value),
-            formatLocation(immunization?.location, immunization?.getExtensionsByUrl(EXT_COUNTRY)?.firstOrNull()?.value),
             DDCC.id,
-            (immunization?.protocolApplied?.firstOrNull()?.authority?.resource as? Organization)?.identifierFirstRep?.value,
-            patient.identifierFirstRep?.value,
-            (immunization?.performer?.firstOrNull()?.actor?.resource as? Practitioner)?.identifierFirstRep?.value,
+            formatCardTitle(immunization?.protocolApplied?.firstOrNull()?.targetDisease),
             formatValidPeriod(DDCC.event[0].period.start, DDCC.event[0].period.end),
+            formatName(patient.name),
+            formatPersonDetails(patient.birthDate, patient.gender),
+            formatIDs(patient.identifier),
+            formatDose(
+                immunization?.protocolApplied?.firstOrNull()?.doseNumberPositiveIntType,
+                immunization?.protocolApplied?.firstOrNull()?.seriesDosesPositiveIntType
+            ),
+            formatDate(immunization?.occurrenceDateTimeType),
+            formatVaccineValidTo(immunization?.getExtensionsByUrl(EXT_VACCINE_VALID)),
+            formatVaccineAgainst(immunization?.protocolApplied?.firstOrNull()?.targetDisease),
+            formatVaccineType(immunization?.vaccineCode),
+            formatVaccineInfo(
+                immunization?.lotNumber,
+                formatBrand(immunization?.getExtensionsByUrl(EXT_BRAND)),
+                immunization?.manufacturer
+            ),
+            formatAuthorizationHolder(immunization?.getExtensionsByUrl(EXT_MA_HOLDER)),
+            formatLocation(immunization?.location, formatCountry(immunization?.getExtensionsByUrl(EXT_COUNTRY))),
+            formatOrganization((immunization?.protocolApplied?.firstOrNull()?.authority?.resource as? Organization)),
+            formatPractioners(immunization?.performer),
+            formatDueDate(recommendation?.recommendation)
         )
     }
 }
