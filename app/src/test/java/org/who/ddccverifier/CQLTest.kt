@@ -20,12 +20,11 @@ import ca.uhn.fhir.context.FhirVersionEnum
 import org.junit.Assert.*
 import org.opencds.cqf.cql.engine.fhir.model.R4FhirModelResolver
 import org.opencds.cqf.cql.evaluator.engine.retrieve.BundleRetrieveProvider
-import org.opencds.cqf.cql.evaluator.engine.terminology.BundleTerminologyProvider
 import org.opencds.cqf.cql.engine.data.CompositeDataProvider
 import org.hl7.elm.r1.VersionedIdentifier
+import org.opencds.cqf.cql.engine.data.DataProvider
 import org.opencds.cqf.cql.engine.execution.InMemoryLibraryLoader
-import org.opencds.cqf.cql.evaluator.fhir.DirectoryBundler
-
+import org.opencds.cqf.cql.engine.execution.LibraryLoader
 
 class CQLTest {
 
@@ -35,15 +34,15 @@ class CQLTest {
     }
 
     private val modelManager = ModelManager()
-    private val libraryManager = LibraryManager(modelManager)
-    private val ucumService =
-        UcumEssenceService(UcumEssenceService::class.java.getResourceAsStream("/ucum-essence.xml"))
+    private val libraryManager = LibraryManager(modelManager).apply {
+        librarySourceLoader.registerProvider(FhirLibrarySourceProvider())
+    }
+    private val ucumService = UcumEssenceService(UcumEssenceService::class.java.getResourceAsStream("/ucum-essence.xml"))
 
     /**
      * Translate CQL to XML and loads the XML as a Library
      */
     private fun loadRules(file: String): org.cqframework.cql.elm.execution.Library? {
-        libraryManager.librarySourceLoader.registerProvider(FhirLibrarySourceProvider())
         val cqlFile = File(URLDecoder.decode(javaClass.classLoader?.getResource(file)?.file, "UTF-8"))
         val translator = CqlTranslator.fromFile(cqlFile, modelManager, libraryManager, ucumService)
         if (translator.errors.size > 0) {
@@ -63,28 +62,31 @@ class CQLTest {
         return CqlLibraryReader.read(StringReader(xml))
     }
 
+    fun loadDependencyLibraries(): LibraryLoader {
+        val fhirHelperSource = libraryManager.librarySourceLoader.getLibrarySource(VersionedIdentifier().withId("FHIRHelpers").withVersion("4.0.0"))
+        val translator = CqlTranslator.fromStream(fhirHelperSource, modelManager, libraryManager, ucumService)
+        val fhirHelpers = CqlLibraryReader.read(StringReader(translator.toXml()))
+
+        return InMemoryLibraryLoader(arrayListOf(fhirHelpers))
+    }
+
+    fun loadDataProvider(assetBundle: Bundle): DataProvider {
+        val fhirContext = FhirContext.forCached(FhirVersionEnum.R4)
+        val bundleRetrieveProvider = BundleRetrieveProvider(fhirContext, assetBundle)
+        val r4ModelResolver = R4FhirModelResolver()
+        return CompositeDataProvider(r4ModelResolver, bundleRetrieveProvider)
+    }
+
     @Test
     fun evaluatePatient() {
         val assetBundle = FhirContext.forR4().newJsonParser().parseResource(open("LibraryTestPatient.json")) as Bundle
         assertEquals("48d1906f-82df-44d2-9d26-284045504ba9", assetBundle.id)
 
         val cqlLibrary = loadRules("LibraryTestRules.cql")
+
         val context = Context(cqlLibrary)
-
-        val fhirContext = FhirContext.forCached(FhirVersionEnum.R4)
-        val bundleRetrieveProvider = BundleRetrieveProvider(fhirContext, assetBundle)
-
-        val fhirHelperSource = libraryManager.librarySourceLoader.getLibrarySource(VersionedIdentifier().withId("FHIRHelpers").withVersion("4.0.0"))
-        val translator = CqlTranslator.fromStream(fhirHelperSource, modelManager, libraryManager, ucumService)
-        val fhirHelpers = CqlLibraryReader.read(StringReader(translator.toXml()))
-
-        val libraryLoader = InMemoryLibraryLoader(arrayListOf(fhirHelpers))
-        context.registerLibraryLoader(libraryLoader)
-
-        val r4ModelResolver = R4FhirModelResolver()
-        val r4Provider = CompositeDataProvider(r4ModelResolver, bundleRetrieveProvider)
-
-        context.registerDataProvider("http://hl7.org/fhir", r4Provider)
+        context.registerLibraryLoader(loadDependencyLibraries())
+        context.registerDataProvider("http://hl7.org/fhir", loadDataProvider(assetBundle))
 
         assertEquals(true, context.resolveExpressionRef("AgeRange-548").evaluate(context))
         assertEquals(true, context.resolveExpressionRef("Essential hypertension (disorder)").evaluate(context))
