@@ -37,6 +37,9 @@ class CQLTest {
             .use { bufferReader -> bufferReader?.readText() } ?: ""
     }
 
+    private val fhirContext = FhirContext.forCached(FhirVersionEnum.R4)
+    private val jSONParser = fhirContext.newJsonParser()
+
     private val modelManager = ModelManager()
     private val libraryManager = LibraryManager(modelManager).apply {
         librarySourceLoader.registerProvider(FhirLibrarySourceProvider())
@@ -46,9 +49,11 @@ class CQLTest {
     /**
      * Translate CQL to XML and loads the XML as a Library
      */
-    private fun loadRules(file: String): org.cqframework.cql.elm.execution.Library? {
-        val cqlFile = File(URLDecoder.decode(javaClass.classLoader?.getResource(file)?.file, "UTF-8"))
-        val translator = CqlTranslator.fromFile(cqlFile, modelManager, libraryManager, ucumService)
+    private fun loadRules(cqlText: String): org.cqframework.cql.elm.execution.Library? {
+        if (cqlText.startsWith("<?xml", true))
+            return CqlLibraryReader.read(StringReader(cqlText))
+
+        val translator = CqlTranslator.fromText(cqlText, modelManager, libraryManager, ucumService)
         if (translator.errors.size > 0) {
             System.err.println("Translation failed due to errors:")
             val errors: ArrayList<String> = ArrayList()
@@ -62,11 +67,10 @@ class CQLTest {
             throw IllegalArgumentException(errors.toString())
         }
         assertEquals(0, translator.errors.size)
-        val xml = translator.toXml()
-        return CqlLibraryReader.read(StringReader(xml))
+        return CqlLibraryReader.read(StringReader(translator.toXml()))
     }
 
-    fun loadDependencyLibraries(): LibraryLoader {
+    private fun loadDependencyLibraries(): LibraryLoader {
         val fhirHelperSource = libraryManager.librarySourceLoader.getLibrarySource(VersionedIdentifier().withId("FHIRHelpers").withVersion("4.0.0"))
         val translator = CqlTranslator.fromStream(fhirHelperSource, modelManager, libraryManager, ucumService)
         val fhirHelpers = CqlLibraryReader.read(StringReader(translator.toXml()))
@@ -74,19 +78,18 @@ class CQLTest {
         return InMemoryLibraryLoader(arrayListOf(fhirHelpers))
     }
 
-    fun loadDataProvider(assetBundle: IBaseBundle): DataProvider {
-        val fhirContext = FhirContext.forCached(FhirVersionEnum.R4)
+    private fun loadDataProvider(assetBundle: IBaseBundle): DataProvider {
         val bundleRetrieveProvider = BundleRetrieveProvider(fhirContext, assetBundle)
         val r4ModelResolver = R4FhirModelResolver()
         return CompositeDataProvider(r4ModelResolver, bundleRetrieveProvider)
     }
 
     @Test
-    fun evaluatePatient() {
-        val assetBundle = FhirContext.forR4().newJsonParser().parseResource(open("LibraryTestPatient.json")) as Bundle
+    fun evaluateHypertensivePatientCQL() {
+        val assetBundle = jSONParser.parseResource(open("LibraryTestPatient.json")) as Bundle
         assertEquals("48d1906f-82df-44d2-9d26-284045504ba9", assetBundle.id)
 
-        val cqlLibrary = loadRules("LibraryTestRules.cql")
+        val cqlLibrary = loadRules(open("LibraryTestRules.cql"))
 
         val context = Context(cqlLibrary)
         context.registerLibraryLoader(loadDependencyLibraries())
@@ -104,12 +107,33 @@ class CQLTest {
     }
 
     @Test
-    fun evaluateDDCC() {
-        val asset = FhirContext.forR4().newJsonParser().parseResource(open("QR1FHIRComposition.json")) as Composition
+    fun evaluateHypertensivePatientXML() {
+        val assetBundle = jSONParser.parseResource(open("LibraryTestPatient.json")) as Bundle
+        assertEquals("48d1906f-82df-44d2-9d26-284045504ba9", assetBundle.id)
+
+        val cqlLibrary = loadRules(open("LibraryTestRules.xml"))
+
+        val context = Context(cqlLibrary)
+        context.registerLibraryLoader(loadDependencyLibraries())
+        context.registerDataProvider("http://hl7.org/fhir", loadDataProvider(assetBundle))
+
+        assertEquals(true, context.resolveExpressionRef("AgeRange-548").evaluate(context))
+        assertEquals(true, context.resolveExpressionRef("Essential hypertension (disorder)").evaluate(context))
+        assertEquals(false, context.resolveExpressionRef("Malignant hypertensive chronic kidney disease (disorder)").evaluate(context))
+        assertEquals(true, context.resolveExpressionRef("MeetsInclusionCriteria").evaluate(context))
+        assertEquals(false, context.resolveExpressionRef("MeetsExclusionCriteria").evaluate(context))
+        assertEquals(true, context.resolveExpressionRef("InPopulation").evaluate(context))
+        assertEquals("", context.resolveExpressionRef("Recommendation").evaluate(context))
+        assertNull(context.resolveExpressionRef("Rationale").evaluate(context))
+        assertNull(context.resolveExpressionRef("Errors").evaluate(context))
+    }
+
+    @Test
+    fun evaluateQR1DDCCCQL() {
+        val asset = jSONParser.parseResource(open("QR1FHIRComposition.json")) as Composition
         assertEquals("Composition/US111222333444555666", asset.id)
 
-        val cqlLibrary = loadRules("DDCCPass.cql")
-
+        val cqlLibrary = loadRules(open("DDCCPass.cql"))
         val bundle = Bundle()
         asset.contained.forEach {
             bundle.addEntry().setResource(it)
@@ -120,5 +144,65 @@ class CQLTest {
         context.registerDataProvider("http://hl7.org/fhir", loadDataProvider(bundle))
 
         assertEquals(false, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
+        assertEquals(null, context.resolveExpressionRef("GetFinalDose").evaluate(context))
+    }
+
+    @Test
+    fun evaluateQR1DDCCXML() {
+        val asset = jSONParser.parseResource(open("QR1FHIRComposition.json")) as Composition
+        assertEquals("Composition/US111222333444555666", asset.id)
+
+        val cqlLibrary = loadRules(open("DDCCPass.xml"))
+        val bundle = Bundle()
+        asset.contained.forEach {
+            bundle.addEntry().setResource(it)
+        }
+
+        val context = Context(cqlLibrary)
+        context.registerLibraryLoader(loadDependencyLibraries())
+        context.registerDataProvider("http://hl7.org/fhir", loadDataProvider(bundle))
+
+        assertEquals(false, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
+        assertEquals(null, context.resolveExpressionRef("GetFinalDose").evaluate(context))
+    }
+
+    @Test
+    fun evaluateQR2DDCCCQL() {
+        val asset = jSONParser.parseResource(open("QR2FHIRComposition.json")) as Composition
+        assertEquals("Composition/111000111", asset.id)
+
+        val cqlLibrary = loadRules(open("DDCCPass.cql"))
+        val bundle = Bundle()
+        asset.contained.forEach {
+            bundle.addEntry().setResource(it)
+        }
+
+        val context = Context(cqlLibrary)
+        context.registerLibraryLoader(loadDependencyLibraries())
+        context.registerDataProvider("http://hl7.org/fhir", loadDataProvider(bundle))
+
+        assertNotNull(context.resolveExpressionRef("GetSingleDose").evaluate(context))
+        assertNull( context.resolveExpressionRef("GetFinalDose").evaluate(context))
+        assertEquals(true, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
+    }
+
+    @Test
+    fun evaluateQR2DDCCXML() {
+        val asset = jSONParser.parseResource(open("QR2FHIRComposition.json")) as Composition
+        assertEquals("Composition/111000111", asset.id)
+
+        val cqlLibrary = loadRules(open("DDCCPass.xml"))
+        val bundle = Bundle()
+        asset.contained.forEach {
+            bundle.addEntry().setResource(it)
+        }
+
+        val context = Context(cqlLibrary)
+        context.registerLibraryLoader(loadDependencyLibraries())
+        context.registerDataProvider("http://hl7.org/fhir", loadDataProvider(bundle))
+
+        assertNotNull(context.resolveExpressionRef("GetSingleDose").evaluate(context))
+        assertNull(context.resolveExpressionRef("GetFinalDose").evaluate(context))
+        assertEquals(true, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
     }
 }
