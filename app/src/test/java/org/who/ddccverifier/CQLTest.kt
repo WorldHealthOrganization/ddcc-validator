@@ -22,6 +22,10 @@ import org.opencds.cqf.cql.engine.fhir.model.R4FhirModelResolver
 import org.opencds.cqf.cql.evaluator.engine.retrieve.BundleRetrieveProvider
 import org.opencds.cqf.cql.engine.data.CompositeDataProvider
 import org.hl7.elm.r1.VersionedIdentifier
+import org.hl7.fhir.instance.model.api.IBaseBundle
+import org.hl7.fhir.r4.model.Composition
+import org.hl7.fhir.r4.model.Immunization
+import org.hl7.fhir.r4.model.Resource
 import org.opencds.cqf.cql.engine.data.DataProvider
 import org.opencds.cqf.cql.engine.execution.InMemoryLibraryLoader
 import org.opencds.cqf.cql.engine.execution.LibraryLoader
@@ -70,7 +74,7 @@ class CQLTest {
         return InMemoryLibraryLoader(arrayListOf(fhirHelpers))
     }
 
-    fun loadDataProvider(assetBundle: Bundle): DataProvider {
+    fun loadDataProvider(assetBundle: IBaseBundle): DataProvider {
         val fhirContext = FhirContext.forCached(FhirVersionEnum.R4)
         val bundleRetrieveProvider = BundleRetrieveProvider(fhirContext, assetBundle)
         val r4ModelResolver = R4FhirModelResolver()
@@ -97,5 +101,24 @@ class CQLTest {
         assertEquals("", context.resolveExpressionRef("Recommendation").evaluate(context))
         assertNull(context.resolveExpressionRef("Rationale").evaluate(context))
         assertNull(context.resolveExpressionRef("Errors").evaluate(context))
+    }
+
+    @Test
+    fun evaluateDDCC() {
+        val asset = FhirContext.forR4().newJsonParser().parseResource(open("QR1FHIRComposition.json")) as Composition
+        assertEquals("Composition/US111222333444555666", asset.id)
+
+        val cqlLibrary = loadRules("DDCCPass.cql")
+
+        val bundle = Bundle()
+        asset.contained.forEach {
+            bundle.addEntry().setResource(it)
+        }
+
+        val context = Context(cqlLibrary)
+        context.registerLibraryLoader(loadDependencyLibraries())
+        context.registerDataProvider("http://hl7.org/fhir", loadDataProvider(bundle))
+
+        assertEquals(false, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
     }
 }
