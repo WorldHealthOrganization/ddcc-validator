@@ -27,7 +27,7 @@ class QRResultCardTest {
 
         val verified = DDCCVerifier().unpackAndVerify(qr1)
         val composition = CBOR2FHIR().run(verified.contents!!)
-        val card2 = DDCCFormatter().run(composition)
+        val card2 = DDCCFormatter().run(composition, true)
 
         // Credential
         assertEquals("COVID-19 Vaccination", card2.cardTitle!!.split(" - ")[1])
@@ -53,6 +53,8 @@ class QRResultCardTest {
 
         // Recommendation
         assertEquals("Jul 29, 2021", card2.nextDose)
+
+        assertEquals("COVID Safe",card2.status)
     }
 
     @Test
@@ -61,7 +63,7 @@ class QRResultCardTest {
 
         val verified = DDCCVerifier().unpackAndVerify(qr2)
         val composition = CBOR2FHIR().run(verified.contents!!)
-        val card2 = DDCCFormatter().run(composition)
+        val card2 = DDCCFormatter().run(composition, true)
 
         // Credential
         assertEquals("COVID-19 Vaccination", card2.cardTitle!!.split(" - ")[1])
@@ -87,5 +89,7 @@ class QRResultCardTest {
 
         // Recommendation
         assertEquals(null, card2.nextDose)
+
+        assertEquals("COVID Safe",card2.status)
     }
 }

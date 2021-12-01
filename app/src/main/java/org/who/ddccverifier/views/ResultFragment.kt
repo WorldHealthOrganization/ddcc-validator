@@ -8,9 +8,12 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import ca.uhn.fhir.context.FhirContext
+import ca.uhn.fhir.context.FhirVersionEnum
 import org.who.ddccverifier.R
 import org.who.ddccverifier.databinding.FragmentResultBinding
 import org.who.ddccverifier.services.CBOR2FHIR
+import org.who.ddccverifier.services.CQLEvaluator
 import org.who.ddccverifier.services.DDCCFormatter
 import org.who.ddccverifier.services.DDCCVerifier
 
@@ -62,13 +65,16 @@ class ResultFragment : Fragment() {
 
         // recommendations
         val nextDose: String?,
+
+        // status by runnign CQL over the data.
+        var status: String?
     )
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         if (args.qr != null) {
-            val DDCC = DDCCVerifier().unpackAndVerify(args.qr!!);
+            val DDCC = DDCCVerifier().unpackAndVerify(args.qr!!)
 
             when (DDCC.status) {
                 DDCCVerifier.Status.INVALID_BASE45 -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_base45)
@@ -84,15 +90,15 @@ class ResultFragment : Fragment() {
             }
 
             if (binding.tvResultTitle.text == resources.getString(R.string.verification_status_verified)) {
-                binding.tvResultHeader.setBackground(resources.getDrawable(R.drawable.rounded_pill));
+                binding.tvResultHeader.setBackground(resources.getDrawable(R.drawable.rounded_pill))
                 binding.tvResultTitleIcon.text = resources.getString(R.string.fa_check_circle_solid);
             } else {
-                binding.tvResultHeader.setBackground(resources.getDrawable(R.drawable.rounded_pill_invalid));
+                binding.tvResultHeader.setBackground(resources.getDrawable(R.drawable.rounded_pill_invalid))
                 binding.tvResultTitleIcon.text = resources.getString(R.string.fa_times_circle_solid);
             }
 
             if (DDCC.issuer != null) {
-                binding.tvResultSignedBy.text = "Signed by " + DDCC.issuer!!.displayName;
+                binding.tvResultSignedBy.text = "Signed by " + DDCC.issuer!!.displayName
                 binding.tvResultSignedByIcon.text = resources.getString(R.string.fa_check_circle_solid);
             } else {
                 binding.tvResultSignedByIcon.text = resources.getString(R.string.fa_times_circle_solid);
@@ -100,7 +106,14 @@ class ResultFragment : Fragment() {
             }
 
             if (DDCC.contents != null) {
-                var card = DDCCFormatter().run(CBOR2FHIR().run(DDCC.contents!!))
+                val asset = CBOR2FHIR().run(DDCC.contents!!)
+                val completedImmunization = true
+                    //CQLEvaluator().resolve(
+                    //"CompletedImmunization",
+                    //resources.assets.open("protection_status_cql_library.json").bufferedReader().use { it.readText() },
+                    //asset, FhirContext.forCached(FhirVersionEnum.R4))
+
+                val card = DDCCFormatter().run(asset, completedImmunization as Boolean)
 
                 // Credential
                 setTextView(binding.tvResultScanDate, card.cardTitle, binding.tvResultScanDate)
@@ -125,6 +138,9 @@ class ResultFragment : Fragment() {
 
                 // Recommendation
                 setTextView(binding.tvResultNextDose, card.nextDose, binding.llResultNextDose)
+
+                // Status
+                setTextView(binding.tvResultStatus, card.status, binding.tvResultStatus)
             }
         }
 
