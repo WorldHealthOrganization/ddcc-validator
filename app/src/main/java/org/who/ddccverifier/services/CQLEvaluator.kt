@@ -5,8 +5,8 @@ import org.cqframework.cql.cql2elm.CqlTranslator
 import org.cqframework.cql.cql2elm.FhirLibrarySourceProvider
 import org.cqframework.cql.cql2elm.LibraryManager
 import org.cqframework.cql.cql2elm.ModelManager
+import org.cqframework.cql.elm.execution.ExpressionDef
 import org.fhir.ucum.UcumEssenceService
-import org.hl7.elm.r1.VersionedIdentifier
 import org.hl7.fhir.instance.model.api.IBaseBundle
 import org.hl7.fhir.r4.model.Bundle
 import org.hl7.fhir.r4.model.Composition
@@ -17,6 +17,8 @@ import org.opencds.cqf.cql.evaluator.engine.retrieve.BundleRetrieveProvider
 import java.io.StringReader
 import java.lang.IllegalArgumentException
 import org.cqframework.cql.elm.execution.Library
+import org.hl7.elm.r1.VersionedIdentifier
+import org.opencds.cqf.cql.engine.exception.CqlException
 import org.opencds.cqf.cql.engine.execution.*
 import kotlin.collections.ArrayList
 
@@ -26,6 +28,7 @@ class CQLEvaluator {
     private val libraryManager = LibraryManager(modelManager).apply {
         librarySourceLoader.registerProvider(FhirLibrarySourceProvider())
     }
+
     private val ucumService = UcumEssenceService(UcumEssenceService::class.java.getResourceAsStream("/ucum-essence.xml"))
 
     /**
@@ -45,13 +48,12 @@ class CQLEvaluator {
             }
             throw IllegalArgumentException(errors.toString())
         }
-
         //println(translator.toJxson())
-        return CqlLibraryReader.read(StringReader(translator.toXml()))
+        return loadLibraryFromXML(translator.toXml())
     }
 
     private fun loadLibraryFromXML(xmlText: String): Library? {
-        return CqlLibraryReader.read(StringReader(xmlText))
+        return CqlLibraryReader.read( StringReader(xmlText))
     }
 
     private fun loadLibraryFromJXSON(jsonText: String): Library? {
@@ -89,11 +91,23 @@ class CQLEvaluator {
         return run(libraryText, bundle, fhirContext)
     }
 
+    fun resolveExpression(library: Library, name: String): ExpressionDef? {
+        for (expressionDef in library.getStatements().getDef()) {
+            if (expressionDef.name == name) {
+                return expressionDef
+            }
+        }
+        return null
+    }
+
     fun run(libraryText: String, assetBundle: IBaseBundle, fhirContext: FhirContext): Context {
         val library = loadLibrary(libraryText, fhirContext)
         val context = Context(library)
         context.registerLibraryLoader(loadDependencyLibraries())
         context.registerDataProvider("http://hl7.org/fhir", loadDataProvider(assetBundle, fhirContext))
+
+        //library?.let { println(resolveExpression(it, "GetFinalDose" )) }
+
         return context
     }
 
