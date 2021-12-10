@@ -107,11 +107,11 @@ class ResultFragment : Fragment() {
 
             if (DDCC.contents != null) {
                 val asset = CBOR2FHIR().run(DDCC.contents!!)
-                val completedImmunization = true
-                    //CQLEvaluator().resolve(
-                    //"CompletedImmunization",
-                    //resources.assets.open("protection_status_cql_library.json").bufferedReader().use { it.readText() },
-                    //asset, FhirContext.forCached(FhirVersionEnum.R4))
+                val completedImmunization =
+                    CQLEvaluator().resolve(
+                    "CompletedImmunization",
+                    resources.assets.open("DDCCPass.json").bufferedReader().use { it.readText() },
+                    asset, FhirContext.forCached(FhirVersionEnum.R4))
 
                 val card = DDCCFormatter().run(asset, completedImmunization as Boolean)
 
