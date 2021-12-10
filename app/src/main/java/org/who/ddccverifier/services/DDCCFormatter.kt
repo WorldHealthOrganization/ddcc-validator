@@ -194,14 +194,7 @@ class DDCCFormatter {
         return extensions.groupBy { getCodeOrText(it.value) }.keys.joinToString(", ")
     }
 
-    private fun formatStatus(completedImmunization: Boolean): String {
-        if (completedImmunization) {
-            return "COVID Safe"
-        }
-        return "COVID Vulnerable"
-    }
-
-    fun run(DDCC: Composition, completedImmunization: Boolean): ResultFragment.ResultCard {
+    fun run(DDCC: Composition): ResultFragment.ResultCard {
         val patient = DDCC.subject.resource as Patient
         val immunization = DDCC.section[0].entry.filter { it.resource.fhirType() == "Immunization" }.firstOrNull()?.resource as? Immunization
         val recommendation = DDCC.section[0].entry.filter { it.resource.fhirType() == "ImmunizationRecommendation" }.firstOrNull()?.resource as? ImmunizationRecommendation
@@ -230,8 +223,7 @@ class DDCCFormatter {
             formatLocation(immunization?.location, formatCountry(immunization?.getExtensionsByUrl(EXT_COUNTRY))),
             formatOrganization((immunization?.protocolApplied?.firstOrNull()?.authority?.resource as? Organization)),
             formatPractioners(immunization?.performer),
-            formatDueDate(recommendation?.recommendation),
-            formatStatus(completedImmunization)
+            formatDueDate(recommendation?.recommendation)
         )
     }
 }

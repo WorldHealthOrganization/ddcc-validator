@@ -10,6 +10,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import ca.uhn.fhir.context.FhirContext
 import ca.uhn.fhir.context.FhirVersionEnum
+import kotlinx.coroutines.*
+import org.hl7.fhir.r4.model.Composition
 import org.who.ddccverifier.R
 import org.who.ddccverifier.databinding.FragmentResultBinding
 import org.who.ddccverifier.services.CBOR2FHIR
@@ -64,10 +66,7 @@ class ResultFragment : Fragment() {
         val hw: String?,
 
         // recommendations
-        val nextDose: String?,
-
-        // status by runnign CQL over the data.
-        var status: String?
+        val nextDose: String?
     )
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -107,13 +106,7 @@ class ResultFragment : Fragment() {
 
             if (DDCC.contents != null) {
                 val asset = CBOR2FHIR().run(DDCC.contents!!)
-                val completedImmunization =
-                    CQLEvaluator().resolve(
-                    "CompletedImmunization",
-                    resources.assets.open("DDCCPass.json").bufferedReader().use { it.readText() },
-                    asset, FhirContext.forCached(FhirVersionEnum.R4))
-
-                val card = DDCCFormatter().run(asset, completedImmunization as Boolean)
+                val card = DDCCFormatter().run(asset)
 
                 // Credential
                 setTextView(binding.tvResultScanDate, card.cardTitle, binding.tvResultScanDate)
@@ -140,13 +133,36 @@ class ResultFragment : Fragment() {
                 setTextView(binding.tvResultNextDose, card.nextDose, binding.llResultNextDose)
 
                 // Status
-                setTextView(binding.tvResultStatus, card.status, binding.tvResultStatus)
+                setTextView(binding.tvResultStatus, "... Processing ...", binding.tvResultStatus)
+
+                showStatus(asset)
             }
         }
 
         binding.btResultClose.setOnClickListener {
             findNavController().navigate(R.id.action_ResultFragment_to_HomeFragment)
         }
+    }
+
+    fun showStatus(DDCC: Composition) = runBlocking {
+        var viewModelJob = Job()
+        val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
+
+        uiScope.launch {
+            withContext(Dispatchers.IO) {
+                val status = if (resolveStatus(DDCC)) "COVID Safe" else "COVID Vulnerable"
+                withContext(Dispatchers.Main){
+                    setTextView(binding.tvResultStatus, status, binding.tvResultStatus)
+                }
+            }
+        }
+    }
+
+    suspend fun resolveStatus(DDCC: Composition): Boolean {
+        return CQLEvaluator().resolve(
+            "CompletedImmunization",
+            resources.assets.open("DDCCPass.json").bufferedReader().use { it.readText() },
+            DDCC, FhirContext.forCached(FhirVersionEnum.R4)) as Boolean
     }
 
     override fun onDestroyView() {
