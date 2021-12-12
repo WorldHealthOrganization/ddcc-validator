@@ -44,7 +44,7 @@ class CQLEvaluator {
         return context
     }
 
-    fun resolve(expression: String, libraryText: String, asset: Composition, fhirContext: FhirContext): Any {
+    fun resolve(expression: String, libraryText: String, asset: Composition, fhirContext: FhirContext): Any? {
         val context = run(libraryText, asset, fhirContext)
         return context.resolveExpressionRef(expression).evaluate(context)
     }
