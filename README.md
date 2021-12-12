@@ -34,11 +34,11 @@ COVID-19 Credential Verifier app for Android using the WHO's Digital Documentati
 - [ ] 6.1. Call issuer to check status of the credential
 - [ ] 6.2. Call issuer to download a new version of the Credential.
 - [ ] 6.3. Screen changes to inform updates/issues
-- [ ] 7. Rule Engine Integration
-- [ ] 7.1. Define Rule Libraries
-- [ ] 7.2. Define Example Rules
-- [ ] 7.3. Define Test libraries
-- [ ] 7.4. Run Rule engines on the FHIR dataset.
+- [x] 7. Rule Engine Integration (CQL)
+- [x] 7.1. Define Rule Libraries
+- [x] 7.2. Define Example Rules
+- [x] 7.3. Define Test libraries
+- [x] 7.4. Run Rule engines on the FHIR dataset.
 - [ ] 8. Key Cloak Integration
 - [ ] 8.1. Define the need for screens.
 - [ ] 9. DIVOC Processing.
