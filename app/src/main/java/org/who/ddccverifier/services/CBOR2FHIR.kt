@@ -182,6 +182,11 @@ class CBOR2FHIR {
             })
         }
 
+        // Is this really necessary? Why aren't these objects part of contained to start with? 
+        myComposition.addContained(myPatient)
+        myComposition.addContained(myImmunization)
+        myRecommendation?.let { myComposition.addContained(myRecommendation) }
+
         return myComposition
     }
 }
