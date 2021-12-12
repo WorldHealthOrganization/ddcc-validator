@@ -1,20 +1,19 @@
 package org.who.ddccverifier
 
+import ca.uhn.fhir.context.FhirContext
+import ca.uhn.fhir.context.FhirVersionEnum
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.Test
 
 import org.junit.Assert.*
 import org.who.ddccverifier.services.CBOR2FHIR
+import org.who.ddccverifier.services.CQLEvaluator
 import org.who.ddccverifier.services.DDCCFormatter
 import org.who.ddccverifier.services.DDCCVerifier
 
 class QRResultCardTest {
 
     private val mapper = ObjectMapper()
-
-    private fun jsonEquals(v1: String, v2: String) {
-        return assertEquals(mapper.readTree(v1), mapper.readTree(v2))
-    }
 
     private fun open(assetName: String): String {
         return javaClass.classLoader?.getResourceAsStream(assetName)?.bufferedReader()
@@ -24,10 +23,19 @@ class QRResultCardTest {
     @Test
     fun cardResultBuilderQR1() {
         val qr1 = open("QR1Contents.txt")
-
         val verified = DDCCVerifier().unpackAndVerify(qr1)
+
+        assertEquals(DDCCVerifier.Status.VERIFIED, verified.status)
+
         val composition = CBOR2FHIR().run(verified.contents!!)
-        val card2 = DDCCFormatter().run(composition, true)
+        val card2 = DDCCFormatter().run(composition)
+        val status = CQLEvaluator().resolve(
+            "CompletedImmunization", open("DDCCPass.json"),
+            composition, FhirContext.forCached(FhirVersionEnum.R4)) as Boolean
+
+        val context = CQLEvaluator().run(open("DDCCPass.json"), composition, FhirContext.forCached(FhirVersionEnum.R4))
+        assertEquals(false, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
+        assertEquals(null, context.resolveExpressionRef("GetFinalDose").evaluate(context))
 
         // Credential
         assertEquals("COVID-19 Vaccination", card2.cardTitle!!.split(" - ")[1])
@@ -54,16 +62,23 @@ class QRResultCardTest {
         // Recommendation
         assertEquals("Jul 29, 2021", card2.nextDose)
 
-        assertEquals("COVID Safe",card2.status)
+        assertEquals(false, status)
     }
 
     @Test
     fun cardResultBuilderQR2() {
         val qr2 = open("QR2Contents.txt")
-
         val verified = DDCCVerifier().unpackAndVerify(qr2)
+
+        assertEquals(DDCCVerifier.Status.VERIFIED, verified.status)
+
         val composition = CBOR2FHIR().run(verified.contents!!)
-        val card2 = DDCCFormatter().run(composition, true)
+        val card2 = DDCCFormatter().run(composition)
+        val DDCCPass = open("DDCCPass.json")
+
+        val status = CQLEvaluator().resolve(
+            "CompletedImmunization", DDCCPass,
+            composition, FhirContext.forCached(FhirVersionEnum.R4)) as Boolean
 
         // Credential
         assertEquals("COVID-19 Vaccination", card2.cardTitle!!.split(" - ")[1])
@@ -90,6 +105,6 @@ class QRResultCardTest {
         // Recommendation
         assertEquals(null, card2.nextDose)
 
-        assertEquals("COVID Safe",card2.status)
+        assertEquals(true, status)
     }
 }

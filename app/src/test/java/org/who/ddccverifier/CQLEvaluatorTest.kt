@@ -53,9 +53,7 @@ class CQLEvaluatorTest {
             throw IllegalArgumentException(errors.toString())
         }
 
-        val jxson = translator.toJxson()
-        println(jxson)
-        return jxson
+        return translator.toJxson()
     }
 
     @Test
