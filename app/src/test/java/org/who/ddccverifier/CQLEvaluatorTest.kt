@@ -52,7 +52,10 @@ class CQLEvaluatorTest {
             }
             throw IllegalArgumentException(errors.toString())
         }
-        return translator.toJxson();
+
+        val jxson = translator.toJxson()
+        println(jxson)
+        return jxson
     }
 
     @Test
@@ -80,8 +83,9 @@ class CQLEvaluatorTest {
 
         val context = cqlEvaluator.run(toJson(open("DDCCPass.cql")), asset, fhirContext)
 
-        assertEquals(false, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
         assertEquals(null, context.resolveExpressionRef("GetFinalDose").evaluate(context))
+        assertEquals(false, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
+        assertEquals(false, CQLEvaluator().resolve("CompletedImmunization", open("DDCCPass.json"), asset, FhirContext.forCached(FhirVersionEnum.R4)))
     }
 
     @Test
@@ -91,8 +95,9 @@ class CQLEvaluatorTest {
 
         val context = cqlEvaluator.run(open("DDCCPass.json"), asset, fhirContext)
 
-        assertEquals(false, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
         assertEquals(null, context.resolveExpressionRef("GetFinalDose").evaluate(context))
+        assertEquals(false, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
+        assertEquals(false, CQLEvaluator().resolve("CompletedImmunization", open("DDCCPass.json"), asset, FhirContext.forCached(FhirVersionEnum.R4)))
     }
 
     @Test
@@ -105,6 +110,7 @@ class CQLEvaluatorTest {
         assertNotNull(context.resolveExpressionRef("GetSingleDose").evaluate(context))
         assertNull( context.resolveExpressionRef("GetFinalDose").evaluate(context))
         assertEquals(true, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
+        assertEquals(true, CQLEvaluator().resolve("CompletedImmunization", open("DDCCPass.json"), asset, FhirContext.forCached(FhirVersionEnum.R4)))
     }
 
     @Test
@@ -117,5 +123,6 @@ class CQLEvaluatorTest {
         assertNotNull(context.resolveExpressionRef("GetSingleDose").evaluate(context))
         assertNull(context.resolveExpressionRef("GetFinalDose").evaluate(context))
         assertEquals(true, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
+        assertEquals(true, CQLEvaluator().resolve("CompletedImmunization", open("DDCCPass.json"), asset, FhirContext.forCached(FhirVersionEnum.R4)))
     }
 }
