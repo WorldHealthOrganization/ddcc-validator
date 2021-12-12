@@ -1,10 +1,8 @@
 package org.who.ddccverifier
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry
 import ca.uhn.fhir.context.FhirContext
 import ca.uhn.fhir.context.FhirVersionEnum
-import junit.framework.Assert.assertTrue
 import org.hl7.fhir.r4.model.Composition
 import org.junit.Assert
 import org.junit.Test
@@ -22,11 +20,6 @@ class CQLEvaluatorAndroidTest {
     private fun open(assetName: String): String {
         return javaClass.classLoader?.getResourceAsStream(assetName)?.bufferedReader()
             .use { bufferReader -> bufferReader?.readText() } ?: ""
-    }
-
-    @Test
-    fun baseTest() {
-        assertTrue(true);
     }
 
     @Test
