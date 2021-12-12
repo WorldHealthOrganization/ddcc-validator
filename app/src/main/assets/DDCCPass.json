@@ -65,6 +65,7 @@
             },
             "alias" : "I"
           } ],
+          "relationship" : [ ],
           "where" : {
             "type" : "Equal",
             "operand" : [ {
@@ -72,137 +73,76 @@
               "source" : [ {
                 "type" : "AliasedQuerySource",
                 "expression" : {
-                  "type" : "Property",
-                  "path" : "protocolApplied",
-                  "scope" : "I"
-                },
-                "alias" : "$this"
-              } ],
-              "where" : {
-                "type" : "Not",
-                "operand" : {
-                  "type" : "IsNull",
-                  "operand" : {
-                    "type" : "Property",
-                    "source" : {
-                      "type" : "AliasRef",
-                      "name" : "$this"
+                  "type" : "Query",
+                  "source" : [ {
+                    "type" : "AliasedQuerySource",
+                    "expression" : {
+                      "type" : "Property",
+                      "path" : "protocolApplied",
+                      "scope" : "I"
                     },
-                    "path" : "doseNumber"
-                  }
-                }
-              },
-              "return" : {
-                "type" : "ReturnClause",
-                "expression" : {
-                  "type" : "Property",
-                  "source" : {
-                    "type" : "AliasRef",
-                    "name" : "$this"
-                  },
-                  "path" : "doseNumber"
-                }
-              }
-            }, {
-              "type" : "Query",
-              "source" : [ {
-                "type" : "AliasedQuerySource",
-                "expression" : {
-                  "type" : "Property",
-                  "path" : "protocolApplied",
-                  "scope" : "I"
-                },
-                "alias" : "$this"
-              } ],
-              "where" : {
-                "type" : "Not",
-                "operand" : {
-                  "type" : "IsNull",
-                  "operand" : {
-                    "type" : "Property",
-                    "source" : {
-                      "type" : "AliasRef",
-                      "name" : "$this"
-                    },
-                    "path" : "seriesDoses"
-                  }
-                }
-              },
-              "return" : {
-                "type" : "ReturnClause",
-                "expression" : {
-                  "type" : "Property",
-                  "source" : {
-                    "type" : "AliasRef",
-                    "name" : "$this"
-                  },
-                  "path" : "seriesDoses"
-                }
-              }
-            } ]
-          }
-        },
-        "name" : "GetFinalDose",
-        "context" : "Immunization",
-        "accessLevel" : "Public"
-      }, {
-        "type" : "ExpressionDef",
-        "expression" : {
-          "type" : "Query",
-          "source" : [ {
-            "type" : "AliasedQuerySource",
-            "expression" : {
-              "type" : "ExpressionRef",
-              "name" : "Immunization"
-            },
-            "alias" : "I"
-          } ],
-          "where" : {
-            "type" : "And",
-            "operand" : [ {
-              "type" : "Exists",
-              "operand" : {
-                "type" : "Query",
-                "source" : [ {
-                  "type" : "AliasedQuerySource",
-                  "expression" : {
-                    "type" : "Property",
-                    "path" : "protocolApplied",
-                    "scope" : "I"
-                  },
-                  "alias" : "$this"
-                } ],
-                "where" : {
-                  "type" : "Not",
-                  "operand" : {
-                    "type" : "IsNull",
+                    "alias" : "$this"
+                  } ],
+                  "where" : {
+                    "type" : "Not",
                     "operand" : {
+                      "type" : "IsNull",
+                      "operand" : {
+                        "type" : "Property",
+                        "source" : {
+                          "type" : "AliasRef",
+                          "name" : "$this"
+                        },
+                        "path" : "doseNumber"
+                      }
+                    }
+                  },
+                  "return" : {
+                    "type" : "ReturnClause",
+                    "expression" : {
                       "type" : "Property",
                       "source" : {
                         "type" : "AliasRef",
                         "name" : "$this"
                       },
                       "path" : "doseNumber"
-                    }
+                    },
+                    "distinct" : false
                   }
                 },
-                "return" : {
-                  "type" : "ReturnClause",
-                  "expression" : {
+                "alias" : "$this"
+              } ],
+              "where" : {
+                "type" : "Not",
+                "operand" : {
+                  "type" : "IsNull",
+                  "operand" : {
                     "type" : "Property",
                     "source" : {
                       "type" : "AliasRef",
                       "name" : "$this"
                     },
-                    "path" : "doseNumber"
+                    "path" : "value"
                   }
                 }
+              },
+              "return" : {
+                "type" : "ReturnClause",
+                "expression" : {
+                  "type" : "Property",
+                  "source" : {
+                    "type" : "AliasRef",
+                    "name" : "$this"
+                  },
+                  "path" : "value"
+                },
+                "distinct" : false
               }
             }, {
-              "type" : "Not",
-              "operand" : {
-                "type" : "Exists",
-                "operand" : {
+              "type" : "Query",
+              "source" : [ {
+                "type" : "AliasedQuerySource",
+                "expression" : {
                   "type" : "Query",
                   "source" : [ {
                     "type" : "AliasedQuerySource",
@@ -236,7 +176,205 @@
                         "name" : "$this"
                       },
                       "path" : "seriesDoses"
+                    },
+                    "distinct" : false
+                  }
+                },
+                "alias" : "$this"
+              } ],
+              "where" : {
+                "type" : "Not",
+                "operand" : {
+                  "type" : "IsNull",
+                  "operand" : {
+                    "type" : "Property",
+                    "source" : {
+                      "type" : "AliasRef",
+                      "name" : "$this"
+                    },
+                    "path" : "value"
+                  }
+                }
+              },
+              "return" : {
+                "type" : "ReturnClause",
+                "expression" : {
+                  "type" : "Property",
+                  "source" : {
+                    "type" : "AliasRef",
+                    "name" : "$this"
+                  },
+                  "path" : "value"
+                },
+                "distinct" : false
+              }
+            } ]
+          }
+        },
+        "name" : "GetFinalDose",
+        "context" : "Immunization",
+        "accessLevel" : "Public"
+      }, {
+        "type" : "ExpressionDef",
+        "expression" : {
+          "type" : "Query",
+          "source" : [ {
+            "type" : "AliasedQuerySource",
+            "expression" : {
+              "type" : "ExpressionRef",
+              "name" : "Immunization"
+            },
+            "alias" : "I"
+          } ],
+          "relationship" : [ ],
+          "where" : {
+            "type" : "And",
+            "operand" : [ {
+              "type" : "Exists",
+              "operand" : {
+                "type" : "Query",
+                "source" : [ {
+                  "type" : "AliasedQuerySource",
+                  "expression" : {
+                    "type" : "Query",
+                    "source" : [ {
+                      "type" : "AliasedQuerySource",
+                      "expression" : {
+                        "type" : "Property",
+                        "path" : "protocolApplied",
+                        "scope" : "I"
+                      },
+                      "alias" : "$this"
+                    } ],
+                    "where" : {
+                      "type" : "Not",
+                      "operand" : {
+                        "type" : "IsNull",
+                        "operand" : {
+                          "type" : "Property",
+                          "source" : {
+                            "type" : "AliasRef",
+                            "name" : "$this"
+                          },
+                          "path" : "doseNumber"
+                        }
+                      }
+                    },
+                    "return" : {
+                      "type" : "ReturnClause",
+                      "expression" : {
+                        "type" : "Property",
+                        "source" : {
+                          "type" : "AliasRef",
+                          "name" : "$this"
+                        },
+                        "path" : "doseNumber"
+                      },
+                      "distinct" : false
                     }
+                  },
+                  "alias" : "$this"
+                } ],
+                "where" : {
+                  "type" : "Not",
+                  "operand" : {
+                    "type" : "IsNull",
+                    "operand" : {
+                      "type" : "Property",
+                      "source" : {
+                        "type" : "AliasRef",
+                        "name" : "$this"
+                      },
+                      "path" : "value"
+                    }
+                  }
+                },
+                "return" : {
+                  "type" : "ReturnClause",
+                  "expression" : {
+                    "type" : "Property",
+                    "source" : {
+                      "type" : "AliasRef",
+                      "name" : "$this"
+                    },
+                    "path" : "value"
+                  },
+                  "distinct" : false
+                }
+              }
+            }, {
+              "type" : "Not",
+              "operand" : {
+                "type" : "Exists",
+                "operand" : {
+                  "type" : "Query",
+                  "source" : [ {
+                    "type" : "AliasedQuerySource",
+                    "expression" : {
+                      "type" : "Query",
+                      "source" : [ {
+                        "type" : "AliasedQuerySource",
+                        "expression" : {
+                          "type" : "Property",
+                          "path" : "protocolApplied",
+                          "scope" : "I"
+                        },
+                        "alias" : "$this"
+                      } ],
+                      "where" : {
+                        "type" : "Not",
+                        "operand" : {
+                          "type" : "IsNull",
+                          "operand" : {
+                            "type" : "Property",
+                            "source" : {
+                              "type" : "AliasRef",
+                              "name" : "$this"
+                            },
+                            "path" : "seriesDoses"
+                          }
+                        }
+                      },
+                      "return" : {
+                        "type" : "ReturnClause",
+                        "expression" : {
+                          "type" : "Property",
+                          "source" : {
+                            "type" : "AliasRef",
+                            "name" : "$this"
+                          },
+                          "path" : "seriesDoses"
+                        },
+                        "distinct" : false
+                      }
+                    },
+                    "alias" : "$this"
+                  } ],
+                  "where" : {
+                    "type" : "Not",
+                    "operand" : {
+                      "type" : "IsNull",
+                      "operand" : {
+                        "type" : "Property",
+                        "source" : {
+                          "type" : "AliasRef",
+                          "name" : "$this"
+                        },
+                        "path" : "value"
+                      }
+                    }
+                  },
+                  "return" : {
+                    "type" : "ReturnClause",
+                    "expression" : {
+                      "type" : "Property",
+                      "source" : {
+                        "type" : "AliasRef",
+                        "name" : "$this"
+                      },
+                      "path" : "value"
+                    },
+                    "distinct" : false
                   }
                 }
               }
@@ -275,6 +413,8 @@
         "accessLevel" : "Public"
       } ]
     },
-    "annotation" : [ { } ]
+    "annotation" : [ {
+      "translatorOptions" : ""
+    } ]
   }
 }
