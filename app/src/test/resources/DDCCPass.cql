@@ -11,9 +11,9 @@ define "CompletedImmunization":
 
 define "GetFinalDose":
   Immunization I
-    where I.protocolApplied.doseNumber = I.protocolApplied.seriesDoses
+    where I.protocolApplied.doseNumber.value = I.protocolApplied.seriesDoses.value
 
 define "GetSingleDose":
   Immunization I
-    where exists(I.protocolApplied.doseNumber)
-      and not exists(I.protocolApplied.seriesDoses)
+    where exists(I.protocolApplied.doseNumber.value)
+      and not exists(I.protocolApplied.seriesDoses.value)
