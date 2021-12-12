@@ -1,6 +1,6 @@
 {
   "resourceType": "Composition",
-  "id":"US111222333444555666",
+  "id": "US111222333444555666",
   "contained": [
     {
       "resourceType": "Patient",
@@ -19,17 +19,8 @@
       "birthDate": "1986-09-19"
     },
     {
-      "resourceType": "Organization",
-      "id": "2",
-      "identifier": [
-        {
-          "value": "wA69g8VD512TfTTdkTNSsG"
-        }
-      ]
-    },
-    {
       "resourceType": "Immunization",
-      "id": "3",
+      "id": "2",
       "extension": [
         {
           "url": "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineBrand",
@@ -91,7 +82,7 @@
       "protocolApplied": [
         {
           "authority": {
-            "reference": "#2"
+            "reference": "#5"
           },
           "targetDisease": [
             {
@@ -109,17 +100,8 @@
       ]
     },
     {
-      "resourceType": "Practitioner",
-      "id": "4",
-      "identifier": [
-        {
-          "value": "http://www.acme.org/practitioners/23"
-        }
-      ]
-    },
-    {
       "resourceType": "ImmunizationRecommendation",
-      "id": "5",
+      "id": "3",
       "patient": {
         "identifier": {
           "value": "1234567890"
@@ -171,6 +153,24 @@
           "seriesDosesPositiveInt": 2
         }
       ]
+    },
+    {
+      "resourceType": "Practitioner",
+      "id": "4",
+      "identifier": [
+        {
+          "value": "http://www.acme.org/practitioners/23"
+        }
+      ]
+    },
+    {
+      "resourceType": "Organization",
+      "id": "5",
+      "identifier": [
+        {
+          "value": "wA69g8VD512TfTTdkTNSsG"
+        }
+      ]
     }
   ],
   "type": {
@@ -196,7 +196,7 @@
   },
   "author": [
     {
-      "reference": "#2"
+      "reference": "#5"
     }
   ],
   "title": "International Certificate of Vaccination or Prophylaxis",
@@ -221,18 +221,18 @@
       },
       "author": [
         {
-          "reference": "#2"
+          "reference": "#5"
         }
       ],
       "focus": {
-        "reference": "#3"
+        "reference": "#2"
       },
       "entry": [
         {
-          "reference": "#3"
+          "reference": "#2"
         },
         {
-          "reference": "#5"
+          "reference": "#3"
         }
       ]
     }
