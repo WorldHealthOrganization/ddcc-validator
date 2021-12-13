@@ -12,13 +12,9 @@ class FHIRLibraryLoader : LibraryLoader {
     private val libraries: MutableMap<String, Library> = HashMap<String, Library>()
 
     private fun loadFromResource(libraryIdentifier: VersionedIdentifier): Library? {
-        val fileName = String.format("%s-%s.json", libraryIdentifier.id, libraryIdentifier.version);
-        //val result = FHIRLibraryLoader::class.java.getResourceAsStream(fileName)
-        val result = javaClass.classLoader.getResourceAsStream(fileName)
-
-        if (result == null) {
-            throw IOException(String.format("Required library file %s was not found", fileName))
-        }
+        val fileName = String.format("%s-%s.json", libraryIdentifier.id, libraryIdentifier.version)
+        val result = javaClass.classLoader?.getResourceAsStream(fileName)
+            ?: throw IOException(String.format("Required library file %s was not found", fileName))
 
         return try {
             JsonCqlLibraryReader.read(InputStreamReader(result))
