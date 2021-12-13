@@ -92,28 +92,28 @@ Build the app:
 ## Screen + Class flow overview
 
 ```
- ┌──────────────────────────────────────────────────┐
- │                  MainActivity                    │
- └──────────────────────────────────────────────────┘
- ┌──────────────┐ ┌──────────────┐ ┌────────────────┐
- │ HomeFragment ├→┤ ScanFragment ├→┤ ResultFragment │
- └──────────────┘ └────┬──▲──────┘ └──▲──────┬──────┘
-                  Image│  │QRContent  │Card  │QRContent
-                 ┌─────▼──┴───────┐   │ ┌────▼───────────┐ ┌─────────────────┐ ┌──────────┐
-                 │ QRCodeAnalyser │   │ │ DDCCVerifier   ├↔┤ TrustRegistry   ├↔┤ KeyUtils │
-                 └────────────────┘   │ └────┬───────────┘ └─────────────────┘ └──────────┘
-                                      │      │CBOR Object
-                                      │ ┌────▼───────────┐
-                                      │ │ CBOR2FHIR      │
-                                      │ └────┬───────────┘                       ┌───────────────┐
-                                      │      │FHIR Object (DDCC Composite)       │ Assets        │
-                                      │ ┌────▼───────────┐ ┌───────────────────┐ │ - ModelInfo   │
-                                      │ │ CQLEvaluator   ├↔┤ FHIRLibraryLoader ├↔┤ - FHIRHelpers │
-                                      │ └────┬───────────┘ └───────────────────┘ │ - DDCCPass    │
-                                      │      │DDCC Status                        └───────────────┘
-                                      │ ┌────▼───────────┐
-                                      └─┤ FHIRFormatter  │
-                                        └────────────────┘
+┌──────────────────────────────────────────────────┐
+│                  MainActivity                    │
+└──────────────────────────────────────────────────┘
+┌──────────────┐ ┌──────────────┐ ┌────────────────┐
+│ HomeFragment ├→┤ ScanFragment ├→┤ ResultFragment │
+└──────────────┘ └────┬──▲──────┘ └──▲──────┬──────┘
+                 Image│  │QRContent  │Card  │QRContent
+                ┌─────▼──┴───────┐   │ ┌────▼───────────┐ ┌─────────────────┐ ┌──────────┐
+                │ QRCodeAnalyser │   │ │ DDCCVerifier   ├↔┤ TrustRegistry   ├↔┤ KeyUtils │
+                └────────────────┘   │ └────┬───────────┘ └─────────────────┘ └──────────┘
+                                     │      │CBOR Object
+                                     │ ┌────▼───────────┐
+                                     │ │ CBOR2FHIR      │
+                                     │ └────┬───────────┘                       ┌───────────────┐
+                                     │      │FHIR Object (DDCC Composite)       │ Assets        │
+                                     │ ┌────▼───────────┐ ┌───────────────────┐ │ - ModelInfo   │
+                                     │ │ CQLEvaluator   ├↔┤ FHIRLibraryLoader ├↔┤ - FHIRHelpers │
+                                     │ └────┬───────────┘ └───────────────────┘ │ - DDCCPass    │
+                                     │      │DDCC Status                        └───────────────┘
+                                     │ ┌────▼───────────┐
+                                     └─┤ FHIRFormatter  │
+                                       └────────────────┘
 ```
 
 ## How to Deploy
