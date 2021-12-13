@@ -13,32 +13,30 @@ COVID-19 Credential Verifier app for Android using the WHO's Digital Documentati
 - [x] 1.3. Result Screen
 - [x] 2. Camera Development
 - [x] 2.1. Manage Permissions
-- [x] 2.2. Add a camera component to the Camera View
-- [x] 2.3. QRs Finding and processing
-- [x] 2.4. Showing QR Text on Screen
-- [x] 3. QR Unpacking
-- [x] 3.1. Generate Test Credentials
-- [x] 3.2. Convert to Test Classes
-- [x] 3.3. Unpack And Display Results
-- [x] 4. Credential Verification (Off-line)
-- [x] 4.1. Public Key Resolver (Key Management)
-- [x] 4.2. Check Trust of Public Key
-- [x] 4.3. Cryptographic verfication
-- [x] 4.4. Error handling
-- [x] 5. Displaying Card Info on Screen
-- [x] 5.1. Display Patient Info
-- [x] 5.2. Display Vaccine Info
-- [x] 5.3. Display Test Result Info
-- [x] 5.4. Display Error Messages
+- [x] 2.2. Camera View
+- [x] 2.3. QRs Finding and Processing
+- [x] 3. Displaying Card Info on Screen
+- [x] 3.1. Display Patient Info
+- [x] 3.2. Display Vaccine Info
+- [x] 3.3. Display Test Result Info
+- [x] 3.4. Display Error Messages
+- [x] 4. QR Unpacking into Verifiable Credential
+- [x] 4.1 QR to COSE-signed CBOR
+- [x] 4.2 COSE-signed CBOR to FHIR DDCC Composite
+- [x] 4.3 FHIR DDCC Composite to Screen Card
+- [x] 5. Credential Verification (Off-line)
+- [x] 5.1. Public Key Resolver (Key Management)
+- [x] 5.2. Check Trust of Public Key
+- [x] 5.3. Cryptographic verification
+- [x] 5.4. Error handling
 - [ ] 6. Credential Status Verification (On-line)
 - [ ] 6.1. Call issuer to check status of the credential
 - [ ] 6.2. Call issuer to download a new version of the Credential.
 - [ ] 6.3. Screen changes to inform updates/issues
 - [x] 7. Rule Engine Integration (CQL)
-- [x] 7.1. Define Rule Libraries
-- [x] 7.2. Define Example Rules
-- [x] 7.3. Define Test libraries
-- [x] 7.4. Run Rule engines on the FHIR dataset.
+- [x] 7.1. Load FHIR Models & Context
+- [x] 7.2. Load Rules Library
+- [x] 7.3. Run Rule engines on the FHIR dataset.
 - [ ] 8. Key Cloak Integration
 - [ ] 8.1. Define the need for screens.
 - [ ] 9. DIVOC Processing.
@@ -53,13 +51,19 @@ COVID-19 Credential Verifier app for Android using the WHO's Digital Documentati
 - [ ] 11.1. Unpack and Verify
 - [ ] 11.2. Trust Registry check
 - [ ] 11.3. Display Info on Screen
+- [ ] 12. EU DCC Processing.
+- [ ] 12.1. Unpack and Verify
+- [ ] 12.2. Trust Registry check
+- [ ] 12.3. Display Info on Screen
 
 # Development Overview
 
 ## Setup
+
 Make sure to have the following pre-requisites installed:
 1. Java 11
-2. Android Studio
+2. Android Studio Artic Fox+
+3. Android 7.0+ Phone or Emulation setup
 
 Fork and clone this repository and import into Android Studio
 ```bash
@@ -85,6 +89,33 @@ Build the app:
 ./gradlew installDebug
 ```
 
+## Screen + Class flow overview
+
+```
+ ┌──────────────────────────────────────────────────┐
+ │                  MainActivity                    │
+ └──────────────────────────────────────────────────┘
+ ┌──────────────┐ ┌──────────────┐ ┌────────────────┐
+ │ HomeFragment ├→┤ ScanFragment ├→┤ ResultFragment │
+ └──────────────┘ └────┬──▲──────┘ └──▲──────┬──────┘
+                  Image│  │QRContent  │Card  │QRContent
+                 ┌─────▼──┴───────┐   │ ┌────▼───────────┐ ┌─────────────────┐ ┌──────────┐
+                 │ QRCodeAnalyser │   │ │ DDCCVerifier   ├↔┤ TrustRegistry   ├↔┤ KeyUtils │
+                 └────────────────┘   │ └────┬───────────┘ └─────────────────┘ └──────────┘
+                                      │      │CBOR Object
+                                      │ ┌────▼───────────┐
+                                      │ │ CBOR2FHIR      │
+                                      │ └────┬───────────┘                       ┌───────────────┐
+                                      │      │FHIR Object (DDCC Composite)       │ Assets        │
+                                      │ ┌────▼───────────┐ ┌───────────────────┐ │ - ModelInfo   │
+                                      │ │ CQLEvaluator   ├↔┤ FHIRLibraryLoader ├↔┤ - FHIRHelpers │
+                                      │ └────┬───────────┘ └───────────────────┘ │ - DDCCPass    │
+                                      │      │DDCC Status                        └───────────────┘
+                                      │ ┌────▼───────────┐
+                                      └─┤ FHIRFormatter  │
+                                        └────────────────┘
+```
+
 ## How to Deploy
 
 1. Generate a new signing key 
@@ -98,7 +129,7 @@ keytool -genkey -v -keystore <my-release-key.keystore> -alias <alias_name> -keya
    - `SIGNING_KEY` <- the data from `<my-release-key.keystore>`
 3. Change the `versionCode` and `versionName` on `app/build.gradle`
 4. Commit and push. 
-5. Tag the commit with `v{versionName}`
+5. Tag the commit with `v{x.x.x}`
 6. Let the [Create Release GitHub Action](https://github.com/Path-Check/who-verifier-app/actions/workflows/create-release.yml) build a new `aab` file. 
 7. Add your CHANGE LOG to the description of the new release
 8. Download the `aab` file and upload it to the` PlayStore. 
