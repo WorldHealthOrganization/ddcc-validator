@@ -8,6 +8,9 @@ import java.io.IOException
 import java.io.InputStreamReader
 import java.util.HashMap
 
+/**
+ * Loads library files for the CQL Evaluator
+ */
 class FHIRLibraryLoader : LibraryLoader {
     private val libraries: MutableMap<String, Library> = HashMap<String, Library>()
 

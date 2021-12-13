@@ -10,6 +10,32 @@ import android.view.Menu
 import android.view.MenuItem
 import org.who.ddccverifier.databinding.ActivityMainBinding
 
+/**
+ * Screen / Class flow:
+ *
+ * ┌──────────────────────────────────────────────────┐
+ * │                  MainActivity                    │
+ * └──────────────────────────────────────────────────┘
+ * ┌──────────────┐ ┌──────────────┐ ┌────────────────┐
+ * │ HomeFragment ├→┤ ScanFragment ├→┤ ResultFragment │
+ * └──────────────┘ └────┬──▲──────┘ └──▲──────┬──────┘
+ *                  Image│  │QRContent  │Card  │QRContent
+ *                 ┌─────▼──┴───────┐   │ ┌────▼───────────┐ ┌─────────────────┐ ┌──────────┐
+ *                 │ QRCodeAnalyser │   │ │ DDCCVerifier   ├↔┤ TrustRegistry   ├↔┤ KeyUtils │
+ *                 └────────────────┘   │ └────┬───────────┘ └─────────────────┘ └──────────┘
+ *                                      │      │CBOR Object
+ *                                      │ ┌────▼───────────┐
+ *                                      │ │ CBOR2FHIR      │
+ *                                      │ └────┬───────────┘                       ┌───────────────┐
+ *                                      │      │FHIR Object (DDCC Composite)       │ Assets        │
+ *                                      │ ┌────▼───────────┐ ┌───────────────────┐ │ - ModelInfo   │
+ *                                      │ │ CQLEvaluator   ├↔┤ FHIRLibraryLoader ├↔┤ - FHIRHelpers │
+ *                                      │ └────┬───────────┘ └───────────────────┘ │ - DDCCPass    │
+ *                                      │      │DDCC Status                        └───────────────┘
+ *                                      │ ┌────▼───────────┐
+ *                                      └─┤ FHIRFormatter  │
+ *                                        └────────────────┘
+ */
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration

@@ -7,6 +7,9 @@ import com.google.mlkit.vision.barcode.Barcode
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.common.InputImage
 
+/**
+ * Turns camera preview frames into QR Codes when found.
+ */
 class QRCodeAnalyzer(private val onQRCodeFound: (Set<String>)->Unit): ImageAnalysis.Analyzer {
 
     private var onlyTheFirstFrame: Boolean = false

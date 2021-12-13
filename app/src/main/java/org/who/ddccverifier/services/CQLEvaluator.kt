@@ -12,12 +12,15 @@ import java.io.StringReader
 import org.cqframework.cql.elm.execution.Library
 import org.opencds.cqf.cql.engine.execution.*
 
+/**
+ * Evaluates a CQL expression on the DDCC Composite
+ */
 class CQLEvaluator {
     private fun loadLibraryFromJXSON(jsonText: String): Library? {
         return JsonCqlLibraryReader.read(StringReader(jsonText))
     }
 
-    private fun loadLibrary(text: String, fhirContext: FhirContext): Library? {
+    private fun loadLibrary(text: String): Library? {
         return loadLibraryFromJXSON(text)
     }
 
@@ -30,13 +33,13 @@ class CQLEvaluator {
     fun run(libraryText: String, asset: Composition, fhirContext: FhirContext): Context {
         val bundle = Bundle()
         asset.contained.forEach {
-            bundle.addEntry().setResource(it)
+            bundle.addEntry().resource = it
         }
         return run(libraryText, bundle, fhirContext)
     }
 
     fun run(libraryText: String, assetBundle: IBaseBundle, fhirContext: FhirContext): Context {
-        val library = loadLibrary(libraryText, fhirContext)
+        val library = loadLibrary(libraryText)
         val context = Context(library)
         context.registerLibraryLoader(FHIRLibraryLoader())
         context.registerDataProvider("http://hl7.org/fhir", loadDataProvider(assetBundle, fhirContext))

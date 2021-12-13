@@ -5,6 +5,9 @@ import com.upokecenter.cbor.CBORType
 import org.hl7.fhir.instance.model.api.IBaseDatatype
 import org.hl7.fhir.r4.model.*
 
+/**
+ * Translates a DDCC QR CBOR object into FHIR Objects
+ */
 class CBOR2FHIR {
     private fun parseDateType(date: CBORObject?): DateType? {
         if (date == null || date.isUndefined) return null

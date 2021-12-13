@@ -5,6 +5,9 @@ import org.who.ddccverifier.views.ResultFragment
 import java.text.SimpleDateFormat
 import java.util.*
 
+/**
+ * Converts a FHIR Object into a Result Card for the Screne.
+ */
 class DDCCFormatter {
     private val fmt = SimpleDateFormat("MMM d, yyyy")
     private val fmtComplete = SimpleDateFormat("MMM d, h:mma")

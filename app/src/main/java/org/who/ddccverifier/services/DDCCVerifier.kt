@@ -10,6 +10,9 @@ import android.util.Base64
 import com.upokecenter.cbor.CBORObject
 import java.security.PublicKey
 
+/**
+ * Turns HC1 QR Codes into CBOR Objects
+ */
 class DDCCVerifier {
     private val prefix = "HC1:"
 

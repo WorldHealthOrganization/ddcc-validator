@@ -5,6 +5,9 @@ import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
+/**
+ * Resolve Keys for Verifiers
+ */
 object TrustRegistry {
     // Using old java.time to keep compatibility down to Android SDK 22.
     private var df: DateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
@@ -41,7 +44,7 @@ object TrustRegistry {
             df.parse("2021-12-01T08:00:00.000Z"),
             "WHO Test Keys",
             "",
-            KeyLoader().ecPublicKeyFromCoordinate(
+            KeyUtils().ecPublicKeyFromCoordinate(
                 "143329cce7868e416927599cf65a34f3ce2ffda55a7eca69ed8919a394d42f0f".chunked(2)
                     .map { it.toInt(16).toByte() }
                     .toByteArray(),

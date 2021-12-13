@@ -5,7 +5,10 @@ import java.security.*
 import java.security.interfaces.ECPublicKey
 import java.security.spec.*
 
-class KeyLoader {
+/**
+ * Converts Key formats into Key objects
+ */
+class KeyUtils {
     private var ecParameterSpec: ECParameterSpec? = null
         get() {
             if (field == null) {
