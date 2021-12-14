@@ -3,8 +3,8 @@
     "type" : "Library",
     "identifier" : {
       "type" : "VersionedIdentifier",
-      "id" : "TestArtifact",
-      "version" : "1"
+      "id" : "DDCCPass",
+      "version" : "0.0.1"
     },
     "schemaIdentifier" : {
       "type" : "VersionedIdentifier",
