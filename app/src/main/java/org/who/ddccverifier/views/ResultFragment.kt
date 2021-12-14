@@ -1,6 +1,7 @@
 package org.who.ddccverifier.views
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,13 +12,14 @@ import androidx.navigation.fragment.navArgs
 import ca.uhn.fhir.context.FhirContext
 import ca.uhn.fhir.context.FhirVersionEnum
 import kotlinx.coroutines.*
+import org.cqframework.cql.elm.execution.VersionedIdentifier
 import org.hl7.fhir.r4.model.Composition
+import org.opencds.cqf.cql.engine.execution.JsonCqlLibraryReader
 import org.who.ddccverifier.R
 import org.who.ddccverifier.databinding.FragmentResultBinding
-import org.who.ddccverifier.services.CBOR2FHIR
-import org.who.ddccverifier.services.CQLEvaluator
-import org.who.ddccverifier.services.DDCCFormatter
-import org.who.ddccverifier.services.DDCCVerifier
+import org.who.ddccverifier.services.*
+import java.io.InputStream
+import java.io.InputStreamReader
 
 /**
  * Displays a Verifiable Credential after being Scanned by the QRScan Fragment
@@ -158,10 +160,14 @@ class ResultFragment : Fragment() {
         }
     }
 
+    private fun open(file: String): InputStream {
+        return resources.assets.open(file);
+    }
+
     suspend fun resolveStatus(DDCC: Composition): Boolean {
-        return CQLEvaluator().resolve(
+        return CQLEvaluator(FHIRLibraryLoader(::open)).resolve(
             "CompletedImmunization",
-            resources.assets.open("DDCCPass.json").bufferedReader().use { it.readText() },
+            VersionedIdentifier().withId("DDCCPass").withVersion("0.0.1"),
             DDCC, FhirContext.forCached(FhirVersionEnum.R4)) as Boolean
     }
 

@@ -2,21 +2,24 @@ package org.who.ddccverifier
 
 import ca.uhn.fhir.context.FhirContext
 import ca.uhn.fhir.context.FhirVersionEnum
-import com.fasterxml.jackson.databind.ObjectMapper
+import org.cqframework.cql.elm.execution.VersionedIdentifier
 import org.junit.Test
 
 import org.junit.Assert.*
-import org.who.ddccverifier.services.CBOR2FHIR
-import org.who.ddccverifier.services.CQLEvaluator
-import org.who.ddccverifier.services.DDCCFormatter
-import org.who.ddccverifier.services.DDCCVerifier
+import org.who.ddccverifier.services.*
+import java.io.InputStream
 
 class QRResultCardTest {
 
-    private val mapper = ObjectMapper()
+    private val ddccPass = VersionedIdentifier().withId("DDCCPass").withVersion("0.0.1")
+
+    private val cqlEvaluator = CQLEvaluator(FHIRLibraryLoader(::inputStream))
+    private fun inputStream(assetName: String): InputStream? {
+        return javaClass.classLoader?.getResourceAsStream(assetName)
+    }
 
     private fun open(assetName: String): String {
-        return javaClass.classLoader?.getResourceAsStream(assetName)?.bufferedReader()
+        return inputStream(assetName)?.bufferedReader()
             .use { bufferReader -> bufferReader?.readText() } ?: ""
     }
 
@@ -29,11 +32,11 @@ class QRResultCardTest {
 
         val composition = CBOR2FHIR().run(verified.contents!!)
         val card2 = DDCCFormatter().run(composition)
-        val status = CQLEvaluator().resolve(
-            "CompletedImmunization", open("DDCCPass.json"),
+        val status = cqlEvaluator.resolve(
+            "CompletedImmunization", ddccPass,
             composition, FhirContext.forCached(FhirVersionEnum.R4)) as Boolean
 
-        val context = CQLEvaluator().run(open("DDCCPass.json"), composition, FhirContext.forCached(FhirVersionEnum.R4))
+        val context = cqlEvaluator.run(ddccPass, composition, FhirContext.forCached(FhirVersionEnum.R4))
         assertEquals(false, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
         assertEquals(null, context.resolveExpressionRef("GetFinalDose").evaluate(context))
 
@@ -74,10 +77,9 @@ class QRResultCardTest {
 
         val composition = CBOR2FHIR().run(verified.contents!!)
         val card2 = DDCCFormatter().run(composition)
-        val DDCCPass = open("DDCCPass.json")
 
-        val status = CQLEvaluator().resolve(
-            "CompletedImmunization", DDCCPass,
+        val status = cqlEvaluator.resolve(
+            "CompletedImmunization", ddccPass,
             composition, FhirContext.forCached(FhirVersionEnum.R4)) as Boolean
 
         // Credential
