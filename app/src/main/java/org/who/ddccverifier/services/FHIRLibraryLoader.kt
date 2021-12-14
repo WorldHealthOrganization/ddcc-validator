@@ -38,7 +38,7 @@ class FHIRLibraryLoader(private val open: (String)->InputStream?) : LibraryLoade
     }
 
     override fun load(libraryIdentifier: VersionedIdentifier): Library {
-        Log.i("Loading: ", libraryIdentifier.toString())
+        //Log.i("Loading: ", libraryIdentifier.toString())
         var library = LibraryCache[libraryIdentifier]
 
         if (library == null) {
