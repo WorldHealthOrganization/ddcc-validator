@@ -34,9 +34,9 @@ class QRResultCardTest {
         val card2 = DDCCFormatter().run(composition)
         val status = cqlEvaluator.resolve(
             "CompletedImmunization", ddccPass,
-            composition, FhirContext.forCached(FhirVersionEnum.R4)) as Boolean
+            composition) as Boolean
 
-        val context = cqlEvaluator.run(ddccPass, composition, FhirContext.forCached(FhirVersionEnum.R4))
+        val context = cqlEvaluator.run(ddccPass, composition)
         assertEquals(false, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
         assertEquals(null, context.resolveExpressionRef("GetFinalDose").evaluate(context))
 
@@ -80,7 +80,7 @@ class QRResultCardTest {
 
         val status = cqlEvaluator.resolve(
             "CompletedImmunization", ddccPass,
-            composition, FhirContext.forCached(FhirVersionEnum.R4)) as Boolean
+            composition) as Boolean
 
         // Credential
         assertEquals("COVID-19 Vaccination", card2.cardTitle!!.split(" - ")[1])

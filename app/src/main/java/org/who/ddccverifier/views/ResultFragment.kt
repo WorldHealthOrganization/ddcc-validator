@@ -168,7 +168,7 @@ class ResultFragment : Fragment() {
         return CQLEvaluator(FHIRLibraryLoader(::open)).resolve(
             "CompletedImmunization",
             VersionedIdentifier().withId("DDCCPass").withVersion("0.0.1"),
-            DDCC, FhirContext.forCached(FhirVersionEnum.R4)) as Boolean
+            DDCC) as Boolean
     }
 
     override fun onDestroyView() {

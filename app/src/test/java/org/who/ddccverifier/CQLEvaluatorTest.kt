@@ -70,7 +70,7 @@ class CQLEvaluatorTest {
         assertEquals("48d1906f-82df-44d2-9d26-284045504ba9", assetBundle.id)
 
         val lib = JsonCqlLibraryReader.read(StringReader(toJson(open("LibraryTestRules.cql"))))
-        val context = cqlEvaluator.run(lib, assetBundle, fhirContext)
+        val context = cqlEvaluator.run(lib, assetBundle)
 
         assertEquals(true, context.resolveExpressionRef("AgeRange-548").evaluate(context))
         assertEquals(true, context.resolveExpressionRef("Essential hypertension (disorder)").evaluate(context))
@@ -89,11 +89,11 @@ class CQLEvaluatorTest {
         assertEquals("Composition/US111222333444555666", asset.id)
 
         val lib = JsonCqlLibraryReader.read(StringReader(toJson(open("DDCCPass.cql"))))
-        val context = cqlEvaluator.run(lib, asset, fhirContext)
+        val context = cqlEvaluator.run(lib, asset)
 
         assertEquals(null, context.resolveExpressionRef("GetFinalDose").evaluate(context))
         assertEquals(false, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
-        assertEquals(false, cqlEvaluator.resolve("CompletedImmunization", ddccPass, asset, FhirContext.forCached(FhirVersionEnum.R4)))
+        assertEquals(false, cqlEvaluator.resolve("CompletedImmunization", ddccPass, asset))
     }
 
     @Test
@@ -101,11 +101,11 @@ class CQLEvaluatorTest {
         val asset = jSONParser.parseResource(open("QR1FHIRComposition.json")) as Composition
         assertEquals("Composition/US111222333444555666", asset.id)
 
-        val context = cqlEvaluator.run(ddccPass, asset, fhirContext)
+        val context = cqlEvaluator.run(ddccPass, asset)
 
         assertEquals(null, context.resolveExpressionRef("GetFinalDose").evaluate(context))
         assertEquals(false, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
-        assertEquals(false, cqlEvaluator.resolve("CompletedImmunization", ddccPass, asset, FhirContext.forCached(FhirVersionEnum.R4)))
+        assertEquals(false, cqlEvaluator.resolve("CompletedImmunization", ddccPass, asset))
     }
 
     @Test
@@ -114,12 +114,12 @@ class CQLEvaluatorTest {
         assertEquals("Composition/111000111", asset.id)
 
         val lib = JsonCqlLibraryReader.read(StringReader(toJson(open("DDCCPass.cql"))))
-        val context = cqlEvaluator.run(lib, asset, fhirContext)
+        val context = cqlEvaluator.run(lib, asset)
 
         assertNotNull(context.resolveExpressionRef("GetSingleDose").evaluate(context))
         assertNull( context.resolveExpressionRef("GetFinalDose").evaluate(context))
         assertEquals(true, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
-        assertEquals(true, cqlEvaluator.resolve("CompletedImmunization", ddccPass, asset, FhirContext.forCached(FhirVersionEnum.R4)))
+        assertEquals(true, cqlEvaluator.resolve("CompletedImmunization", ddccPass, asset))
     }
 
     @Test
@@ -127,11 +127,11 @@ class CQLEvaluatorTest {
         val asset = jSONParser.parseResource(open("QR2FHIRComposition.json")) as Composition
         assertEquals("Composition/111000111", asset.id)
 
-        val context = cqlEvaluator.run(ddccPass, asset, fhirContext)
+        val context = cqlEvaluator.run(ddccPass, asset)
 
         assertNotNull(context.resolveExpressionRef("GetSingleDose").evaluate(context))
         assertNull(context.resolveExpressionRef("GetFinalDose").evaluate(context))
         assertEquals(true, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
-        assertEquals(true, cqlEvaluator.resolve("CompletedImmunization", ddccPass, asset, FhirContext.forCached(FhirVersionEnum.R4)))
+        assertEquals(true, cqlEvaluator.resolve("CompletedImmunization", ddccPass, asset))
     }
 }

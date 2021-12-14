@@ -37,7 +37,7 @@ class CQLEvaluatorAndroidTest {
         val asset = jSONParser.parseResource(open("QR1FHIRComposition.json")) as Composition
         Assert.assertEquals("Composition/US111222333444555666", asset.id)
 
-        val context = cqlEvaluator.run(ddccPass, asset, fhirContext)
+        val context = cqlEvaluator.run(ddccPass, asset)
 
         Assert.assertEquals(false, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
         Assert.assertNull(context.resolveExpressionRef("GetFinalDose").evaluate(context))
@@ -50,7 +50,7 @@ class CQLEvaluatorAndroidTest {
         val asset = jSONParser.parseResource(open("QR2FHIRComposition.json")) as Composition
         Assert.assertEquals("Composition/111000111", asset.id)
 
-        val context = cqlEvaluator.run(ddccPass, asset, fhirContext)
+        val context = cqlEvaluator.run(ddccPass, asset)
 
         Assert.assertEquals(true, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
         Assert.assertNull(context.resolveExpressionRef("GetFinalDose").evaluate(context))
@@ -65,7 +65,7 @@ class CQLEvaluatorAndroidTest {
         Assert.assertEquals(DDCCVerifier.Status.VERIFIED, verified.status)
 
         val composition = CBOR2FHIR().run(verified.contents!!)
-        val context = cqlEvaluator.run(ddccPass, composition, fhirContext)
+        val context = cqlEvaluator.run(ddccPass, composition)
 
         Assert.assertEquals(false, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
         Assert.assertNull(context.resolveExpressionRef("GetFinalDose").evaluate(context))
@@ -80,7 +80,7 @@ class CQLEvaluatorAndroidTest {
         Assert.assertEquals(DDCCVerifier.Status.VERIFIED, verified.status)
 
         val composition = CBOR2FHIR().run(verified.contents!!)
-        val context = cqlEvaluator.run(ddccPass, composition, fhirContext)
+        val context = cqlEvaluator.run(ddccPass, composition)
 
         Assert.assertEquals(true, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
         Assert.assertNull(context.resolveExpressionRef("GetFinalDose").evaluate(context))
