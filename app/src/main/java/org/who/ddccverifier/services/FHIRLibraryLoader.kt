@@ -10,14 +10,16 @@ import java.io.InputStream
 import java.io.InputStreamReader
 import java.util.HashMap
 
+object LibraryCache: HashMap<VersionedIdentifier, Library>(){
+
+}
+
 /**
  * Loads library files for the CQL Evaluator
  */
 class FHIRLibraryLoader(private val open: (String)->InputStream?) : LibraryLoader {
-    private val libraries: MutableMap<VersionedIdentifier, Library> = HashMap<VersionedIdentifier, Library>()
-
     fun add(library: Library): Library {
-        libraries[library.identifier] = library
+        LibraryCache[library.identifier] = library
         return library
     }
 
@@ -36,7 +38,8 @@ class FHIRLibraryLoader(private val open: (String)->InputStream?) : LibraryLoade
     }
 
     override fun load(libraryIdentifier: VersionedIdentifier): Library {
-        var library = libraries[libraryIdentifier]
+        Log.i("Loading: ", libraryIdentifier.toString())
+        var library = LibraryCache[libraryIdentifier]
 
         if (library == null) {
             library = loadFromResource(libraryIdentifier)
