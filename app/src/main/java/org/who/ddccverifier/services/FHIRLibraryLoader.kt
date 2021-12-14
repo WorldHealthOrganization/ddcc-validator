@@ -14,40 +14,34 @@ import java.util.HashMap
  * Loads library files for the CQL Evaluator
  */
 class FHIRLibraryLoader(private val open: (String)->InputStream?) : LibraryLoader {
-    private val libraries: MutableMap<String, Library> = HashMap<String, Library>()
+    private val libraries: MutableMap<VersionedIdentifier, Library> = HashMap<VersionedIdentifier, Library>()
 
-    private fun index(libraryIdentifier: VersionedIdentifier): String {
-        return String.format("%s-%s", libraryIdentifier.id, libraryIdentifier.version)
+    fun add(library: Library): Library {
+        libraries[library.identifier] = library
+        return library
     }
 
-    private fun loadFromResource(libraryIdentifier: VersionedIdentifier): Library? {
-        val fileName = String.format("%s.json", index(libraryIdentifier))
+    fun add(libraryText: InputStream): Library {
+        return add(JsonCqlLibraryReader.read(InputStreamReader(libraryText)))
+    }
+
+    private fun loadFromResource(libraryIdentifier: VersionedIdentifier): Library {
+        val fileName = String.format("%s-%s.json", libraryIdentifier.id, libraryIdentifier.version)
         //Log.i("Loading: ", fileName)
 
         val result = open(fileName)
             ?: throw IOException(String.format("Required library file %s was not found", fileName))
 
-        return JsonCqlLibraryReader.read(InputStreamReader(result))
+        return add(result)
     }
 
-    override fun load(libraryIdentifier: VersionedIdentifier): Library? {
-        var library = libraries[index(libraryIdentifier)]
+    override fun load(libraryIdentifier: VersionedIdentifier): Library {
+        var library = libraries[libraryIdentifier]
 
         if (library == null) {
             library = loadFromResource(libraryIdentifier)
-            if (library != null) {
-                libraries[index(libraryIdentifier)] = library
-            }
         }
 
         return library
-    }
-
-    fun add(library: Library) {
-        libraries[index(library.identifier)] = library
-    }
-
-    fun add(libraryText: InputStream) {
-        add(JsonCqlLibraryReader.read(InputStreamReader(libraryText)))
     }
 }
