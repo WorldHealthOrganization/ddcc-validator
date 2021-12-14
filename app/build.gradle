@@ -27,9 +27,6 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    configurations {
-        all*.exclude group: 'xml-apis'  // Duplicated class package with Eclipse Moxy
-    }
     kotlinOptions {
         jvmTarget = '1.8'
     }
