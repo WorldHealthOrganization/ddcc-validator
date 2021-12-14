@@ -4,15 +4,18 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import ca.uhn.fhir.context.FhirContext
 import ca.uhn.fhir.context.FhirVersionEnum
 import org.cqframework.cql.elm.execution.VersionedIdentifier
+import org.hl7.fhir.r4.model.Bundle
 import org.hl7.fhir.r4.model.Composition
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.opencds.cqf.cql.engine.execution.JsonCqlLibraryReader
 import org.who.ddccverifier.services.CBOR2FHIR
 import org.who.ddccverifier.services.CQLEvaluator
 import org.who.ddccverifier.services.DDCCVerifier
 import org.who.ddccverifier.services.FHIRLibraryLoader
 import java.io.InputStream
+import java.io.StringReader
 
 @RunWith(AndroidJUnit4::class)
 class CQLEvaluatorAndroidTest {
@@ -85,5 +88,24 @@ class CQLEvaluatorAndroidTest {
         Assert.assertEquals(true, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
         Assert.assertNull(context.resolveExpressionRef("GetFinalDose").evaluate(context))
         Assert.assertNotNull(context.resolveExpressionRef("GetSingleDose").evaluate(context))
+    }
+
+    @Test
+    fun evaluateHypertensivePatientCQL() {
+        val assetBundle = jSONParser.parseResource(open("LibraryTestPatient.json")) as Bundle
+        Assert.assertEquals("48d1906f-82df-44d2-9d26-284045504ba9", assetBundle.id)
+
+        val lib = JsonCqlLibraryReader.read(StringReader(open("LibraryTestRules.json")))
+        val context = cqlEvaluator.run(lib, assetBundle)
+
+        Assert.assertEquals(true, context.resolveExpressionRef("AgeRange-548").evaluate(context))
+        Assert.assertEquals(true, context.resolveExpressionRef("Essential hypertension (disorder)").evaluate(context))
+        Assert.assertEquals(false, context.resolveExpressionRef("Malignant hypertensive chronic kidney disease (disorder)").evaluate(context))
+        Assert.assertEquals(true, context.resolveExpressionRef("MeetsInclusionCriteria").evaluate(context))
+        Assert.assertEquals(false, context.resolveExpressionRef("MeetsExclusionCriteria").evaluate(context))
+        Assert.assertEquals(true, context.resolveExpressionRef("InPopulation").evaluate(context))
+        Assert.assertEquals("", context.resolveExpressionRef("Recommendation").evaluate(context))
+        Assert.assertNull(context.resolveExpressionRef("Rationale").evaluate(context))
+        Assert.assertNull(context.resolveExpressionRef("Errors").evaluate(context))
     }
 }
