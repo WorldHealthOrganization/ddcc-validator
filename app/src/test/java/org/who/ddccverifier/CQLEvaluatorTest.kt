@@ -39,7 +39,6 @@ class CQLEvaluatorTest {
         val ucumService = UcumEssenceService(UcumEssenceService::class.java.getResourceAsStream("/ucum-essence.xml"))
 
         val translator = CqlTranslator.fromText(cqlText, modelManager, libraryManager, ucumService)
-        CqlTranslator.getJxsonMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
         if (translator.errors.size > 0) {
             System.err.println("Translation failed due to errors:")
             val errors: ArrayList<String> = ArrayList()

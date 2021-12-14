@@ -107,7 +107,7 @@ dependencies {
     // Tests outside Android can process CQL.
     // Good to test new rules without having to convert to JSON
     testImplementation 'junit:junit:4.13.2'
-    testImplementation group: 'info.cqframework', name: 'cql-to-elm', version: '1.5.4'
+    testImplementation group: 'info.cqframework', name: 'cql-to-elm', version: '1.5.5'
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
