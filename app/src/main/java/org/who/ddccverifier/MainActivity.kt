@@ -18,22 +18,22 @@ import org.who.ddccverifier.databinding.ActivityMainBinding
  * └──────────────────────────────────────────────────┘
  * ┌──────────────┐ ┌──────────────┐ ┌────────────────┐
  * │ HomeFragment ├→┤ ScanFragment ├→┤ ResultFragment │
- * └──────────────┘ └────┬──▲──────┘ └──▲──────┬──────┘
- *                  Image│  │QRContent  │Card  │QRContent
- *                 ┌─────▼──┴───────┐   │ ┌────▼───────────┐ ┌─────────────────┐ ┌──────────┐
- *                 │ QRCodeAnalyser │   │ │ DDCCVerifier   ├↔┤ TrustRegistry   ├↔┤ KeyUtils │
- *                 └────────────────┘   │ └────┬───────────┘ └─────────────────┘ └──────────┘
- *                                      │      │CBOR Object
- *                                      │ ┌────▼───────────┐
- *                                      │ │ CBOR2FHIR      │
- *                                      │ └────┬───────────┘                       ┌───────────────┐
- *                                      │      │FHIR Object (DDCC Composite)       │ Assets        │
- *                                      │ ┌────▼───────────┐ ┌───────────────────┐ │ - ModelInfo   │
- *                                      │ │ CQLEvaluator   ├↔┤ FHIRLibraryLoader ├↔┤ - FHIRHelpers │
- *                                      │ └────┬───────────┘ └───────────────────┘ │ - DDCCPass    │
- *                                      │      │DDCC Status                        └───────────────┘
- *                                      │ ┌────▼───────────┐
- *                                      └─┤ FHIRFormatter  │
+ * └──────────────┘ └─────┬──▲─────┘ └──▲──────┬──────┘
+ *                   Image│  │QRContent │Card  │QRContent
+ *                  ┌─────▼──┴─────┐    │ ┌────▼───────────┐
+ *                  │ QRCodeFinder │    │ │ QRUnpacker     │
+ *                  └──────────────┘    │ └────┬───────────┘
+ *                                      │      │HCERT QRContent
+ *     ┌──────────┐ ┌─────────────────┐ │ ┌────▼───────────┐  ┌────────────────┐
+ *     │ KeyUtils ├↔┤ TrustRegistry   ├←┼→┤ HCERTVerifier  ├─→│ CBORTranslator │
+ *     └──────────┘ └─────────────────┘ │ └────┬───────────┘  └────┬───────────┘
+ *  ┌──────────────┐                    │      │DDCC Composite     │
+ *  │ Assets       │ ┌────────────────┐ │ ┌────▼───────────┐  ┌────▼───────────┐
+ *  │ - ModelInfo  ├↔┤ FHIRLib..Loader├←┼→┤ CQLEvaluator   │  │ WHOCBOR2FHIR   │
+ *  │ - FHIRHelper │ └────────────────┘ │ └────┬───────────┘  └────────────────┘
+ *  │ - DDCCPass   │                    │      │DDCC Composite (FHIR)
+ *  └──────────────┘                    │ ┌────▼───────────┐
+ *                                      └─┤ DDCCFormatter  │
  *                                        └────────────────┘
  */
 class MainActivity : AppCompatActivity() {

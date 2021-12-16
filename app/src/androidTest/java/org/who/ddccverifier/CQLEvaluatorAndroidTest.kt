@@ -10,10 +10,11 @@ import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.opencds.cqf.cql.engine.execution.JsonCqlLibraryReader
-import org.who.ddccverifier.services.CBOR2FHIR
-import org.who.ddccverifier.services.CQLEvaluator
-import org.who.ddccverifier.services.DDCCVerifier
-import org.who.ddccverifier.services.FHIRLibraryLoader
+import org.who.ddccverifier.services.qrs.hcert.WHOCBOR2FHIR
+import org.who.ddccverifier.services.qrs.hcert.HCERTVerifier
+import org.who.ddccverifier.services.fhir.CQLEvaluator
+import org.who.ddccverifier.services.fhir.FHIRLibraryLoader
+import org.who.ddccverifier.services.qrs.QRUnpacker
 import java.io.InputStream
 import java.io.StringReader
 
@@ -36,8 +37,8 @@ class CQLEvaluatorAndroidTest {
     }
 
     @Test
-    fun evaluateQR1DDCCJSONTest() {
-        val asset = jSONParser.parseResource(open("QR1FHIRComposition.json")) as Composition
+    fun evaluateDDCCPassOnWHOQR1FromCompositonTest() {
+        val asset = jSONParser.parseResource(open("WHOQR1FHIRComposition.json")) as Composition
         Assert.assertEquals("Composition/US111222333444555666", asset.id)
 
         val context = cqlEvaluator.run(ddccPass, asset)
@@ -49,8 +50,8 @@ class CQLEvaluatorAndroidTest {
 
 
     @Test
-    fun evaluateQR2DDCCJSONTest() {
-        val asset = jSONParser.parseResource(open("QR2FHIRComposition.json")) as Composition
+    fun evaluateDDCCPassOnWHOQR2FromCompositonTest() {
+        val asset = jSONParser.parseResource(open("WHOQR2FHIRComposition.json")) as Composition
         Assert.assertEquals("Composition/111000111", asset.id)
 
         val context = cqlEvaluator.run(ddccPass, asset)
@@ -61,14 +62,13 @@ class CQLEvaluatorAndroidTest {
     }
 
     @Test
-    fun evaluateQR1DDCCQRTest() {
-        val qr1 = open("QR1Contents.txt")
-        val verified = DDCCVerifier().unpackAndVerify(qr1)
+    fun evaluateDDCCPassOnWHOQR1FromQRTest() {
+        val qr1 = open("WHOQR1Contents.txt")
+        val verified = HCERTVerifier().unpackAndVerify(qr1)
 
-        Assert.assertEquals(DDCCVerifier.Status.VERIFIED, verified.status)
+        Assert.assertEquals(QRUnpacker.Status.VERIFIED, verified.status)
 
-        val composition = CBOR2FHIR().run(verified.contents!!)
-        val context = cqlEvaluator.run(ddccPass, composition)
+        val context = cqlEvaluator.run(ddccPass, verified.contents!!)
 
         Assert.assertEquals(false, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
         Assert.assertNull(context.resolveExpressionRef("GetFinalDose").evaluate(context))
@@ -76,14 +76,13 @@ class CQLEvaluatorAndroidTest {
     }
 
     @Test
-    fun evaluateQR2DDCCQRTest() {
-        val qr1 = open("QR2Contents.txt")
-        val verified = DDCCVerifier().unpackAndVerify(qr1)
+    fun evaluateDDCCPassOnWHOQR2FromQRTest() {
+        val qr1 = open("WHOQR2Contents.txt")
+        val verified = HCERTVerifier().unpackAndVerify(qr1)
 
-        Assert.assertEquals(DDCCVerifier.Status.VERIFIED, verified.status)
+        Assert.assertEquals(QRUnpacker.Status.VERIFIED, verified.status)
 
-        val composition = CBOR2FHIR().run(verified.contents!!)
-        val context = cqlEvaluator.run(ddccPass, composition)
+        val context = cqlEvaluator.run(ddccPass, verified.contents!!)
 
         Assert.assertEquals(true, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
         Assert.assertNull(context.resolveExpressionRef("GetFinalDose").evaluate(context))

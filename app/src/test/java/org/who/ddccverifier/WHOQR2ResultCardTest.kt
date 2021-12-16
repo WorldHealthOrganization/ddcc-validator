@@ -1,15 +1,18 @@
 package org.who.ddccverifier
 
-import ca.uhn.fhir.context.FhirContext
-import ca.uhn.fhir.context.FhirVersionEnum
 import org.cqframework.cql.elm.execution.VersionedIdentifier
 import org.junit.Test
 
 import org.junit.Assert.*
 import org.who.ddccverifier.services.*
+import org.who.ddccverifier.services.fhir.CQLEvaluator
+import org.who.ddccverifier.services.fhir.FHIRLibraryLoader
+import org.who.ddccverifier.services.qrs.QRUnpacker
+import org.who.ddccverifier.services.qrs.hcert.HCERTVerifier
+import org.who.ddccverifier.services.qrs.hcert.WHOCBOR2FHIR
 import java.io.InputStream
 
-class QRResultCardTest {
+class WHOQR2ResultCardTest {
 
     private val ddccPass = VersionedIdentifier().withId("DDCCPass").withVersion("0.0.1")
 
@@ -25,18 +28,17 @@ class QRResultCardTest {
 
     @Test
     fun cardResultBuilderQR1() {
-        val qr1 = open("QR1Contents.txt")
-        val verified = DDCCVerifier().unpackAndVerify(qr1)
+        val qr1 = open("WHOQR1Contents.txt")
+        val verified = QRUnpacker().decode(qr1)
 
-        assertEquals(DDCCVerifier.Status.VERIFIED, verified.status)
+        assertEquals(QRUnpacker.Status.VERIFIED, verified.status)
 
-        val composition = CBOR2FHIR().run(verified.contents!!)
-        val card2 = DDCCFormatter().run(composition)
+        val card2 = DDCCFormatter().run(verified.contents!!)
         val status = cqlEvaluator.resolve(
             "CompletedImmunization", ddccPass,
-            composition) as Boolean
+            verified.contents!!) as Boolean
 
-        val context = cqlEvaluator.run(ddccPass, composition)
+        val context = cqlEvaluator.run(ddccPass, verified.contents!!)
         assertEquals(false, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
         assertEquals(null, context.resolveExpressionRef("GetFinalDose").evaluate(context))
 
@@ -70,17 +72,16 @@ class QRResultCardTest {
 
     @Test
     fun cardResultBuilderQR2() {
-        val qr2 = open("QR2Contents.txt")
-        val verified = DDCCVerifier().unpackAndVerify(qr2)
+        val qr2 = open("WHOQR2Contents.txt")
+        val verified = QRUnpacker().decode(qr2)
 
-        assertEquals(DDCCVerifier.Status.VERIFIED, verified.status)
+        assertEquals(QRUnpacker.Status.VERIFIED, verified.status)
 
-        val composition = CBOR2FHIR().run(verified.contents!!)
-        val card2 = DDCCFormatter().run(composition)
+        val card2 = DDCCFormatter().run(verified.contents!!)
 
         val status = cqlEvaluator.resolve(
             "CompletedImmunization", ddccPass,
-            composition) as Boolean
+            verified.contents!!) as Boolean
 
         // Credential
         assertEquals("COVID-19 Vaccination", card2.cardTitle!!.split(" - ")[1])

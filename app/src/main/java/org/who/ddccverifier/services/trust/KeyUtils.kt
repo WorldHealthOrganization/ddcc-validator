@@ -1,4 +1,4 @@
-package org.who.ddccverifier.services
+package org.who.ddccverifier.services.trust
 
 import java.math.BigInteger
 import java.security.*

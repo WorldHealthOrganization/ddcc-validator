@@ -1,7 +1,6 @@
 package org.who.ddccverifier.views
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -9,17 +8,18 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import ca.uhn.fhir.context.FhirContext
-import ca.uhn.fhir.context.FhirVersionEnum
 import kotlinx.coroutines.*
 import org.cqframework.cql.elm.execution.VersionedIdentifier
 import org.hl7.fhir.r4.model.Composition
-import org.opencds.cqf.cql.engine.execution.JsonCqlLibraryReader
 import org.who.ddccverifier.R
 import org.who.ddccverifier.databinding.FragmentResultBinding
 import org.who.ddccverifier.services.*
+import org.who.ddccverifier.services.fhir.CQLEvaluator
+import org.who.ddccverifier.services.fhir.FHIRLibraryLoader
+import org.who.ddccverifier.services.qrs.QRUnpacker
+import org.who.ddccverifier.services.qrs.hcert.HCERTVerifier
+import org.who.ddccverifier.services.qrs.hcert.WHOCBOR2FHIR
 import java.io.InputStream
-import java.io.InputStreamReader
 
 /**
  * Displays a Verifiable Credential after being Scanned by the QRScan Fragment
@@ -75,19 +75,20 @@ class ResultFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         if (args.qr != null) {
-            val DDCC = DDCCVerifier().unpackAndVerify(args.qr!!)
+            val DDCC = QRUnpacker().decode(args.qr!!)
 
             when (DDCC.status) {
-                DDCCVerifier.Status.INVALID_BASE45 -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_base45)
-                DDCCVerifier.Status.INVALID_ZIP -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_zip)
-                DDCCVerifier.Status.INVALID_COSE -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_cose)
-                DDCCVerifier.Status.KID_NOT_INCLUDED -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_kid_not_included)
-                DDCCVerifier.Status.ISSUER_NOT_TRUSTED -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_issuer_not_trusted)
-                DDCCVerifier.Status.TERMINATED_KEYS -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_terminated_keys)
-                DDCCVerifier.Status.EXPIRED_KEYS -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_expired_keys)
-                DDCCVerifier.Status.REVOKED_KEYS -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_revoked_keys)
-                DDCCVerifier.Status.INVALID_SIGNATURE -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_signature)
-                DDCCVerifier.Status.VERIFIED -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_verified)
+                QRUnpacker.Status.NOT_SUPPORTED -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_base45)
+                QRUnpacker.Status.INVALID_BASE45 -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_base45)
+                QRUnpacker.Status.INVALID_ZIP -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_zip)
+                QRUnpacker.Status.INVALID_COSE -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_cose)
+                QRUnpacker.Status.KID_NOT_INCLUDED -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_kid_not_included)
+                QRUnpacker.Status.ISSUER_NOT_TRUSTED -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_issuer_not_trusted)
+                QRUnpacker.Status.TERMINATED_KEYS -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_terminated_keys)
+                QRUnpacker.Status.EXPIRED_KEYS -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_expired_keys)
+                QRUnpacker.Status.REVOKED_KEYS -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_revoked_keys)
+                QRUnpacker.Status.INVALID_SIGNATURE -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_signature)
+                QRUnpacker.Status.VERIFIED -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_verified)
             }
 
             if (binding.tvResultTitle.text == resources.getString(R.string.verification_status_verified)) {
@@ -107,8 +108,7 @@ class ResultFragment : Fragment() {
             }
 
             if (DDCC.contents != null) {
-                val asset = CBOR2FHIR().run(DDCC.contents!!)
-                val card = DDCCFormatter().run(asset)
+                val card = DDCCFormatter().run(DDCC.contents!!)
 
                 // Credential
                 setTextView(binding.tvResultScanDate, card.cardTitle, binding.tvResultScanDate)
@@ -137,7 +137,7 @@ class ResultFragment : Fragment() {
                 // Status
                 setTextView(binding.tvResultStatus, "... Processing ...", binding.tvResultStatus)
 
-                showStatus(asset)
+                showStatus(DDCC.contents!!)
             }
         }
 

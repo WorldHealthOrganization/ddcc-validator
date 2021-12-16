@@ -1,4 +1,4 @@
-package org.who.ddccverifier.services
+package org.who.ddccverifier.services.fhir
 
 import ca.uhn.fhir.context.FhirContext
 import ca.uhn.fhir.context.FhirVersionEnum

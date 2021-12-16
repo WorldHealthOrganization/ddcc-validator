@@ -1,0 +1,142 @@
+{
+  "resourceType": "PlanDefinition",
+  "identifier": [
+    {
+      "type": "VersionedIdentifier",
+      "id": "COVIDCheck",
+      "version": "0.0.1"
+    }
+  ],
+  "version": "0.0.1",
+  "title": "COVID Venue Check-in",
+  "subtitle": "Checks what rights are granted based on the health status of the Patient",
+  "type": "eca-rule",
+  "status": "active",
+  "subject": "Patient",
+  "date": "2021-12-15",
+  "publisher": "City of Somerville",
+  "contact": [
+    {
+      "name": "Paul Villien",
+      "telecom": [
+        {
+          "system": "phone",
+          "value": "+1 617 122 3222"
+        },
+        {
+          "system": "url",
+          "value": "https://www.somervillema.gov/departments/city-and-state-orders-related-covid-19"
+        }
+      ]
+    }
+  ],
+  "description": "Set of rules to determine which precautions should be taken by the Patient",
+  "jurisdiction": [
+    {
+      "system": "urn:iso:std:iso:3166:-2",
+      "value": "US-MA"
+    }
+  ],
+  "purpose": "To define access rules durint the COVID Pandemic",
+  "usage": "Cross-property checks",
+  "copyright": "Somrville, 2021",
+  "approvalDate": "2021-12-15",
+  "lastReviewDate": "2021-12-15",
+  "effectivePeriod": {
+    "start": "2021-12-15",
+    "end": "2021-12-15"
+  },
+  "goal": [
+    {
+      "category": {
+        "value": "behavioral"
+      },
+      "priority": {
+        "value": "high-priority"
+      },
+      "addresses": [
+        {
+          "value": "code for COVID Infection"
+        }
+      ],
+      "target": [
+        {
+          "measure": {
+            "code": "10177-4"
+          },
+          "detailCodeableConcept": {
+            "coding": [
+              {
+                "system": "http://snomed.info/sct",
+                "code": "840539006",
+                "display": "Negative"
+              }
+            ],
+            "text": "Negative for COVID-19"
+          }
+        }
+      ]
+    }
+  ],
+  "action": [
+    {
+      "prefix": "1.",
+      "title": "Full Immunization",
+      "description": "Patient can enter",
+      "textEquivalent": "",
+      "priority": "routine",
+      "trigger": [
+        {
+          "type": "data-accessed",
+          "data": [
+            {
+              "type": "DDCC Document"
+            }
+          ]
+        }
+      ],
+      "condition": {
+        "kind": "applicability",
+        "expression": {
+          "name": "Fully Immunized",
+          "code": "text/cql",
+          "expression": "completedImmunization",
+          "reference": "DDCCPass-0.0.1.json"
+        }
+      },
+      "input": {
+        "type": "Immunization"
+      }
+    },
+    {
+      "prefix": "1.",
+      "title": "Negative Test",
+      "description": "Patient can enter, but wearing a mask",
+      "textEquivalent": "",
+      "priority": "routine",
+      "trigger": [
+        {
+          "type": "data-accessed",
+          "data": [
+            {
+              "type": "DDCC Document"
+            }
+          ]
+        }
+      ],
+      "condition": {
+        "kind": "applicability",
+        "expression": {
+          "name": "Negative Covid Test",
+          "code": "text/cql",
+          "expression": "negativeCovidTest",
+          "reference": "DDCCPass-0.0.1.json"
+        }
+      },
+      "input": {
+        "type": "Immunization"
+      }
+    }
+  ]
+}
+

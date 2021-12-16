@@ -1,4 +1,4 @@
-package org.who.ddccverifier.services
+package org.who.ddccverifier.services.qrs.hcert
 
 import com.upokecenter.cbor.CBORObject
 import com.upokecenter.cbor.CBORType
@@ -8,7 +8,7 @@ import org.hl7.fhir.r4.model.*
 /**
  * Translates a DDCC QR CBOR object into FHIR Objects
  */
-class CBOR2FHIR {
+class WHOCBOR2FHIR {
     private fun parseDateType(date: CBORObject?): DateType? {
         if (date == null || date.isUndefined) return null
         return DateType(date.AsString())

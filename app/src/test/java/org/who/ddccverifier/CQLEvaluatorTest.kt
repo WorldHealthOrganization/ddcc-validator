@@ -13,8 +13,8 @@ import org.fhir.ucum.UcumEssenceService
 import org.junit.Assert.*
 import org.hl7.fhir.r4.model.Composition
 import org.opencds.cqf.cql.engine.execution.JsonCqlLibraryReader
-import org.who.ddccverifier.services.CQLEvaluator
-import org.who.ddccverifier.services.FHIRLibraryLoader
+import org.who.ddccverifier.services.fhir.CQLEvaluator
+import org.who.ddccverifier.services.fhir.FHIRLibraryLoader
 import java.io.InputStream
 import java.io.StringReader
 import java.lang.IllegalArgumentException
@@ -65,7 +65,7 @@ class CQLEvaluatorTest {
     }
 
     @Test
-    fun evaluateHypertensivePatientCQL() {
+    fun evaluateHypertensivePatientFromCQLTest() {
         val assetBundle = jSONParser.parseResource(open("LibraryTestPatient.json")) as Bundle
         assertEquals("48d1906f-82df-44d2-9d26-284045504ba9", assetBundle.id)
 
@@ -84,8 +84,8 @@ class CQLEvaluatorTest {
     }
 
     @Test
-    fun evaluateQR1DDCCCQL() {
-        val asset = jSONParser.parseResource(open("QR1FHIRComposition.json")) as Composition
+    fun evaluateDDCCPassAsCQLOnQR1FromCompositionTest() {
+        val asset = jSONParser.parseResource(open("WHOQR1FHIRComposition.json")) as Composition
         assertEquals("Composition/US111222333444555666", asset.id)
 
         val lib = JsonCqlLibraryReader.read(StringReader(toJson(open("DDCCPass.cql"))))
@@ -97,8 +97,8 @@ class CQLEvaluatorTest {
     }
 
     @Test
-    fun evaluateQR1DDCCJSON() {
-        val asset = jSONParser.parseResource(open("QR1FHIRComposition.json")) as Composition
+    fun evaluateDDCCPassAsJSONOnQR1FromCompositionTest() {
+        val asset = jSONParser.parseResource(open("WHOQR1FHIRComposition.json")) as Composition
         assertEquals("Composition/US111222333444555666", asset.id)
 
         val context = cqlEvaluator.run(ddccPass, asset)
@@ -109,8 +109,8 @@ class CQLEvaluatorTest {
     }
 
     @Test
-    fun evaluateQR2DDCCCQL() {
-        val asset = jSONParser.parseResource(open("QR2FHIRComposition.json")) as Composition
+    fun evaluateDDCCPassAsCQLOnQR2FromCompositionTest() {
+        val asset = jSONParser.parseResource(open("WHOQR2FHIRComposition.json")) as Composition
         assertEquals("Composition/111000111", asset.id)
 
         val lib = JsonCqlLibraryReader.read(StringReader(toJson(open("DDCCPass.cql"))))
@@ -123,8 +123,8 @@ class CQLEvaluatorTest {
     }
 
     @Test
-    fun evaluateQR2DDCCJSON() {
-        val asset = jSONParser.parseResource(open("QR2FHIRComposition.json")) as Composition
+    fun evaluateDDCCPassAsJSONOnQR2FromCompositionTest() {
+        val asset = jSONParser.parseResource(open("WHOQR2FHIRComposition.json")) as Composition
         assertEquals("Composition/111000111", asset.id)
 
         val context = cqlEvaluator.run(ddccPass, asset)

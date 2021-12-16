@@ -28,6 +28,7 @@
     <string name="dose_pha_label">PHA</string>
     <string name="dose_hw_label">HW</string>
 
+    <string name="verification_status_not_supported">QR Not Supported</string>
     <string name="verification_status_invalid_base45">Invalid QR</string>
     <string name="verification_status_invalid_zip">Invalid QR</string>
     <string name="verification_status_invalid_cose">Invalid QR</string>
