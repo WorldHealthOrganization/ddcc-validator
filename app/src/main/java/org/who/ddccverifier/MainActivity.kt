@@ -20,17 +20,17 @@ import org.who.ddccverifier.databinding.ActivityMainBinding
  * │ HomeFragment ├→┤ ScanFragment ├→┤ ResultFragment │
  * └──────────────┘ └─────┬──▲─────┘ └──▲──────┬──────┘
  *                   Image│  │QRContent │Card  │QRContent
- *                  ┌─────▼──┴─────┐    │ ┌────▼───────────┐
- *                  │ QRCodeFinder │    │ │ QRUnpacker     │
- *                  └──────────────┘    │ └────┬───────────┘
+ *                  ┌─────▼──┴─────┐    │ ┌────▼───────┐
+ *                  │ QRCodeFinder │    │ │ QRUnpacker │
+ *                  └──────────────┘    │ └────┬───────┘
  *                                      │      │HCERT QRContent
  *     ┌──────────┐ ┌─────────────────┐ │ ┌────▼───────────┐  ┌────────────────┐
- *     │ KeyUtils ├↔┤ TrustRegistry   ├←┼→┤ HCERTVerifier  ├─→│ CBORTranslator │
- *     └──────────┘ └─────────────────┘ │ └────┬───────────┘  └────┬───────────┘
- *  ┌──────────────┐                    │      │DDCC Composite     │
- *  │ Assets       │ ┌────────────────┐ │ ┌────▼───────────┐  ┌────▼───────────┐
- *  │ - ModelInfo  ├↔┤ FHIRLib..Loader├←┼→┤ CQLEvaluator   │  │ WHOCBOR2FHIR   │
- *  │ - FHIRHelper │ └────────────────┘ │ └────┬───────────┘  └────────────────┘
+ *     │ KeyUtils ├↔┤ TrustRegistry   ├←┼→┤ HCertVerifier  ├─→│ CBORTranslator │
+ *     └──────────┘ └─────────────────┘ │ └────┬───────────┘  └────┬────────┬──┘
+ *  ┌──────────────┐                    │      │DDCC Composite     │        │
+ *  │ Assets       │ ┌────────────────┐ │ ┌────▼───────────┐  ┌────▼─────┐┌─▼────────┐
+ *  │ - ModelInfo  ├↔┤ FHIRLib..Loader├←┼→┤ CQLEvaluator   │  │ WHO2FHIR ││ DCC2FHIR │
+ *  │ - FHIRHelper │ └────────────────┘ │ └────┬───────────┘  └──────────┘└──────────┘
  *  │ - DDCCPass   │                    │      │DDCC Composite (FHIR)
  *  └──────────────┘                    │ ┌────▼───────────┐
  *                                      └─┤ DDCCFormatter  │
