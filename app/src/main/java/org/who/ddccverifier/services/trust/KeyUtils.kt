@@ -1,6 +1,6 @@
 package org.who.ddccverifier.services.trust
 
-import org.apache.commons.codec.binary.Base64
+import android.util.Base64
 import java.io.ByteArrayInputStream
 import java.math.BigInteger
 import java.security.*
@@ -45,7 +45,7 @@ class KeyUtils {
     }
 
     fun ecPublicKeyFromCoordinate(x: String, y: String): PublicKey {
-        return ecPublicKeyFromCoordinate(Base64.decodeBase64(x),Base64.decodeBase64(y))
+        return ecPublicKeyFromCoordinate(Base64.decode(x, Base64.URL_SAFE),Base64.decode(y, Base64.URL_SAFE))
     }
 
     fun ecPublicKeyFromPEM(pem: String): PublicKey {
@@ -53,7 +53,7 @@ class KeyUtils {
             .replace("-----BEGIN PUBLIC KEY-----", "")
             .replace(System.lineSeparator().toRegex(), "")
             .replace("-----END PUBLIC KEY-----", "")
-        val encoded: ByteArray = Base64.decodeBase64(publicKeyPEM)
+        val encoded: ByteArray = Base64.decode(publicKeyPEM, Base64.DEFAULT)
         val keyFactory = KeyFactory.getInstance("EC")
         val keySpec = X509EncodedKeySpec(encoded)
         return keyFactory.generatePublic(keySpec)
@@ -64,7 +64,7 @@ class KeyUtils {
             .replace("-----BEGIN CERTIFICATE-----", "")
             .replace(System.lineSeparator().toRegex(), "")
             .replace("-----END CERTIFICATE-----", "")
-        val encoded: ByteArray = Base64.decodeBase64(publicKeyPEM)
+        val encoded: ByteArray = Base64.decode(publicKeyPEM, Base64.DEFAULT)
 
         val cf = CertificateFactory.getInstance("X.509")
         val cert = cf.generateCertificate(ByteArrayInputStream(encoded))
@@ -96,7 +96,7 @@ class KeyUtils {
     }
 
     fun rsaPublicKeyFromModulusExponent(n: String, e: String): PublicKey {
-        return rsaPublicKeyFromModulusExponent(Base64.decodeBase64(n),Base64.decodeBase64(e))
+        return rsaPublicKeyFromModulusExponent(Base64.decode(n, Base64.URL_SAFE),Base64.decode(e, Base64.URL_SAFE))
     }
 
     fun rsaPublicKeyFromPEM(pem: String): PublicKey {
@@ -104,7 +104,7 @@ class KeyUtils {
             .replace("-----BEGIN PUBLIC KEY-----", "")
             .replace(System.lineSeparator().toRegex(), "")
             .replace("-----END PUBLIC KEY-----", "")
-        val encoded: ByteArray = Base64.decodeBase64(publicKeyPEM)
+        val encoded: ByteArray = Base64.decode(publicKeyPEM, Base64.DEFAULT)
         val keyFactory = KeyFactory.getInstance("RSA")
         val keySpec = X509EncodedKeySpec(encoded)
         return keyFactory.generatePublic(keySpec)
