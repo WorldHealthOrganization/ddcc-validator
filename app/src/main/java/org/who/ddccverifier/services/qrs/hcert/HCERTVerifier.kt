@@ -57,7 +57,7 @@ class HCERTVerifier {
     }
 
     private fun resolveIssuer(kid: String): TrustRegistry.TrustedEntity? {
-        return TrustRegistry.resolve(kid)
+        return TrustRegistry.resolve(TrustRegistry.Framework.DCC, kid)
     }
 
     private fun getContent(signedMessage: Sign1Message): CBORObject {
@@ -98,7 +98,7 @@ class HCERTVerifier {
             TrustRegistry.Status.REVOKED -> return QRUnpacker.VerificationResult(QRUnpacker.Status.REVOKED_KEYS, contents, issuer, qr)
         }
 
-        if (verify(signedMessage, issuer.pubKey)) {
+        if (verify(signedMessage, issuer.didDocument)) {
             return QRUnpacker.VerificationResult(QRUnpacker.Status.VERIFIED, contents, issuer, qr)
         }
 

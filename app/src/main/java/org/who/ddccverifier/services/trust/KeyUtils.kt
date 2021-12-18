@@ -1,7 +1,10 @@
 package org.who.ddccverifier.services.trust
 
+import org.apache.commons.codec.binary.Base64
+import java.io.ByteArrayInputStream
 import java.math.BigInteger
 import java.security.*
+import java.security.cert.CertificateFactory
 import java.security.interfaces.ECPublicKey
 import java.security.spec.*
 
@@ -41,6 +44,48 @@ class KeyUtils {
         return keyFactory.generatePublic(ecKeySpec)
     }
 
+    fun ecPublicKeyFromCoordinate(x: String, y: String): PublicKey {
+        return ecPublicKeyFromCoordinate(Base64.decodeBase64(x),Base64.decodeBase64(y))
+    }
+
+    fun ecPublicKeyFromPEM(pem: String): PublicKey {
+        val publicKeyPEM = pem
+            .replace("-----BEGIN PUBLIC KEY-----", "")
+            .replace(System.lineSeparator().toRegex(), "")
+            .replace("-----END PUBLIC KEY-----", "")
+        val encoded: ByteArray = Base64.decodeBase64(publicKeyPEM)
+        val keyFactory = KeyFactory.getInstance("EC")
+        val keySpec = X509EncodedKeySpec(encoded)
+        return keyFactory.generatePublic(keySpec)
+    }
+
+    fun certificateFromPEM(pem: String): PublicKey {
+        val publicKeyPEM = pem
+            .replace("-----BEGIN CERTIFICATE-----", "")
+            .replace(System.lineSeparator().toRegex(), "")
+            .replace("-----END CERTIFICATE-----", "")
+        val encoded: ByteArray = Base64.decodeBase64(publicKeyPEM)
+
+        val cf = CertificateFactory.getInstance("X.509")
+        val cert = cf.generateCertificate(ByteArrayInputStream(encoded))
+
+        return cert.publicKey;
+    }
+
+    fun publicKeyFromPEM(pem: String): PublicKey{
+        if (pem.startsWith("-----BEGIN CERTIFICATE-----"))
+            return certificateFromPEM(pem)
+
+        //TODO: Figure out a way to get the OID from the PEM bytes to set the right params
+        try {
+            return ecPublicKeyFromPEM(pem)
+        } catch (e: InvalidKeyException) {
+            return rsaPublicKeyFromPEM(pem)
+        } catch (e: InvalidKeySpecException) {
+            return rsaPublicKeyFromPEM(pem)
+        }
+    }
+
     /**
      * Creates a {@link java.security.PublicKey} from an RSA modulus n exponent e
      */
@@ -48,5 +93,20 @@ class KeyUtils {
         val rsaPublicKeySpec = RSAPublicKeySpec(BigInteger(1, n), BigInteger(1, e))
         val keyFactory = KeyFactory.getInstance("RSA")
         return keyFactory.generatePublic(rsaPublicKeySpec)
+    }
+
+    fun rsaPublicKeyFromModulusExponent(n: String, e: String): PublicKey {
+        return rsaPublicKeyFromModulusExponent(Base64.decodeBase64(n),Base64.decodeBase64(e))
+    }
+
+    fun rsaPublicKeyFromPEM(pem: String): PublicKey {
+        val publicKeyPEM = pem
+            .replace("-----BEGIN PUBLIC KEY-----", "")
+            .replace(System.lineSeparator().toRegex(), "")
+            .replace("-----END PUBLIC KEY-----", "")
+        val encoded: ByteArray = Base64.decodeBase64(publicKeyPEM)
+        val keyFactory = KeyFactory.getInstance("RSA")
+        val keySpec = X509EncodedKeySpec(encoded)
+        return keyFactory.generatePublic(keySpec)
     }
 }
