@@ -73,74 +73,74 @@ class ResultFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         if (args.qr != null) {
-            val DDCC = QRUnpacker().decode(args.qr!!)
-
-            when (DDCC.status) {
-                QRUnpacker.Status.NOT_SUPPORTED -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_base45)
-                QRUnpacker.Status.INVALID_BASE45 -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_base45)
-                QRUnpacker.Status.INVALID_ZIP -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_zip)
-                QRUnpacker.Status.INVALID_COSE -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_cose)
-                QRUnpacker.Status.KID_NOT_INCLUDED -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_kid_not_included)
-                QRUnpacker.Status.ISSUER_NOT_TRUSTED -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_issuer_not_trusted)
-                QRUnpacker.Status.TERMINATED_KEYS -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_terminated_keys)
-                QRUnpacker.Status.EXPIRED_KEYS -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_expired_keys)
-                QRUnpacker.Status.REVOKED_KEYS -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_revoked_keys)
-                QRUnpacker.Status.INVALID_SIGNATURE -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_signature)
-                QRUnpacker.Status.VERIFIED -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_verified)
-            }
-
-            if (binding.tvResultTitle.text == resources.getString(R.string.verification_status_verified)) {
-                binding.tvResultHeader.setBackground(resources.getDrawable(R.drawable.rounded_pill))
-                binding.tvResultTitleIcon.text = resources.getString(R.string.fa_check_circle_solid);
-            } else {
-                binding.tvResultHeader.setBackground(resources.getDrawable(R.drawable.rounded_pill_invalid))
-                binding.tvResultTitleIcon.text = resources.getString(R.string.fa_times_circle_solid);
-            }
-
-            if (DDCC.issuer != null) {
-                binding.tvResultSignedBy.text = "Signed by " + DDCC.issuer!!.displayName
-                binding.tvResultSignedByIcon.text = resources.getString(R.string.fa_check_circle_solid);
-            } else {
-                binding.tvResultSignedByIcon.text = resources.getString(R.string.fa_times_circle_solid);
-                binding.tvResultSignedBy.text = resources.getString(R.string.verification_status_invalid_signature)
-            }
-
-            if (DDCC.contents != null) {
-                val card = DDCCFormatter().run(DDCC.contents!!)
-
-                // Credential
-                setTextView(binding.tvResultScanDate, card.cardTitle, binding.tvResultScanDate)
-                setTextView(binding.tvResultValidUntil, card.validUntil, binding.llResultValidUntil)
-
-                // Patient
-                setTextView(binding.tvResultName, card.personName, binding.tvResultName)
-                setTextView(binding.tvResultPersonDetails, card.personDetails, binding.tvResultPersonDetails)
-                setTextView(binding.tvResultIdentifier, card.identifier, binding.tvResultIdentifier)
-
-                // Immunization
-                setTextView(binding.tvResultVaccineType, card.vaccineType, binding.tvResultVaccineType)
-                setTextView(binding.tvResultDoseTitle, card.dose, binding.tvResultDoseTitle)
-                setTextView(binding.tvResultDoseDate, card.doseDate, binding.llResultDoseDate)
-                setTextView(binding.tvResultVaccineValid, card.vaccineValid, binding.llResultVaccineValid)
-                setTextView(binding.tvResultVaccineInfo, card.vaccineInfo, binding.llResultVaccineInfo)
-                setTextView(binding.tvResultVaccineInfo2, card.vaccineInfo2, binding.llResultVaccineInfo2)
-                setTextView(binding.tvResultCentre, card.location, binding.llResultCentre)
-                setTextView(binding.tvResultHcid, card.hcid, binding.llResultHcid)
-                setTextView(binding.tvResultPha, card.pha, binding.llResultPha)
-                setTextView(binding.tvResultHw, card.hw, binding.llResultHw)
-
-                // Recommendation
-                setTextView(binding.tvResultNextDose, card.nextDose, binding.llResultNextDose)
-
-                // Status
-                setTextView(binding.tvResultStatus, "... Processing ...", binding.tvResultStatus)
-
-                showStatus(DDCC.contents!!)
-            }
+            resolveAndShowQR(args.qr!!)
         }
 
         binding.btResultClose.setOnClickListener {
             findNavController().navigate(R.id.action_ResultFragment_to_HomeFragment)
+        }
+    }
+
+    fun updateScreen(DDCC: QRUnpacker.VerificationResult) {
+        when (DDCC.status) {
+            QRUnpacker.Status.NOT_SUPPORTED -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_base45)
+            QRUnpacker.Status.INVALID_BASE45 -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_base45)
+            QRUnpacker.Status.INVALID_ZIP -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_zip)
+            QRUnpacker.Status.INVALID_COSE -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_cose)
+            QRUnpacker.Status.KID_NOT_INCLUDED -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_kid_not_included)
+            QRUnpacker.Status.ISSUER_NOT_TRUSTED -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_issuer_not_trusted)
+            QRUnpacker.Status.TERMINATED_KEYS -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_terminated_keys)
+            QRUnpacker.Status.EXPIRED_KEYS -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_expired_keys)
+            QRUnpacker.Status.REVOKED_KEYS -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_revoked_keys)
+            QRUnpacker.Status.INVALID_SIGNATURE -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_signature)
+            QRUnpacker.Status.VERIFIED -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_verified)
+        }
+
+        if (binding.tvResultTitle.text == resources.getString(R.string.verification_status_verified)) {
+            binding.tvResultHeader.setBackground(resources.getDrawable(R.drawable.rounded_pill))
+            binding.tvResultTitleIcon.text = resources.getString(R.string.fa_check_circle_solid);
+        } else {
+            binding.tvResultHeader.setBackground(resources.getDrawable(R.drawable.rounded_pill_invalid))
+            binding.tvResultTitleIcon.text = resources.getString(R.string.fa_times_circle_solid);
+        }
+
+        if (DDCC.issuer != null) {
+            binding.tvResultSignedBy.text = "Signed by " + DDCC.issuer!!.displayName
+            binding.tvResultSignedByIcon.text = resources.getString(R.string.fa_check_circle_solid);
+        } else {
+            binding.tvResultSignedByIcon.text = resources.getString(R.string.fa_times_circle_solid);
+            binding.tvResultSignedBy.text = resources.getString(R.string.verification_status_invalid_signature)
+        }
+
+        if (DDCC.contents != null) {
+            val card = DDCCFormatter().run(DDCC.contents!!)
+
+            // Credential
+            setTextView(binding.tvResultScanDate, card.cardTitle, binding.tvResultScanDate)
+            setTextView(binding.tvResultValidUntil, card.validUntil, binding.llResultValidUntil)
+
+            // Patient
+            setTextView(binding.tvResultName, card.personName, binding.tvResultName)
+            setTextView(binding.tvResultPersonDetails, card.personDetails, binding.tvResultPersonDetails)
+            setTextView(binding.tvResultIdentifier, card.identifier, binding.tvResultIdentifier)
+
+            // Immunization
+            setTextView(binding.tvResultVaccineType, card.vaccineType, binding.tvResultVaccineType)
+            setTextView(binding.tvResultDoseTitle, card.dose, binding.tvResultDoseTitle)
+            setTextView(binding.tvResultDoseDate, card.doseDate, binding.llResultDoseDate)
+            setTextView(binding.tvResultVaccineValid, card.vaccineValid, binding.llResultVaccineValid)
+            setTextView(binding.tvResultVaccineInfo, card.vaccineInfo, binding.llResultVaccineInfo)
+            setTextView(binding.tvResultVaccineInfo2, card.vaccineInfo2, binding.llResultVaccineInfo2)
+            setTextView(binding.tvResultCentre, card.location, binding.llResultCentre)
+            setTextView(binding.tvResultHcid, card.hcid, binding.llResultHcid)
+            setTextView(binding.tvResultPha, card.pha, binding.llResultPha)
+            setTextView(binding.tvResultHw, card.hw, binding.llResultHw)
+
+            // Recommendation
+            setTextView(binding.tvResultNextDose, card.nextDose, binding.llResultNextDose)
+
+            // Status
+            setTextView(binding.tvResultStatus, "... Processing ...", binding.tvResultStatus)
         }
     }
 
@@ -158,11 +158,35 @@ class ResultFragment : Fragment() {
         }
     }
 
+    fun resolveAndShowQR(qr: String) = runBlocking {
+        var viewModelJob = Job()
+        val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
+
+        uiScope.launch {
+            withContext(Dispatchers.IO) {
+                val result = resolveQR(qr)
+
+                if (result.contents != null)
+                    showStatus(result.contents!!)
+
+                withContext(Dispatchers.Main){
+                    updateScreen(result)
+                }
+            }
+        }
+    }
+
     private fun open(file: String): InputStream {
         return resources.assets.open(file);
     }
 
+    suspend fun resolveQR(qr: String): QRUnpacker.VerificationResult {
+        // Triggers Networking
+        return QRUnpacker().decode(qr)
+    }
+
     suspend fun resolveStatus(DDCC: Composition): Boolean {
+        // Might be slow
         return CQLEvaluator(FHIRLibraryLoader(::open)).resolve(
             "CompletedImmunization",
             VersionedIdentifier().withId("DDCCPass").withVersion("0.0.1"),
