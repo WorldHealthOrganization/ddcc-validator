@@ -8,11 +8,9 @@ import org.who.ddccverifier.services.*
 import org.who.ddccverifier.services.fhir.CQLEvaluator
 import org.who.ddccverifier.services.fhir.FHIRLibraryLoader
 import org.who.ddccverifier.services.qrs.QRUnpacker
-import org.who.ddccverifier.services.qrs.hcert.HCERTVerifier
-import org.who.ddccverifier.services.qrs.hcert.WHOCBOR2FHIR
 import java.io.InputStream
 
-class WHOQR2ResultCardTest {
+class QRViewTest {
 
     private val ddccPass = VersionedIdentifier().withId("DDCCPass").withVersion("0.0.1")
 
@@ -27,7 +25,7 @@ class WHOQR2ResultCardTest {
     }
 
     @Test
-    fun cardResultBuilderQR1() {
+    fun viewWHOQR1() {
         val qr1 = open("WHOQR1Contents.txt")
         val verified = QRUnpacker().decode(qr1)
 
@@ -71,7 +69,7 @@ class WHOQR2ResultCardTest {
     }
 
     @Test
-    fun cardResultBuilderQR2() {
+    fun viewWHOQR2() {
         val qr2 = open("WHOQR2Contents.txt")
         val verified = QRUnpacker().decode(qr2)
 
@@ -103,6 +101,50 @@ class WHOQR2ResultCardTest {
         assertEquals("Location/971", card2.location)
         assertEquals("111000111", card2.hcid)
         assertEquals(null, card2.pha)
+        assertEquals(null, card2.hw)
+
+        // Recommendation
+        assertEquals(null, card2.nextDose)
+
+        assertEquals(true, status)
+    }
+
+    @Test
+    fun viewEUQR1() {
+        val qr1 = open("EUQR1Contents.txt")
+        val verified = QRUnpacker().decode(qr1)
+
+        assertEquals(QRUnpacker.Status.VERIFIED, verified.status)
+
+        val card2 = DDCCFormatter().run(verified.contents!!)
+        val status = cqlEvaluator.resolve(
+            "CompletedImmunization", ddccPass,
+            verified.contents!!) as Boolean
+
+        val context = cqlEvaluator.run(ddccPass, verified.contents!!)
+        assertEquals(true, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
+        assertNotNull(context.resolveExpressionRef("GetFinalDose").evaluate(context))
+
+        // Credential
+        assertEquals("COVID-19 Vaccination", card2.cardTitle!!.split(" - ")[1])
+        assertEquals("Valid from Jun 30, 2021 to Jun 30, 2022", card2.validUntil)
+
+        // Patient
+        assertEquals("Monika Fellhauer, MONIKA FELLHAUER", card2.personName)
+        assertEquals("Feb 24, 1984", card2.personDetails)
+        assertEquals(null, card2.identifier)
+
+        // Immunization
+        assertEquals("SARS-CoV-2 mRNA Vaccine", card2.vaccineType)
+        assertEquals("Dose: 2 of 2", card2.dose)
+        assertEquals("May 27, 2021", card2.doseDate)
+        assertEquals(null, card2.vaccineValid)
+        assertEquals("COVID-19", card2.vaccineAgainst)
+        assertEquals("EU/1/20/1528, ORG-100030215", card2.vaccineInfo)
+        assertEquals("ORG-100030215", card2.vaccineInfo2)
+        assertEquals("DE", card2.location)
+        assertEquals(null, card2.hcid)
+        assertEquals("Robert Koch-Institut", card2.pha)
         assertEquals(null, card2.hw)
 
         // Recommendation

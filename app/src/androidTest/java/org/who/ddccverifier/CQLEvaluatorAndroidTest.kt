@@ -10,8 +10,7 @@ import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.opencds.cqf.cql.engine.execution.JsonCqlLibraryReader
-import org.who.ddccverifier.services.qrs.hcert.WHOCBOR2FHIR
-import org.who.ddccverifier.services.qrs.hcert.HCERTVerifier
+import org.who.ddccverifier.services.qrs.hcert.HCertVerifier
 import org.who.ddccverifier.services.fhir.CQLEvaluator
 import org.who.ddccverifier.services.fhir.FHIRLibraryLoader
 import org.who.ddccverifier.services.qrs.QRUnpacker
@@ -64,7 +63,7 @@ class CQLEvaluatorAndroidTest {
     @Test
     fun evaluateDDCCPassOnWHOQR1FromQRTest() {
         val qr1 = open("WHOQR1Contents.txt")
-        val verified = HCERTVerifier().unpackAndVerify(qr1)
+        val verified = HCertVerifier().unpackAndVerify(qr1)
 
         Assert.assertEquals(QRUnpacker.Status.VERIFIED, verified.status)
 
@@ -78,7 +77,21 @@ class CQLEvaluatorAndroidTest {
     @Test
     fun evaluateDDCCPassOnWHOQR2FromQRTest() {
         val qr1 = open("WHOQR2Contents.txt")
-        val verified = HCERTVerifier().unpackAndVerify(qr1)
+        val verified = HCertVerifier().unpackAndVerify(qr1)
+
+        Assert.assertEquals(QRUnpacker.Status.VERIFIED, verified.status)
+
+        val context = cqlEvaluator.run(ddccPass, verified.contents!!)
+
+        Assert.assertEquals(true, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
+        Assert.assertNull(context.resolveExpressionRef("GetFinalDose").evaluate(context))
+        Assert.assertNotNull(context.resolveExpressionRef("GetSingleDose").evaluate(context))
+    }
+
+    @Test
+    fun evaluateDDCCPassOnEUQR1FromQRTest() {
+        val qr1 = open("EUQR1Contents.txt")
+        val verified = HCertVerifier().unpackAndVerify(qr1)
 
         Assert.assertEquals(QRUnpacker.Status.VERIFIED, verified.status)
 

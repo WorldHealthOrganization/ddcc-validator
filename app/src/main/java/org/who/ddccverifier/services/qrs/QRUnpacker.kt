@@ -1,8 +1,7 @@
 package org.who.ddccverifier.services.qrs
 
-import org.hl7.fhir.instance.model.api.IDomainResource
 import org.hl7.fhir.r4.model.Composition
-import org.who.ddccverifier.services.qrs.hcert.HCERTVerifier
+import org.who.ddccverifier.services.qrs.hcert.HCertVerifier
 import org.who.ddccverifier.services.trust.TrustRegistry
 
 /**
@@ -32,7 +31,7 @@ class QRUnpacker {
 
     fun decode(qrPayload : String): VerificationResult {
         if (qrPayload.startsWith("HC1:")) {
-            return HCERTVerifier().unpackAndVerify(qrPayload);
+            return HCertVerifier().unpackAndVerify(qrPayload);
         }
         return QRUnpacker.VerificationResult(QRUnpacker.Status.NOT_SUPPORTED, null, null, qrPayload)
     }

@@ -4,40 +4,19 @@ import com.upokecenter.cbor.CBORObject
 import com.upokecenter.cbor.CBORType
 import org.hl7.fhir.instance.model.api.IBaseDatatype
 import org.hl7.fhir.r4.model.*
-import java.util.*
 
 /**
- * Translates a DDCC QR CBOR object into FHIR Objects
+ * Translates an EU DCC QR CBOR payload into FHIR Objects
  */
-class EUDCCCBOR2FHIR {
-    val CWT_ISSUER = 1
-    val CWT_SUBJECT = 2
-    val CWT_AUDIENCE = 3
-    val CWT_EXPIRATION = 4
-    val CWT_NOT_BEFORE = 5
-    val CWT_ISSUED_AT = 6
-    val CWT_ID = 7;
-    val HCERT = -260;
-    val HCERT_V1 = 1;
-    val UY_STRING_PAYLOAD = 99;
-
-
+class WHO2FHIR {
     private fun parseDateType(date: CBORObject?): DateType? {
         if (date == null || date.isUndefined) return null
-        if (date.isNumber) {
-            return DateType(Date(date.AsInt64()*1000));
-        } else {
-            return DateType(date.AsString())
-        }
+        return DateType(date.AsString())
     }
 
     private fun parseDateTimeType(date: CBORObject?): DateTimeType? {
         if (date == null || date.isUndefined) return null
-        if (date.isNumber) {
-            return DateTimeType(Date(date.AsInt64()*1000));
-        } else {
-            return DateTimeType(date.AsString())
-        }
+        return DateTimeType(date.AsString())
     }
 
     private fun parsePositiveIntType(positiveInt: CBORObject?): PositiveIntType? {
@@ -89,21 +68,14 @@ class EUDCCCBOR2FHIR {
     private fun parseCoding(obj: CBORObject?): Coding? {
         if (obj == null || obj.isUndefined) return null
         return Coding().apply {
-            code = obj.AsString()
+            code = obj["code"]?.AsString()
+            system = obj["system"]?.AsString()
         }
     }
 
-    private fun parseCoding(obj: CBORObject?, st: String): Coding? {
+    private fun parseCodableConcept(obj: CBORObject?): CodeableConcept? {
         if (obj == null || obj.isUndefined) return null
-        return Coding().apply {
-            code = obj.AsString()
-            system = st;
-        }
-    }
-
-    private fun parseCodableConcept(obj: CBORObject?, system: String): CodeableConcept? {
-        if (obj == null || obj.isUndefined) return null
-        return CodeableConcept(parseCoding(obj, system))
+        return CodeableConcept(parseCoding(obj))
     }
 
     private fun parseOrganization(obj: CBORObject?): Organization? {
@@ -131,19 +103,7 @@ class EUDCCCBOR2FHIR {
     private fun parseHumanName(obj: CBORObject?): HumanName? {
         if (obj == null || obj.isUndefined) return null
         return HumanName().apply {
-            use = HumanName.NameUse.OFFICIAL
-            family = obj["fn"].AsString()
-            addGiven(obj["gn"].AsString())
-        }
-    }
-
-
-    private fun parseTransliteratedHumanName(obj: CBORObject?): HumanName? {
-        if (obj == null || obj.isUndefined) return null
-        return HumanName().apply {
-            use = HumanName.NameUse.OFFICIAL
-            family = obj["fnt"].AsString()
-            addGiven(obj["gnt"].AsString())
+            text = obj.AsString()
         }
     }
 
@@ -165,56 +125,42 @@ class EUDCCCBOR2FHIR {
         }
     }
 
-    fun run(CWT: CBORObject): Composition {
-        val iss = CWT[CWT_ISSUER]
-        val sub = CWT[CWT_SUBJECT]
-        val aud = CWT[CWT_AUDIENCE]
-        val exp = CWT[CWT_EXPIRATION]
-        val nbf = CWT[CWT_NOT_BEFORE]
-        val iat = CWT[CWT_ISSUED_AT]
-        val cert = CWT[HCERT][HCERT_V1]
-
+    fun run(DDCC: CBORObject): Composition {
         val myPatient = Patient().apply{
-            name = listOfNotNull(
-                parseHumanName(cert["nam"]),
-                parseTransliteratedHumanName(cert["nam"])
-            )
-            birthDateElement = parseDateType(cert["dob"])
+            name = listOf(parseHumanName(DDCC["name"]))
+            identifier = listOfNotNull(parseIdentifier(DDCC["identifier"]))
+            birthDateElement = parseDateType(DDCC["birthDate"])
+            gender = parseGender(DDCC["sex"])
         }
 
-        val immunizations = mutableListOf<Reference>()
-        val authors = mutableListOf<Reference>()
-
-        if (!cert["v"].isUndefined) {
-            for (i in 0..cert["v"].size()-1) {
-                val vax = cert["v"][i]
-                val myAuthority = parseOrganization(vax["is"])
-                val myImmunization = Immunization().apply {
-                    identifier = listOfNotNull(parseIdentifier(vax["ci"]))
-                    patient = Reference(myPatient)
-                    vaccineCode = parseCodableConcept(vax["vp"], "http://snomed.info/sct")
-                    occurrence = parseDateTimeType(vax["dt"])
-                    protocolApplied =
-                        listOfNotNull(Immunization.ImmunizationProtocolAppliedComponent().apply {
-                            targetDisease = listOfNotNull(parseCodableConcept(vax["tg"], "http://snomed.info/sct"))
-                            doseNumber = parsePositiveIntType(vax["dn"])
-                            seriesDoses = parsePositiveIntType(vax["sd"])
-                            authority = Reference(myAuthority)
-                        })
-                    manufacturer = parseIdentifierReference(vax["ma"])
-                    extension = listOfNotNull(
-                        parseExtension(parseCoding(vax["mp"], ""),"https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineBrand"),
-                        parseExtension(parseCoding(vax["ma"], ""),"https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineMarketAuthorization"),
-                        parseExtension(parseCoding(vax["co"], "urn:iso:std:iso:3166"),"https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCCountryOfVaccination"),
-                    )
-                }
-
-                authors.add(Reference(myAuthority))
-                immunizations.add(Reference(myImmunization))
+        val myImmunization = Immunization().apply{
+            patient = Reference().apply {
+                identifier = parseIdentifier(DDCC["identifier"])
             }
+            vaccineCode = parseCodableConcept(DDCC["vaccine"])
+            occurrence = parseDateTimeType(DDCC["date"])
+            lotNumber = DDCC["lot"]?.AsString()
+            protocolApplied = listOfNotNull(Immunization.ImmunizationProtocolAppliedComponent().apply {
+                targetDisease = listOfNotNull(parseCodableConcept(DDCC["disease"]))
+                doseNumber = parsePositiveIntType(DDCC["dose"])
+                seriesDoses = parsePositiveIntType(DDCC["total_doses"])
+                authority = Reference(parseOrganization(DDCC["pha"]))
+            })
+            location = parseLocation(DDCC["centre"])
+            performer = listOfNotNull(parsePerformer(DDCC["hw"]))
+            manufacturer = parseIdentifierReference(DDCC["manufacturer"])
+            extension = listOfNotNull(
+                parseExtension(parseCoding(DDCC["brand"]), "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineBrand"),
+                parseExtension(parseCoding(DDCC["ma_holder"]), "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineMarketAuthorization"),
+                parseExtension(parseCoding(DDCC["country"]), "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCCountryOfVaccination"),
+                parseExtension(parseDateTimeType(DDCC["vaccine_valid"]), "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineValidFrom"),
+            )
         }
+
+        val myRecommendation = createRecommendationBasedOn(DDCC["due_date"], myImmunization)
 
         val myComposition = Composition().apply {
+            id = DDCC["hcid"]?.AsString()
             type = CodeableConcept(Coding("http://loinc.org", "82593-5", "Immunization summary report"))
             category = listOf(CodeableConcept(Coding().apply {
                 code = "ddcc-vs"
@@ -223,24 +169,26 @@ class EUDCCCBOR2FHIR {
             title = "International Certificate of Vaccination or Prophylaxis"
             event = listOf(Composition.CompositionEventComponent().apply {
                 period = Period().apply {
-                    startElement = parseDateTimeType(nbf) ?: parseDateTimeType(iat)
-                    endElement = parseDateTimeType(exp)
+                    startElement = parseDateTimeType(DDCC["valid_from"])
+                    endElement = parseDateTimeType(DDCC["valid_until"])
                 }
             })
-            author = authors
+            author = listOfNotNull(myImmunization.protocolAppliedFirstRep.authority)
             section = listOf(Composition.SectionComponent().apply {
                 code = CodeableConcept(Coding("http://loinc.org", "11369-6", "History of Immunization Narrative"))
-                author = authors
-                entry = immunizations
+                author = listOfNotNull(myImmunization.protocolAppliedFirstRep.authority)
+                focus = Reference(myImmunization)
+                entry = listOfNotNull(
+                    Reference(myImmunization),
+                    myRecommendation?.let { Reference(myRecommendation) }
+                )
             })
         }
 
         // Is this really necessary? Why aren't these objects part of contained to start with?
         myComposition.addContained(myPatient)
-
-        for (imm in immunizations) {
-            myComposition.addContained(imm.resource as Resource)
-        }
+        myComposition.addContained(myImmunization)
+        myRecommendation?.let { myComposition.addContained(myRecommendation) }
 
         return myComposition
     }

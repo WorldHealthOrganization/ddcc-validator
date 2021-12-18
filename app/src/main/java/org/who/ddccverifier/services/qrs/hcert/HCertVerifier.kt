@@ -13,9 +13,9 @@ import org.who.ddccverifier.services.trust.TrustRegistry
 import java.security.PublicKey
 
 /**
- * Turns HC1 QR Codes into CBOR Objects
+ * Turns HC1 QR Codes into Fhir Objects
  */
-class HCERTVerifier {
+class HCertVerifier {
     private val prefix = "HC1:"
 
     private fun prefixDecode(qr: String): String {
@@ -78,7 +78,7 @@ class HCERTVerifier {
         val decodedBytes = base45Decode(hc1Decoded) ?: return null
         val deflatedBytes = deflate(decodedBytes) ?: return null
         val signedMessage = decodeSignedMessage(deflatedBytes) ?: return null
-        return getContent(signedMessage);
+        return getContent(signedMessage)
     }
 
     fun unpackAndVerify(qr: String): QRUnpacker.VerificationResult {

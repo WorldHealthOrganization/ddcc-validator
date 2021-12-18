@@ -17,8 +17,6 @@ import org.who.ddccverifier.services.*
 import org.who.ddccverifier.services.fhir.CQLEvaluator
 import org.who.ddccverifier.services.fhir.FHIRLibraryLoader
 import org.who.ddccverifier.services.qrs.QRUnpacker
-import org.who.ddccverifier.services.qrs.hcert.HCERTVerifier
-import org.who.ddccverifier.services.qrs.hcert.WHOCBOR2FHIR
 import java.io.InputStream
 
 /**

@@ -3,13 +3,12 @@ package org.who.ddccverifier
 import org.junit.Test
 
 import org.junit.Assert.*
-import org.who.ddccverifier.services.qrs.hcert.HCERTVerifier
+import org.who.ddccverifier.services.qrs.hcert.HCertVerifier
 import ca.uhn.fhir.context.FhirContext
-import org.who.ddccverifier.services.qrs.hcert.WHOCBOR2FHIR
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.who.ddccverifier.services.qrs.QRUnpacker
 
-class WHOQR2FHIRTest {
+class QRVerifyTest {
 
     private val mapper = ObjectMapper()
     private val jsonParser = FhirContext.forR4().newJsonParser()
@@ -24,9 +23,9 @@ class WHOQR2FHIRTest {
     }
 
     @Test
-    fun fhirQR1() {
+    fun verifyWHOQR1() {
         val qr1 = open("WHOQR1Contents.txt")
-        val verified = HCERTVerifier().unpackAndVerify(qr1)
+        val verified = HCertVerifier().unpackAndVerify(qr1)
 
         assertNotNull(verified)
         assertEquals(QRUnpacker.Status.VERIFIED, verified.status)
@@ -37,14 +36,28 @@ class WHOQR2FHIRTest {
     }
 
     @Test
-    fun fhirQR2() {
+    fun verifyWHOQR2() {
         val qr2 = open("WHOQR2Contents.txt")
-        val verified = HCERTVerifier().unpackAndVerify(qr2)
+        val verified = HCertVerifier().unpackAndVerify(qr2)
         assertNotNull(verified)
         assertEquals(QRUnpacker.Status.VERIFIED, verified.status)
 
         val json = jsonParser.encodeResourceToString(verified.contents!!)
 
         jsonEquals(open("WHOQR2FHIRComposition.json"), json)
+    }
+
+    @Test
+    fun verifyWHOEUQR1() {
+        val qr1 = open("EUQR1Contents.txt")
+        val verified = HCertVerifier().unpackAndVerify(qr1)
+
+        assertNotNull(verified)
+        assertEquals(QRUnpacker.Status.VERIFIED, verified.status)
+
+        val json = jsonParser.encodeResourceToString(verified.contents!!)
+
+        jsonEquals(open("EUQR1FHIRComposition.json"), json)
+
     }
 }

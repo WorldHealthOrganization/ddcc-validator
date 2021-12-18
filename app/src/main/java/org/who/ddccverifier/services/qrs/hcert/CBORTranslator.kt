@@ -11,8 +11,8 @@ class CBORTranslator {
 
     fun toFhir(hcertPayload: CBORObject): Composition {
         if (hcertPayload[EU_DCC_CODE] != null)
-            return EUDCCCBOR2FHIR().run(hcertPayload)
+            return DCC2FHIR().run(hcertPayload)
 
-        return WHOCBOR2FHIR().run(hcertPayload)
+        return WHO2FHIR().run(hcertPayload)
     }
 }
