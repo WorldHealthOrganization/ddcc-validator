@@ -1,24 +1,18 @@
 package org.who.ddccverifier.services.trust
 
 import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import org.json.JSONObject
-import org.json.JSONTokener
 import java.net.URL
 import java.security.PublicKey
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
-import android.icu.lang.UCharacter.GraphemeClusterBreak.V
 import com.fasterxml.jackson.annotation.JsonValue
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonDeserializer
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-
-import org.checkerframework.checker.units.qual.K
 
 /**
  * Resolve Keys for Verifiers
