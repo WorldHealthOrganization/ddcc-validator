@@ -11,8 +11,8 @@ android {
         applicationId "org.who.ddccverifier"
         minSdk 25
         targetSdk 30
-        versionCode 5
-        versionName "0.0.5"
+        versionCode 6
+        versionName "0.0.6"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -90,7 +90,7 @@ dependencies {
     implementation 'com.fasterxml.jackson.module:jackson-module-jaxb-annotations:2.13.0'
 
     // Necessary to call JSON APIs (Download the Trust Registry)
-    implementation "com.fasterxml.jackson.module:jackson-module-kotlin:2.13.+"
+    implementation "com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0"
 
     // Necessary to Load CQL Engine's evaluation classes generated with JAXB (Versions must match)
     implementation 'org.jvnet.jaxb2_commons:jaxb2-basics:0.12.0'

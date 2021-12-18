@@ -51,10 +51,10 @@ COVID-19 Credential Verifier app for Android using the WHO's Digital Documentati
 - [ ] 11.1. Unpack and Verify
 - [ ] 11.2. Trust Registry check
 - [ ] 11.3. Display Info on Screen
-- [ ] 12. EU DCC Processing.
-- [ ] 12.1. Unpack and Verify
-- [ ] 12.2. Trust Registry check
-- [ ] 12.3. Display Info on Screen
+- [x] 12. EU DCC Processing.
+- [x] 12.1. Unpack and Verify
+- [x] 12.2. Trust Registry check
+- [x] 12.3. Display Info on Screen
 
 # Development Overview
 
