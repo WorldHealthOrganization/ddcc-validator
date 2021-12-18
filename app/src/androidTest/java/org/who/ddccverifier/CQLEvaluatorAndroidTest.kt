@@ -7,6 +7,7 @@ import org.cqframework.cql.elm.execution.VersionedIdentifier
 import org.hl7.fhir.r4.model.Bundle
 import org.hl7.fhir.r4.model.Composition
 import org.junit.Assert
+import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.opencds.cqf.cql.engine.execution.JsonCqlLibraryReader
@@ -14,6 +15,7 @@ import org.who.ddccverifier.services.qrs.hcert.HCertVerifier
 import org.who.ddccverifier.services.fhir.CQLEvaluator
 import org.who.ddccverifier.services.fhir.FHIRLibraryLoader
 import org.who.ddccverifier.services.qrs.QRUnpacker
+import org.who.ddccverifier.services.trust.TrustRegistry
 import java.io.InputStream
 import java.io.StringReader
 
@@ -28,6 +30,14 @@ class CQLEvaluatorAndroidTest {
 
     private fun inputStream(assetName: String): InputStream? {
         return javaClass.classLoader?.getResourceAsStream(assetName)
+    }
+
+    companion object {
+        @BeforeClass
+        @JvmStatic
+        fun setupClass() {
+            TrustRegistry.init()
+        }
     }
 
     private fun open(assetName: String): String {
