@@ -52,10 +52,9 @@ class DDCCFormatter {
     }
 
     // Patient Info
-    private fun formatName(names: List<HumanName>): String? {
-        return names.groupBy(
-            { it.text ?: it.nameAsSingleString }
-        ).keys.joinToString(", ")
+    private fun formatName(names: List<HumanName>?): String? {
+        if (names == null || names.isEmpty()) return null
+        return names.groupBy { it.text ?: it.nameAsSingleString }.keys.joinToString(", ")
     }
 
     private fun formatPersonDetails(dob: Date?, gender: Enumerations.AdministrativeGender?): String? {
@@ -67,7 +66,7 @@ class DDCCFormatter {
         }
     }
 
-    private fun formatIDs(identifiers: List<Identifier>): String? {
+    private fun formatIDs(identifiers: List<Identifier>?): String? {
         if (identifiers == null || identifiers.isEmpty()) return null
         return "ID: " + identifiers.groupBy { it.value }.keys.joinToString(", ")
     }
@@ -104,7 +103,7 @@ class DDCCFormatter {
 
     private fun formatPractioner(practitioner: Practitioner?): String? {
         if (practitioner?.identifier == null) return null
-        return practitioner?.identifier.groupBy {
+        return practitioner.identifier.groupBy {
             it.value
         }.keys.joinToString(", ")
     }
@@ -118,7 +117,7 @@ class DDCCFormatter {
 
     private fun formatOrganization(org: Organization?): String? {
         if (org?.identifier == null) return null
-        return org?.identifier.groupBy {
+        return org.identifier.groupBy {
             it.value
         }.keys.joinToString(", ")
     }

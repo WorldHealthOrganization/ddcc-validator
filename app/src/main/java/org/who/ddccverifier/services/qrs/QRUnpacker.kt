@@ -31,8 +31,8 @@ class QRUnpacker {
 
     fun decode(qrPayload : String): VerificationResult {
         if (qrPayload.startsWith("HC1:")) {
-            return HCertVerifier().unpackAndVerify(qrPayload);
+            return HCertVerifier().unpackAndVerify(qrPayload)
         }
-        return QRUnpacker.VerificationResult(QRUnpacker.Status.NOT_SUPPORTED, null, null, qrPayload)
+        return VerificationResult(Status.NOT_SUPPORTED, null, null, qrPayload)
     }
 }

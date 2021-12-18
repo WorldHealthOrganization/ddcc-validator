@@ -108,8 +108,8 @@ class CQLEvaluatorAndroidTest {
         val context = cqlEvaluator.run(ddccPass, verified.contents!!)
 
         Assert.assertEquals(true, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
-        Assert.assertNull(context.resolveExpressionRef("GetFinalDose").evaluate(context))
-        Assert.assertNotNull(context.resolveExpressionRef("GetSingleDose").evaluate(context))
+        Assert.assertNotNull(context.resolveExpressionRef("GetFinalDose").evaluate(context))
+        Assert.assertNull(context.resolveExpressionRef("GetSingleDose").evaluate(context))
     }
 
     @Test

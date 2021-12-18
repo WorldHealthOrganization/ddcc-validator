@@ -63,7 +63,7 @@ object KeyUtils {
             .replace("-----END CERTIFICATE-----", "")
         val encoded: ByteArray = Base64.decode(publicKeyPEM, Base64.DEFAULT)
         val cert = CertificateFactory.getInstance("X.509").generateCertificate(ByteArrayInputStream(encoded))
-        return cert.publicKey;
+        return cert.publicKey
     }
 
     fun publicKeyFromPEM(pem: String): PublicKey{
@@ -71,12 +71,12 @@ object KeyUtils {
             return certificateFromPEM(pem)
 
         //TODO: Figure out a way to get the OID from the PEM bytes to set the right params
-        try {
-            return ecPublicKeyFromPEM(pem)
+        return try {
+            ecPublicKeyFromPEM(pem)
         } catch (e: InvalidKeyException) {
-            return rsaPublicKeyFromPEM(pem)
+            rsaPublicKeyFromPEM(pem)
         } catch (e: InvalidKeySpecException) {
-            return rsaPublicKeyFromPEM(pem)
+            rsaPublicKeyFromPEM(pem)
         }
     }
 

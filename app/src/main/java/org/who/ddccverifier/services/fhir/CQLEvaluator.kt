@@ -17,7 +17,7 @@ import org.opencds.cqf.cql.engine.execution.*
 object LazyLoaderR4FhirModelResolver: R4FhirModelResolver() {
     override fun initialize() {
         // Override the creation of a new Context, use Cached Version instead
-        fhirContext = FhirContext.forCached(FhirVersionEnum.R4);
+        fhirContext = FhirContext.forCached(FhirVersionEnum.R4)
         // do not load everything (Overriding initialize cuts 50% of evaluation time)
         fhirContext.registerCustomType(AnnotatedUuidType::class.java)
     }

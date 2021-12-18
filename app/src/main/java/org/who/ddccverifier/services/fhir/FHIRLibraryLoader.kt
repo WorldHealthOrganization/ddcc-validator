@@ -1,6 +1,5 @@
 package org.who.ddccverifier.services.fhir
 
-import android.util.Log
 import org.cqframework.cql.elm.execution.Library
 import org.cqframework.cql.elm.execution.VersionedIdentifier
 import org.opencds.cqf.cql.engine.execution.JsonCqlLibraryReader

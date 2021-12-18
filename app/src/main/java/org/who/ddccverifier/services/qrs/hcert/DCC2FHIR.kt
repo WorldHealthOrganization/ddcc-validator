@@ -16,27 +16,27 @@ class DCC2FHIR {
     val CWT_EXPIRATION = 4
     val CWT_NOT_BEFORE = 5
     val CWT_ISSUED_AT = 6
-    val CWT_ID = 7;
-    val HCERT = -260;
-    val HCERT_V1 = 1;
-    val UY_STRING_PAYLOAD = 99;
+    val CWT_ID = 7
+    val HCERT = -260
+    val HCERT_V1 = 1
+    val UY_STRING_PAYLOAD = 99
 
 
     private fun parseDateType(date: CBORObject?): DateType? {
         if (date == null || date.isUndefined) return null
-        if (date.isNumber) {
-            return DateType(Date(date.AsInt64()*1000));
+        return if (date.isNumber) {
+            DateType(Date(date.AsInt64()*1000))
         } else {
-            return DateType(date.AsString())
+            DateType(date.AsString())
         }
     }
 
     private fun parseDateTimeType(date: CBORObject?): DateTimeType? {
         if (date == null || date.isUndefined) return null
-        if (date.isNumber) {
-            return DateTimeType(Date(date.AsInt64()*1000));
+        return if (date.isNumber) {
+            DateTimeType(Date(date.AsInt64()*1000))
         } else {
-            return DateTimeType(date.AsString())
+            DateTimeType(date.AsString())
         }
     }
 
@@ -68,36 +68,11 @@ class DCC2FHIR {
         }
     }
 
-    private fun parsePerformer(obj: CBORObject?) : Immunization.ImmunizationPerformerComponent? {
-        if (obj == null || obj.isUndefined) return null
-        return Immunization.ImmunizationPerformerComponent().apply {
-            actor = Reference(Practitioner().apply {
-                identifier = listOf(Identifier().apply {
-                    value = obj.AsString()
-                })
-            })
-        }
-    }
-
-    private fun parseLocation(obj: CBORObject?): Reference? {
-        if (obj == null || obj.isUndefined) return null
-        return Reference().apply {
-            display = obj.AsString()
-        }
-    }
-
-    private fun parseCoding(obj: CBORObject?): Coding? {
-        if (obj == null || obj.isUndefined) return null
-        return Coding().apply {
-            code = obj.AsString()
-        }
-    }
-
     private fun parseCoding(obj: CBORObject?, st: String): Coding? {
         if (obj == null || obj.isUndefined) return null
         return Coding().apply {
             code = obj.AsString()
-            system = st;
+            system = st
         }
     }
 
@@ -123,11 +98,6 @@ class DCC2FHIR {
         }
     }
 
-    private fun parseGender(obj: CBORObject?): Enumerations.AdministrativeGender? {
-        if (obj == null || obj.isUndefined) return null
-        return Enumerations.AdministrativeGender.fromCode(obj["code"].AsString())
-    }
-
     private fun parseHumanName(obj: CBORObject?): HumanName? {
         if (obj == null || obj.isUndefined) return null
         return HumanName().apply {
@@ -144,24 +114,6 @@ class DCC2FHIR {
             use = HumanName.NameUse.OFFICIAL
             family = obj["fnt"].AsString()
             addGiven(obj["gnt"].AsString())
-        }
-    }
-
-    private fun createRecommendationBasedOn(due_date: CBORObject?, immunization: Immunization): ImmunizationRecommendation? {
-        if (due_date == null || due_date.isUndefined) return null
-        return ImmunizationRecommendation().apply {
-            patient = immunization.patient
-            recommendation = listOf(ImmunizationRecommendation.ImmunizationRecommendationRecommendationComponent().apply {
-                vaccineCode = listOfNotNull(immunization.vaccineCode)
-                targetDisease = immunization.protocolAppliedFirstRep.targetDiseaseFirstRep
-                doseNumber = PositiveIntType().setValue(immunization.protocolAppliedFirstRep.doseNumberPositiveIntType.value +1)
-                seriesDoses = immunization.protocolAppliedFirstRep.seriesDoses
-                forecastStatus = CodeableConcept(Coding("http://terminology.hl7.org/2.1.0/CodeSystem-immunization-recommendation-status.html", "due", ""))
-                dateCriterion = listOf(ImmunizationRecommendation.ImmunizationRecommendationRecommendationDateCriterionComponent().apply {
-                    code = CodeableConcept(Coding("http://loinc.org", "30980-7", "Date vaccine due"))
-                    valueElement = parseDateTimeType(due_date)
-                })
-            })
         }
     }
 
@@ -186,7 +138,7 @@ class DCC2FHIR {
         val authors = mutableListOf<Reference>()
 
         if (!cert["v"].isUndefined) {
-            for (i in 0..cert["v"].size()-1) {
+            for (i in 0 until cert["v"].size()) {
                 val vax = cert["v"][i]
                 val myAuthority = parseOrganization(vax["is"])
                 val myImmunization = Immunization().apply {

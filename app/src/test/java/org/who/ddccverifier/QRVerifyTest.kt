@@ -6,7 +6,9 @@ import org.junit.Assert.*
 import org.who.ddccverifier.services.qrs.hcert.HCertVerifier
 import ca.uhn.fhir.context.FhirContext
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.junit.BeforeClass
 import org.who.ddccverifier.services.qrs.QRUnpacker
+import org.who.ddccverifier.services.trust.TrustRegistry
 
 class QRVerifyTest {
 
@@ -20,6 +22,14 @@ class QRVerifyTest {
     private fun open(assetName: String): String {
         return javaClass.classLoader?.getResourceAsStream(assetName)?.bufferedReader()
             .use { bufferReader -> bufferReader?.readText() } ?: ""
+    }
+
+    companion object {
+        @BeforeClass
+        @JvmStatic
+        fun setupClass() {
+            TrustRegistry.init()
+        }
     }
 
     @Test

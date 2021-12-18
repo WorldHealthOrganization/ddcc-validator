@@ -1,6 +1,5 @@
 package org.who.ddccverifier.services.trust
 
-import android.util.Log
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import java.net.URL
@@ -40,14 +39,14 @@ object TrustRegistry {
         override fun deserialize(p: JsonParser, ctxt: DeserializationContext): PublicKey {
             val node = p.readValueAsTree<JsonNode>()
 
-            if (node.isTextual()) {
+            return if (node.isTextual()) {
                 // PEM File
-                return KeyUtils.publicKeyFromPEM(node.asText());
+                KeyUtils.publicKeyFromPEM(node.asText())
             } else {
                 if (node.has("x"))
-                    return KeyUtils.ecPublicKeyFromCoordinate(node.get("x").asText(), node.get("y").asText())
+                    KeyUtils.ecPublicKeyFromCoordinate(node.get("x").asText(), node.get("y").asText())
                 else
-                    return KeyUtils.rsaPublicKeyFromModulusExponent(node.get("n").asText(), node.get("e").asText())
+                    KeyUtils.rsaPublicKeyFromModulusExponent(node.get("n").asText(), node.get("e").asText())
             }
         }
     }
@@ -62,7 +61,7 @@ object TrustRegistry {
         val validUntilDT: Date?,
         @JsonDeserialize(using = DidDocumentDeserializer::class)
         val didDocument: PublicKey,
-        val credentialType: Array<String>,
+        val credentialType: List<String>,
     )
 
     private var registry: MutableMap<Framework, MutableMap<String, TrustedEntity>> = mutableMapOf()
@@ -96,7 +95,7 @@ object TrustRegistry {
                         .map { it.toInt(16).toByte() }
                         .toByteArray()
                 ),
-                arrayOf("VS")
+                listOf("VS")
             )
         )
     }
