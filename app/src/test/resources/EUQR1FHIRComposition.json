@@ -41,6 +41,7 @@
         {
           "url": "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCCountryOfVaccination",
           "valueCoding": {
+            "system": "urn:iso:std:iso:3166",
             "code": "DE"
           }
         }
@@ -125,6 +126,7 @@
   "event": [
     {
       "period": {
+        "start": "2021-06-30T11:47:00-04:00",
         "end": "2022-06-30T11:47:00-04:00"
       }
     }
