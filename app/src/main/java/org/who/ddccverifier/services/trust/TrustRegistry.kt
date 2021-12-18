@@ -64,9 +64,7 @@ object TrustRegistry {
         val credentialType: List<String>,
     )
 
-    private var registry: MutableMap<Framework, MutableMap<String, TrustedEntity>> = mutableMapOf()
-
-    fun init() {
+    private val registry: MutableMap<Framework, MutableMap<String, TrustedEntity>> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val result = URL("https://raw.githubusercontent.com/Path-Check/trust-registry/main/registry.json").readText()
         //TODO: Downloading this JSON takes 500ms
 
@@ -75,9 +73,12 @@ object TrustRegistry {
             object : TypeReference<MutableMap<Framework, MutableMap<String, TrustedEntity>>>() {}
 
         //TODO: Parsing this JSON takes 5s
-        registry.putAll(mapper.readValue(result, typeRef))
+        val reg = mapper.readValue(result, typeRef)
+        addTestKeys(reg)
+        return@lazy reg;
+    }
 
-        // add the test key
+    private fun addTestKeys(registry: MutableMap<Framework, MutableMap<String, TrustedEntity>>) {
         registry[Framework.DCC]?.put(
             "MTE=", TrustedEntity(
                 mapOf("en" to "Test Keys for the WHO\'s DDCC"),
@@ -98,6 +99,10 @@ object TrustRegistry {
                 listOf("VS")
             )
         )
+    }
+
+    fun init() {
+        registry[Framework.DCC]?.get("MTE=")
     }
 
     fun resolve(framework: Framework, kid: String): TrustedEntity? {

@@ -37,6 +37,7 @@ class ResultFragment : Fragment() {
     }
 
     private fun setTextView(view: TextView, text: String?, line: View) {
+        if (line == null) return;
         if (text != null && !text.isEmpty()) {
             view.text = text
             line.visibility = TextView.VISIBLE
@@ -72,6 +73,9 @@ class ResultFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.tvResultHeader.visibility = TextView.INVISIBLE
+        binding.tvResultCard.visibility = TextView.INVISIBLE
+
         if (args.qr != null) {
             resolveAndShowQR(args.qr!!)
         }
@@ -82,6 +86,9 @@ class ResultFragment : Fragment() {
     }
 
     fun updateScreen(DDCC: QRUnpacker.VerificationResult) {
+        binding.tvResultHeader.visibility = TextView.VISIBLE
+        binding.tvResultCard.visibility = TextView.VISIBLE
+
         when (DDCC.status) {
             QRUnpacker.Status.NOT_SUPPORTED -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_base45)
             QRUnpacker.Status.INVALID_BASE45 -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_base45)
@@ -152,7 +159,9 @@ class ResultFragment : Fragment() {
             withContext(Dispatchers.IO) {
                 val status = if (resolveStatus(DDCC)) "COVID Safe" else "COVID Vulnerable"
                 withContext(Dispatchers.Main){
-                    setTextView(binding.tvResultStatus, status, binding.tvResultStatus)
+                    _binding?.let {
+                        setTextView(binding.tvResultStatus, status, binding.tvResultStatus)
+                    }
                 }
             }
         }
