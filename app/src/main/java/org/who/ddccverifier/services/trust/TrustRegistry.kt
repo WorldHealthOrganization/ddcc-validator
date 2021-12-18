@@ -41,12 +41,12 @@ object TrustRegistry {
 
             if (node.isTextual()) {
                 // PEM File
-                return KeyUtils().publicKeyFromPEM(node.asText());
+                return KeyUtils.publicKeyFromPEM(node.asText());
             } else {
                 if (node.has("x"))
-                    return KeyUtils().ecPublicKeyFromCoordinate(node.get("x").asText(), node.get("y").asText())
+                    return KeyUtils.ecPublicKeyFromCoordinate(node.get("x").asText(), node.get("y").asText())
                 else
-                    return KeyUtils().rsaPublicKeyFromModulusExponent(node.get("n").asText(), node.get("e").asText())
+                    return KeyUtils.rsaPublicKeyFromModulusExponent(node.get("n").asText(), node.get("e").asText())
             }
         }
     }
@@ -68,10 +68,13 @@ object TrustRegistry {
 
     private fun loadFromPathCheckRegistry() {
         val result = URL("https://raw.githubusercontent.com/Path-Check/trust-registry/main/registry.json").readText()
+        //TODO: Downloading this JSON takes 500ms
+
         val mapper = jacksonObjectMapper()
         val typeRef: TypeReference<MutableMap<Framework, MutableMap<String, TrustedEntity>>> =
             object : TypeReference<MutableMap<Framework, MutableMap<String, TrustedEntity>>>() {}
 
+        //TODO: Parsing this JSON takes 5s
         registry.putAll(mapper.readValue(result, typeRef))
 
         // add the test key
@@ -84,7 +87,7 @@ object TrustRegistry {
                 "WHO Test Keys",
                 df.parse("2021-01-01T08:00:00.000Z"),
                 df.parse("2021-12-01T08:00:00.000Z"),
-                KeyUtils().ecPublicKeyFromCoordinate(
+                KeyUtils.ecPublicKeyFromCoordinate(
                     "143329cce7868e416927599cf65a34f3ce2ffda55a7eca69ed8919a394d42f0f".chunked(2)
                         .map { it.toInt(16).toByte() }
                         .toByteArray(),
