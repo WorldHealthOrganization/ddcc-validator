@@ -11,7 +11,7 @@ import java.security.spec.*
 /**
  * Converts Key formats into Key objects
  */
-class KeyUtils {
+object KeyUtils {
     private var ecParameterSpec: ECParameterSpec? = null
         get() {
             if (field == null) {
@@ -39,9 +39,7 @@ class KeyUtils {
     fun ecPublicKeyFromCoordinate(x: ByteArray, y: ByteArray): PublicKey {
         val ecPoint = ECPoint(BigInteger(1, x), BigInteger(1, y))
         val ecKeySpec = ECPublicKeySpec(ecPoint, ecParameterSpec)
-
-        val keyFactory = KeyFactory.getInstance("EC")
-        return keyFactory.generatePublic(ecKeySpec)
+        return KeyFactory.getInstance("EC").generatePublic(ecKeySpec)
     }
 
     fun ecPublicKeyFromCoordinate(x: String, y: String): PublicKey {
@@ -54,9 +52,8 @@ class KeyUtils {
             .replace(System.lineSeparator().toRegex(), "")
             .replace("-----END PUBLIC KEY-----", "")
         val encoded: ByteArray = Base64.decode(publicKeyPEM, Base64.DEFAULT)
-        val keyFactory = KeyFactory.getInstance("EC")
         val keySpec = X509EncodedKeySpec(encoded)
-        return keyFactory.generatePublic(keySpec)
+        return KeyFactory.getInstance("EC").generatePublic(keySpec)
     }
 
     fun certificateFromPEM(pem: String): PublicKey {
@@ -65,10 +62,7 @@ class KeyUtils {
             .replace(System.lineSeparator().toRegex(), "")
             .replace("-----END CERTIFICATE-----", "")
         val encoded: ByteArray = Base64.decode(publicKeyPEM, Base64.DEFAULT)
-
-        val cf = CertificateFactory.getInstance("X.509")
-        val cert = cf.generateCertificate(ByteArrayInputStream(encoded))
-
+        val cert = CertificateFactory.getInstance("X.509").generateCertificate(ByteArrayInputStream(encoded))
         return cert.publicKey;
     }
 
@@ -91,8 +85,7 @@ class KeyUtils {
      */
     fun rsaPublicKeyFromModulusExponent(n: ByteArray, e: ByteArray): PublicKey {
         val rsaPublicKeySpec = RSAPublicKeySpec(BigInteger(1, n), BigInteger(1, e))
-        val keyFactory = KeyFactory.getInstance("RSA")
-        return keyFactory.generatePublic(rsaPublicKeySpec)
+        return KeyFactory.getInstance("RSA").generatePublic(rsaPublicKeySpec)
     }
 
     fun rsaPublicKeyFromModulusExponent(n: String, e: String): PublicKey {
@@ -105,8 +98,7 @@ class KeyUtils {
             .replace(System.lineSeparator().toRegex(), "")
             .replace("-----END PUBLIC KEY-----", "")
         val encoded: ByteArray = Base64.decode(publicKeyPEM, Base64.DEFAULT)
-        val keyFactory = KeyFactory.getInstance("RSA")
         val keySpec = X509EncodedKeySpec(encoded)
-        return keyFactory.generatePublic(keySpec)
+        return KeyFactory.getInstance("RSA").generatePublic(keySpec)
     }
 }
