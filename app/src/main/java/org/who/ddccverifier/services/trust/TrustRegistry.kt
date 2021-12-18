@@ -1,5 +1,6 @@
 package org.who.ddccverifier.services.trust
 
+import android.util.Log
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import java.net.URL
@@ -66,7 +67,7 @@ object TrustRegistry {
 
     private var registry: MutableMap<Framework, MutableMap<String, TrustedEntity>> = mutableMapOf()
 
-    private fun loadFromPathCheckRegistry() {
+    fun init() {
         val result = URL("https://raw.githubusercontent.com/Path-Check/trust-registry/main/registry.json").readText()
         //TODO: Downloading this JSON takes 500ms
 
@@ -101,9 +102,6 @@ object TrustRegistry {
     }
 
     fun resolve(framework: Framework, kid: String): TrustedEntity? {
-        if (!registry.containsKey(framework) || !registry[framework]?.containsKey(kid)!!)
-            loadFromPathCheckRegistry()
-
         return registry[framework]?.get(kid)
     }
 }

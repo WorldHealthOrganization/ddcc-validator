@@ -8,7 +8,11 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
+import kotlinx.coroutines.*
+import org.hl7.fhir.r4.model.Composition
 import org.who.ddccverifier.databinding.ActivityMainBinding
+import org.who.ddccverifier.services.qrs.QRUnpacker
+import org.who.ddccverifier.services.trust.TrustRegistry
 
 /**
  * Screen / Class flow:
@@ -43,6 +47,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        init()
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -52,6 +57,22 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
+    }
+
+    fun init() = runBlocking {
+        var viewModelJob = Job()
+        val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
+
+        uiScope.launch {
+            withContext(Dispatchers.IO) {
+                backgroundInit()
+            }
+        }
+    }
+
+    suspend fun backgroundInit() {
+        // Triggers Networking
+        TrustRegistry.init()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
