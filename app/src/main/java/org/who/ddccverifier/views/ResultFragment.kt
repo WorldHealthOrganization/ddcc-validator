@@ -105,7 +105,7 @@ class ResultFragment : Fragment() {
         }
 
         if (DDCC.issuer != null) {
-            binding.tvResultSignedBy.text = "Signed by " + DDCC.issuer!!.displayName
+            binding.tvResultSignedBy.text = "Signed by " + DDCC.issuer!!.displayName["en"]
             binding.tvResultSignedByIcon.text = resources.getString(R.string.fa_check_circle_solid);
         } else {
             binding.tvResultSignedByIcon.text = resources.getString(R.string.fa_times_circle_solid);
