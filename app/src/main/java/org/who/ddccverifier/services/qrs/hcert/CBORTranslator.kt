@@ -7,7 +7,12 @@ import org.hl7.fhir.r4.model.Composition
  * Finds the right translator for the CBOR content using HC1.
  */
 class CBORTranslator {
+    val EU_DCC_CODE = -260;
+
     fun toFhir(hcertPayload: CBORObject): Composition {
+        if (hcertPayload[EU_DCC_CODE] != null)
+            return EUDCCCBOR2FHIR().run(hcertPayload)
+
         return WHOCBOR2FHIR().run(hcertPayload)
     }
 }
