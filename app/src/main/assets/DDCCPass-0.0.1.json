@@ -418,83 +418,80 @@
           } ],
           "relationship" : [ ],
           "where" : {
-            "type" : "Equal",
+            "type" : "Contains",
             "operand" : [ {
-              "type" : "SingletonFrom",
-              "operand" : {
-                "type" : "Query",
-                "source" : [ {
-                  "type" : "AliasedQuerySource",
-                  "expression" : {
-                    "type" : "Query",
-                    "source" : [ {
-                      "type" : "AliasedQuerySource",
-                      "expression" : {
+              "type" : "Query",
+              "source" : [ {
+                "type" : "AliasedQuerySource",
+                "expression" : {
+                  "type" : "Query",
+                  "source" : [ {
+                    "type" : "AliasedQuerySource",
+                    "expression" : {
+                      "type" : "Property",
+                      "source" : {
                         "type" : "Property",
-                        "source" : {
-                          "type" : "Property",
-                          "path" : "vaccineCode",
-                          "scope" : "I"
-                        },
-                        "path" : "coding"
+                        "path" : "vaccineCode",
+                        "scope" : "I"
                       },
-                      "alias" : "$this"
-                    } ],
-                    "where" : {
-                      "type" : "Not",
-                      "operand" : {
-                        "type" : "IsNull",
-                        "operand" : {
-                          "type" : "Property",
-                          "source" : {
-                            "type" : "AliasRef",
-                            "name" : "$this"
-                          },
-                          "path" : "code"
-                        }
-                      }
+                      "path" : "coding"
                     },
-                    "return" : {
-                      "type" : "ReturnClause",
-                      "expression" : {
+                    "alias" : "$this"
+                  } ],
+                  "where" : {
+                    "type" : "Not",
+                    "operand" : {
+                      "type" : "IsNull",
+                      "operand" : {
                         "type" : "Property",
                         "source" : {
                           "type" : "AliasRef",
                           "name" : "$this"
                         },
                         "path" : "code"
-                      },
-                      "distinct" : false
+                      }
                     }
                   },
-                  "alias" : "$this"
-                } ],
-                "where" : {
-                  "type" : "Not",
-                  "operand" : {
-                    "type" : "IsNull",
-                    "operand" : {
+                  "return" : {
+                    "type" : "ReturnClause",
+                    "expression" : {
                       "type" : "Property",
                       "source" : {
                         "type" : "AliasRef",
                         "name" : "$this"
                       },
-                      "path" : "value"
-                    }
+                      "path" : "code"
+                    },
+                    "distinct" : false
                   }
                 },
-                "return" : {
-                  "type" : "ReturnClause",
-                  "expression" : {
+                "alias" : "$this"
+              } ],
+              "where" : {
+                "type" : "Not",
+                "operand" : {
+                  "type" : "IsNull",
+                  "operand" : {
                     "type" : "Property",
                     "source" : {
                       "type" : "AliasRef",
                       "name" : "$this"
                     },
                     "path" : "value"
-                  },
-                  "distinct" : false
+                  }
                 }
+              },
+              "return" : {
+                "type" : "ReturnClause",
+                "expression" : {
+                  "type" : "Property",
+                  "source" : {
+                    "type" : "AliasRef",
+                    "name" : "$this"
+                  },
+                  "path" : "value"
+                },
+                "distinct" : false
               }
             }, {
               "type" : "Literal",
@@ -528,25 +525,149 @@
       }, {
         "type" : "ExpressionDef",
         "expression" : {
+          "type" : "Query",
+          "source" : [ {
+            "type" : "AliasedQuerySource",
+            "expression" : {
+              "type" : "Retrieve",
+              "dataType" : "{http://hl7.org/fhir}Immunization"
+            },
+            "alias" : "I"
+          } ],
+          "relationship" : [ ],
+          "where" : {
+            "type" : "Contains",
+            "operand" : [ {
+              "type" : "Query",
+              "source" : [ {
+                "type" : "AliasedQuerySource",
+                "expression" : {
+                  "type" : "Query",
+                  "source" : [ {
+                    "type" : "AliasedQuerySource",
+                    "expression" : {
+                      "type" : "Property",
+                      "source" : {
+                        "type" : "Property",
+                        "path" : "vaccineCode",
+                        "scope" : "I"
+                      },
+                      "path" : "coding"
+                    },
+                    "alias" : "$this"
+                  } ],
+                  "where" : {
+                    "type" : "Not",
+                    "operand" : {
+                      "type" : "IsNull",
+                      "operand" : {
+                        "type" : "Property",
+                        "source" : {
+                          "type" : "AliasRef",
+                          "name" : "$this"
+                        },
+                        "path" : "code"
+                      }
+                    }
+                  },
+                  "return" : {
+                    "type" : "ReturnClause",
+                    "expression" : {
+                      "type" : "Property",
+                      "source" : {
+                        "type" : "AliasRef",
+                        "name" : "$this"
+                      },
+                      "path" : "code"
+                    },
+                    "distinct" : false
+                  }
+                },
+                "alias" : "$this"
+              } ],
+              "where" : {
+                "type" : "Not",
+                "operand" : {
+                  "type" : "IsNull",
+                  "operand" : {
+                    "type" : "Property",
+                    "source" : {
+                      "type" : "AliasRef",
+                      "name" : "$this"
+                    },
+                    "path" : "value"
+                  }
+                }
+              },
+              "return" : {
+                "type" : "ReturnClause",
+                "expression" : {
+                  "type" : "Property",
+                  "source" : {
+                    "type" : "AliasRef",
+                    "name" : "$this"
+                  },
+                  "path" : "value"
+                },
+                "distinct" : false
+              }
+            }, {
+              "type" : "Literal",
+              "valueType" : "{urn:hl7-org:elm-types:r1}String",
+              "value" : "208"
+            } ]
+          }
+        },
+        "name" : "GetAllPfizer",
+        "context" : "Immunization",
+        "accessLevel" : "Public"
+      }, {
+        "type" : "ExpressionDef",
+        "expression" : {
+          "type" : "Greater",
+          "operand" : [ {
+            "type" : "Count",
+            "source" : {
+              "type" : "ExpressionRef",
+              "name" : "GetAllPfizer"
+            }
+          }, {
+            "type" : "Literal",
+            "valueType" : "{urn:hl7-org:elm-types:r1}Integer",
+            "value" : "1"
+          } ]
+        },
+        "name" : "PfizerProtocol",
+        "context" : "Immunization",
+        "accessLevel" : "Public"
+      }, {
+        "type" : "ExpressionDef",
+        "expression" : {
           "type" : "Or",
           "operand" : [ {
             "type" : "Or",
             "operand" : [ {
-              "type" : "Exists",
-              "operand" : {
-                "type" : "ExpressionRef",
-                "name" : "GetFinalDose"
-              }
+              "type" : "Or",
+              "operand" : [ {
+                "type" : "Exists",
+                "operand" : {
+                  "type" : "ExpressionRef",
+                  "name" : "GetFinalDose"
+                }
+              }, {
+                "type" : "Exists",
+                "operand" : {
+                  "type" : "ExpressionRef",
+                  "name" : "GetSingleDose"
+                }
+              } ]
             }, {
-              "type" : "Exists",
-              "operand" : {
-                "type" : "ExpressionRef",
-                "name" : "GetSingleDose"
-              }
+              "type" : "ExpressionRef",
+              "name" : "ModernaProtocol"
             } ]
           }, {
             "type" : "ExpressionRef",
-            "name" : "ModernaProtocol"
+            "name" : "PfizerProtocol"
           } ]
         },
         "name" : "CompletedImmunization",
@@ -556,16 +677,6 @@
     },
     "annotation" : [ {
       "translatorOptions" : ""
-    }, {
-      "libraryId" : "DDCCPass",
-      "libraryVersion" : "0.0.1",
-      "startLine" : 28,
-      "startChar" : 37,
-      "endLine" : 28,
-      "endChar" : 41,
-      "message" : "List-valued expression was demoted to a singleton.",
-      "errorType" : "semantic",
-      "errorSeverity" : "warning"
     } ]
   }
 }
