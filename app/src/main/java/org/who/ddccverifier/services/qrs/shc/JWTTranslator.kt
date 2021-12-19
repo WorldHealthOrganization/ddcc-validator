@@ -1,5 +1,6 @@
 package org.who.ddccverifier.services.qrs.shc
 
+import ca.uhn.fhir.model.api.TemporalPrecisionEnum
 import org.hl7.fhir.r4.model.*
 import java.util.*
 
@@ -22,7 +23,7 @@ class JWTTranslator {
 
     private fun parseDateType(date: Double?): DateTimeType? {
         if (date == null) return null
-        return DateTimeType(Date((date*1000).toLong()))
+        return DateTimeType(Date((date*1000).toLong()), TemporalPrecisionEnum.DAY)
     }
 
     fun toFhir(payload: SHCVerifier.JWTPayload): Composition {

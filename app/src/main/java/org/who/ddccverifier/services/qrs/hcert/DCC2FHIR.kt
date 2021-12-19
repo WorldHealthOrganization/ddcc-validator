@@ -1,5 +1,6 @@
 package org.who.ddccverifier.services.qrs.hcert
 
+import ca.uhn.fhir.model.api.TemporalPrecisionEnum
 import com.upokecenter.cbor.CBORObject
 import com.upokecenter.cbor.CBORType
 import org.hl7.fhir.instance.model.api.IBaseDatatype
@@ -34,7 +35,7 @@ class DCC2FHIR {
     private fun parseDateTimeType(date: CBORObject?): DateTimeType? {
         if (date == null || date.isUndefined) return null
         return if (date.isNumber) {
-            DateTimeType(Date(date.AsInt64()*1000))
+            DateTimeType(Date(date.AsInt64()*1000), TemporalPrecisionEnum.DAY)
         } else {
             DateTimeType(date.AsString())
         }
