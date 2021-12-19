@@ -1,12 +1,14 @@
 package org.who.ddccverifier.services.trust
 
 import android.util.Base64
+import org.bouncycastle.jcajce.util.BCJcaJceHelper
 import java.io.ByteArrayInputStream
 import java.math.BigInteger
 import java.security.*
-import java.security.cert.CertificateFactory
 import java.security.interfaces.ECPublicKey
 import java.security.spec.*
+import org.bouncycastle.util.io.pem.PemReader
+import java.io.StringReader
 
 /**
  * Converts Key formats into Key objects
@@ -32,14 +34,11 @@ object KeyUtils {
             return field
         }
 
-    /**
-     * Creates a {@link java.security.PublicKey} from a coordinate point (x, y).
-     * Assumes curve P-256.
-     */
     fun ecPublicKeyFromCoordinate(x: ByteArray, y: ByteArray): PublicKey {
         val ecPoint = ECPoint(BigInteger(1, x), BigInteger(1, y))
         val ecKeySpec = ECPublicKeySpec(ecPoint, ecParameterSpec)
         return KeyFactory.getInstance("EC").generatePublic(ecKeySpec)
+        //return BCJcaJceHelper().createKeyFactory("EC").generatePublic(ecKeySpec)
     }
 
     fun ecPublicKeyFromCoordinate(x: String, y: String): PublicKey {
@@ -47,23 +46,16 @@ object KeyUtils {
     }
 
     fun ecPublicKeyFromPEM(pem: String): PublicKey {
-        val publicKeyPEM = pem
-            .replace("-----BEGIN PUBLIC KEY-----", "")
-            .replace(System.lineSeparator().toRegex(), "")
-            .replace("-----END PUBLIC KEY-----", "")
-        val encoded: ByteArray = Base64.decode(publicKeyPEM, Base64.DEFAULT)
-        val keySpec = X509EncodedKeySpec(encoded)
-        return KeyFactory.getInstance("EC").generatePublic(keySpec)
+        val reader = PemReader(StringReader(pem))
+        val keySpec = X509EncodedKeySpec(reader.readPemObject().content)
+        return BCJcaJceHelper().createKeyFactory("EC").generatePublic(keySpec)
     }
 
     fun certificateFromPEM(pem: String): PublicKey {
-        val publicKeyPEM = pem
-            .replace("-----BEGIN CERTIFICATE-----", "")
-            .replace(System.lineSeparator().toRegex(), "")
-            .replace("-----END CERTIFICATE-----", "")
-        val encoded: ByteArray = Base64.decode(publicKeyPEM, Base64.DEFAULT)
-        val cert = CertificateFactory.getInstance("X.509").generateCertificate(ByteArrayInputStream(encoded))
-        return cert.publicKey
+        val reader = PemReader(StringReader(pem))
+        val stream = ByteArrayInputStream(reader.readPemObject().content)
+        return BCJcaJceHelper().createCertificateFactory("X.509")
+                               .generateCertificate(stream).publicKey
     }
 
     fun publicKeyFromPEM(pem: String): PublicKey{
@@ -74,8 +66,10 @@ object KeyUtils {
         return try {
             ecPublicKeyFromPEM(pem)
         } catch (e: InvalidKeyException) {
+            e.printStackTrace()
             rsaPublicKeyFromPEM(pem)
         } catch (e: InvalidKeySpecException) {
+            e.printStackTrace()
             rsaPublicKeyFromPEM(pem)
         }
     }
@@ -85,7 +79,7 @@ object KeyUtils {
      */
     fun rsaPublicKeyFromModulusExponent(n: ByteArray, e: ByteArray): PublicKey {
         val rsaPublicKeySpec = RSAPublicKeySpec(BigInteger(1, n), BigInteger(1, e))
-        return KeyFactory.getInstance("RSA").generatePublic(rsaPublicKeySpec)
+        return BCJcaJceHelper().createKeyFactory("RSA").generatePublic(rsaPublicKeySpec)
     }
 
     fun rsaPublicKeyFromModulusExponent(n: String, e: String): PublicKey {
@@ -93,12 +87,8 @@ object KeyUtils {
     }
 
     fun rsaPublicKeyFromPEM(pem: String): PublicKey {
-        val publicKeyPEM = pem
-            .replace("-----BEGIN PUBLIC KEY-----", "")
-            .replace(System.lineSeparator().toRegex(), "")
-            .replace("-----END PUBLIC KEY-----", "")
-        val encoded: ByteArray = Base64.decode(publicKeyPEM, Base64.DEFAULT)
-        val keySpec = X509EncodedKeySpec(encoded)
-        return KeyFactory.getInstance("RSA").generatePublic(keySpec)
+        val reader = PemReader(StringReader(pem))
+        val keySpec = X509EncodedKeySpec(reader.readPemObject().content)
+        return BCJcaJceHelper().createKeyFactory("RSA").generatePublic(keySpec)
     }
 }

@@ -84,6 +84,10 @@ dependencies {
     // Necessary to Convert the QR into the DDCC FHIR Composite
     implementation 'com.google.android.fhir:engine:0.1.0-alpha05'
 
+    // Use BouncyCastle to not rely on each Android's version hability to unpack and load public keys
+    // Android 10+ issues due to the move to Conscrypt on a older verion of BC
+    implementation group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.70'
+
     // Necessary to Load Jackson-based FHIR Libraries (FHIR Helper, Model Info, and CQL Rules)
     implementation group: 'xerces', name: 'xercesImpl', version: '2.12.1'
     implementation 'com.fasterxml.jackson.core:jackson-core:2.13.0'
