@@ -43,10 +43,12 @@ COVID-19 Credential Verifier app for Android using the WHO's Digital Documentati
 - [ ] 9.1. Unpack and Verify
 - [ ] 9.2. Trust Registry check
 - [ ] 9.3. Display Info on Screen
-- [ ] 10. SHC Processing
-- [ ] 10.1. Unpack and Verify
-- [ ] 10.2. Trust Registry check
-- [ ] 10.3. Display Info on Screen
+- [x] 10. SHC Processing
+- [x] 10.1. Unpack and Verify
+- [x] 10.2. Trust Registry check
+- [x] 10.3. Display Vacination Info on Screen
+- [ ] 10.4. Display Test Info on Screen
+- [ ] 10.5. Display Recovery Info on Screen
 - [ ] 11. ICAO Processing.
 - [ ] 11.1. Unpack and Verify
 - [ ] 11.2. Trust Registry check
@@ -54,7 +56,9 @@ COVID-19 Credential Verifier app for Android using the WHO's Digital Documentati
 - [x] 12. EU DCC Processing.
 - [x] 12.1. Unpack and Verify
 - [x] 12.2. Trust Registry check
-- [x] 12.3. Display Info on Screen
+- [x] 12.3. Display Vacination Info on Screen
+- [ ] 12.4. Display Test Info on Screen
+- [ ] 12.5. Display Recovery Info on Screen
 
 # Development Overview
 
