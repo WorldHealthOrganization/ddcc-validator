@@ -11,6 +11,7 @@ import org.who.ddccverifier.services.fhir.FHIRLibraryLoader
 import org.who.ddccverifier.services.qrs.QRUnpacker
 import org.who.ddccverifier.services.trust.TrustRegistry
 import java.io.InputStream
+import java.util.*
 
 class QRViewTest {
 
@@ -48,7 +49,7 @@ class QRViewTest {
 
         val context = cqlEvaluator.run(ddccPass, verified.contents!!)
         assertEquals(false, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
-        assertEquals(null, context.resolveExpressionRef("GetFinalDose").evaluate(context))
+        assertEquals(Collections.EMPTY_LIST, context.resolveExpressionRef("GetFinalDose").evaluate(context))
 
         // Credential
         assertEquals("COVID-19 Vaccination", card2.cardTitle!!.split(" - ")[1])
@@ -156,6 +157,48 @@ class QRViewTest {
         assertEquals(null, card2.hcid)
         assertEquals("Robert Koch-Institut", card2.pha)
         assertEquals(null, card2.hw)
+
+        // Recommendation
+        assertEquals(null, card2.nextDose)
+
+        assertEquals(true, status)
+    }
+
+    @Test
+    fun viewSHCQR1() {
+        val qr1 = open("SHCQR1Contents.txt")
+        val verified = QRUnpacker().decode(qr1)
+
+        assertEquals(QRUnpacker.Status.VERIFIED, verified.status)
+
+        val card2 = DDCCFormatter().run(verified.contents!!)
+        val status = cqlEvaluator.resolve("CompletedImmunization", ddccPass, verified.contents!!) as Boolean
+
+        val context = cqlEvaluator.run(ddccPass, verified.contents!!)
+        assertEquals(true, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
+        assertNotNull(context.resolveExpressionRef("GetFinalDose").evaluate(context))
+
+        // Credential
+        assertEquals("Vaccination", card2.cardTitle!!.split(" - ")[1])
+        assertEquals("Valid from Jun 1, 2021", card2.validUntil)
+
+        // Patient
+        assertEquals("John B. Anyperson", card2.personName)
+        assertEquals("Jan 20, 1951", card2.personDetails)
+        assertEquals(null, card2.identifier)
+
+        // Immunization
+        assertEquals("Moderna COVID-19", card2.vaccineType)
+        assertEquals(null, card2.dose)
+        assertEquals("Jan 1, 2021", card2.doseDate)
+        assertEquals(null, card2.vaccineValid)
+        assertEquals(null, card2.vaccineAgainst)
+        assertEquals("Lot #0000001", card2.vaccineInfo)
+        assertEquals(null, card2.vaccineInfo2)
+        assertEquals(null, card2.location)
+        assertEquals(null, card2.hcid)
+        assertEquals(null, card2.pha)
+        assertEquals("ABC General Hospital", card2.hw)
 
         // Recommendation
         assertEquals(null, card2.nextDose)

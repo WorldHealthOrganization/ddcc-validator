@@ -1,0 +1,138 @@
+{
+  "resourceType": "Composition",
+  "contained": [
+    {
+      "resourceType": "Patient",
+      "id": "resource:0",
+      "name": [
+        {
+          "family": "Anyperson",
+          "given": [
+            "John",
+            "B."
+          ]
+        }
+      ],
+      "birthDate": "1951-01-20"
+    },
+    {
+      "resourceType": "Immunization",
+      "id": "resource:1",
+      "status": "completed",
+      "vaccineCode": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/cvx",
+            "code": "207"
+          }
+        ]
+      },
+      "patient": {
+        "reference": "Patient/resource:0"
+      },
+      "occurrenceDateTime": "2021-01-01",
+      "lotNumber": "0000001",
+      "performer": [
+        {
+          "actor": {
+            "display": "ABC General Hospital"
+          }
+        }
+      ]
+    },
+    {
+      "resourceType": "Immunization",
+      "id": "resource:2",
+      "status": "completed",
+      "vaccineCode": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/cvx",
+            "code": "207"
+          }
+        ]
+      },
+      "patient": {
+        "reference": "Patient/resource:0"
+      },
+      "occurrenceDateTime": "2021-01-29",
+      "lotNumber": "0000007",
+      "performer": [
+        {
+          "actor": {
+            "display": "ABC General Hospital"
+          }
+        }
+      ]
+    },
+    {
+      "resourceType": "Organization",
+      "id": "1",
+      "identifier": [
+        {
+          "value": "https://spec.smarthealth.cards/examples/issuer"
+        }
+      ]
+    }
+  ],
+  "type": {
+    "coding": [
+      {
+        "system": "http://loinc.org",
+        "code": "82593-5",
+        "display": "Immunization summary report"
+      }
+    ]
+  },
+  "category": [
+    {
+      "coding": [
+        {
+          "code": "ddcc-vs"
+        }
+      ]
+    }
+  ],
+  "subject": {
+    "reference": "#resource:0"
+  },
+  "author": [
+    {
+      "reference": "#1"
+    }
+  ],
+  "title": "International Certificate of Vaccination or Prophylaxis",
+  "event": [
+    {
+      "period": {
+        "start": "2021-06-01T15:39:58-04:00"
+      }
+    }
+  ],
+  "section": [
+    {
+      "code": {
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "11369-6",
+            "display": "History of Immunization Narrative"
+          }
+        ]
+      },
+      "author": [
+        {
+          "reference": "#1"
+        }
+      ],
+      "entry": [
+        {
+          "reference": "#resource:1"
+        },
+        {
+          "reference": "#resource:2"
+        }
+      ]
+    }
+  ]
+}

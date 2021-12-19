@@ -78,6 +78,8 @@ dependencies {
     // Necessary to unpack the EU's DDC HCERT QR Codes.
     implementation 'io.github.ehn-digital-green-development:base45:0.0.3'
     implementation 'com.augustcellars.cose:cose-java:1.1.0'
+    // Necessary to unpack SHC QR Codes
+    implementation "com.nimbusds:nimbus-jose-jwt:9.15.2"
 
     // Necessary to Convert the QR into the DDCC FHIR Composite
     implementation 'com.google.android.fhir:engine:0.1.0-alpha05'

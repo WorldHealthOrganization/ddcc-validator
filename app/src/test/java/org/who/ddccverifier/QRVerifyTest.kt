@@ -8,6 +8,7 @@ import ca.uhn.fhir.context.FhirContext
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.BeforeClass
 import org.who.ddccverifier.services.qrs.QRUnpacker
+import org.who.ddccverifier.services.qrs.shc.SHCVerifier
 import org.who.ddccverifier.services.trust.TrustRegistry
 
 class QRVerifyTest {
@@ -68,6 +69,18 @@ class QRVerifyTest {
         val json = jsonParser.encodeResourceToString(verified.contents!!)
 
         jsonEquals(open("EUQR1FHIRComposition.json"), json)
+    }
 
+    @Test
+    fun verifySHCQR1() {
+        val qr1 = open("SHCQR1Contents.txt")
+        val verified = SHCVerifier().unpackAndVerify(qr1)
+
+        assertNotNull(verified)
+        assertEquals(QRUnpacker.Status.VERIFIED, verified.status)
+
+        val json = jsonParser.encodeResourceToString(verified.contents!!)
+
+        jsonEquals(open("SHCQR1FHIRComposition.json"), json)
     }
 }

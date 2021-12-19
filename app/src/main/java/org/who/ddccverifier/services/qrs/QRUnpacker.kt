@@ -2,6 +2,7 @@ package org.who.ddccverifier.services.qrs
 
 import org.hl7.fhir.r4.model.Composition
 import org.who.ddccverifier.services.qrs.hcert.HCertVerifier
+import org.who.ddccverifier.services.qrs.shc.SHCVerifier
 import org.who.ddccverifier.services.trust.TrustRegistry
 
 /**
@@ -30,8 +31,11 @@ class QRUnpacker {
     )
 
     fun decode(qrPayload : String): VerificationResult {
-        if (qrPayload.startsWith("HC1:")) {
+        if (qrPayload.uppercase().startsWith("HC1:")) {
             return HCertVerifier().unpackAndVerify(qrPayload)
+        }
+        if (qrPayload.uppercase().startsWith("SHC:")) {
+            return SHCVerifier().unpackAndVerify(qrPayload)
         }
         return VerificationResult(Status.NOT_SUPPORTED, null, null, qrPayload)
     }

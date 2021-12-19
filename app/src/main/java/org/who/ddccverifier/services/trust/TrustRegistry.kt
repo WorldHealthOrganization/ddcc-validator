@@ -99,6 +99,22 @@ object TrustRegistry {
                 listOf("VS")
             )
         )
+
+        registry[Framework.SHC]?.put(
+            "https://spec.smarthealth.cards/examples/issuer#3Kfdg-XwP-7gXyywtUfUADwBumDOPKMQx-iELL11W9s", TrustedEntity(
+                mapOf("en" to "Test Keys for the SmartHealth Cards"),
+                null,
+                Type.ISSUER,
+                Status.CURRENT,
+                "SHC Test Keys",
+                df.parse("2021-01-01T08:00:00.000Z"),
+                df.parse("2021-12-01T08:00:00.000Z"),
+                KeyUtils.ecPublicKeyFromCoordinate(
+                    "11XvRWy1I2S0EyJlyf_bWfw_TQ5CJJNLw78bHXNxcgw",
+                    "eZXwxvO1hvCY0KucrPfKo7yAyMT6Ajc3N7OkAB6VYy8"),
+                listOf("VS")
+            )
+        )
     }
 
     fun init() {

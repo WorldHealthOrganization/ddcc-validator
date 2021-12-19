@@ -18,6 +18,8 @@ import org.who.ddccverifier.services.fhir.FHIRLibraryLoader
 import java.io.InputStream
 import java.io.StringReader
 import java.lang.IllegalArgumentException
+import java.util.*
+import kotlin.collections.ArrayList
 
 class CQLEvaluatorTest {
 
@@ -79,8 +81,8 @@ class CQLEvaluatorTest {
         assertEquals(false, context.resolveExpressionRef("MeetsExclusionCriteria").evaluate(context))
         assertEquals(true, context.resolveExpressionRef("InPopulation").evaluate(context))
         assertEquals("", context.resolveExpressionRef("Recommendation").evaluate(context))
-        assertNull(context.resolveExpressionRef("Rationale").evaluate(context))
-        assertNull(context.resolveExpressionRef("Errors").evaluate(context))
+        assertEquals(null, context.resolveExpressionRef("Rationale").evaluate(context))
+        assertEquals(null, context.resolveExpressionRef("Errors").evaluate(context))
     }
 
     @Test
@@ -91,7 +93,10 @@ class CQLEvaluatorTest {
         val lib = JsonCqlLibraryReader.read(StringReader(toJson(open("DDCCPass.cql"))))
         val context = cqlEvaluator.run(lib, asset)
 
-        assertEquals(null, context.resolveExpressionRef("GetFinalDose").evaluate(context))
+        assertEquals(Collections.EMPTY_LIST, context.resolveExpressionRef("GetFinalDose").evaluate(context))
+        assertEquals(Collections.EMPTY_LIST, context.resolveExpressionRef("GetSingleDose").evaluate(context))
+        assertEquals(Collections.EMPTY_LIST, context.resolveExpressionRef("GetAllModerna").evaluate(context))
+        assertEquals(false, context.resolveExpressionRef("ModernaProtocol").evaluate(context))
         assertEquals(false, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
         assertEquals(false, cqlEvaluator.resolve("CompletedImmunization", ddccPass, asset))
     }
@@ -103,7 +108,7 @@ class CQLEvaluatorTest {
 
         val context = cqlEvaluator.run(ddccPass, asset)
 
-        assertEquals(null, context.resolveExpressionRef("GetFinalDose").evaluate(context))
+        assertEquals(Collections.EMPTY_LIST, context.resolveExpressionRef("GetFinalDose").evaluate(context))
         assertEquals(false, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
         assertEquals(false, cqlEvaluator.resolve("CompletedImmunization", ddccPass, asset))
     }
@@ -116,8 +121,8 @@ class CQLEvaluatorTest {
         val lib = JsonCqlLibraryReader.read(StringReader(toJson(open("DDCCPass.cql"))))
         val context = cqlEvaluator.run(lib, asset)
 
-        assertNotNull(context.resolveExpressionRef("GetSingleDose").evaluate(context))
-        assertNull( context.resolveExpressionRef("GetFinalDose").evaluate(context))
+        assertNotEquals(Collections.EMPTY_LIST, context.resolveExpressionRef("GetSingleDose").evaluate(context))
+        assertEquals(Collections.EMPTY_LIST,  context.resolveExpressionRef("GetFinalDose").evaluate(context))
         assertEquals(true, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
         assertEquals(true, cqlEvaluator.resolve("CompletedImmunization", ddccPass, asset))
     }
@@ -129,8 +134,23 @@ class CQLEvaluatorTest {
 
         val context = cqlEvaluator.run(ddccPass, asset)
 
-        assertNotNull(context.resolveExpressionRef("GetSingleDose").evaluate(context))
-        assertNull(context.resolveExpressionRef("GetFinalDose").evaluate(context))
+        assertNotEquals(Collections.EMPTY_LIST, context.resolveExpressionRef("GetSingleDose").evaluate(context))
+        assertEquals(Collections.EMPTY_LIST, context.resolveExpressionRef("GetFinalDose").evaluate(context))
+        assertEquals(true, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
+        assertEquals(true, cqlEvaluator.resolve("CompletedImmunization", ddccPass, asset))
+    }
+
+    @Test
+    fun evaluateDDCCPassAsCQLOnSHCQR1FromCompositionTest() {
+        val asset = jSONParser.parseResource(open("SHCQR1FHIRComposition.json")) as Composition
+
+        val lib = JsonCqlLibraryReader.read(StringReader(toJson(open("DDCCPass.cql"))))
+        val context = cqlEvaluator.run(lib, asset)
+
+        assertEquals(Collections.EMPTY_LIST, context.resolveExpressionRef("GetSingleDose").evaluate(context))
+        assertEquals(Collections.EMPTY_LIST, context.resolveExpressionRef("GetFinalDose").evaluate(context))
+        assertNotEquals(Collections.EMPTY_LIST, context.resolveExpressionRef("GetAllModerna").evaluate(context))
+        assertEquals(true, context.resolveExpressionRef("ModernaProtocol").evaluate(context))
         assertEquals(true, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
         assertEquals(true, cqlEvaluator.resolve("CompletedImmunization", ddccPass, asset))
     }

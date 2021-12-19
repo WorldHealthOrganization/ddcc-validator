@@ -18,6 +18,109 @@ class DDCCFormatter {
         "1119305005" to "SARS-CoV-2 Antigen Vaccine",
         "J07BX03" to "COVID-19 Vaccine"
     )
+    private val CVX = mapOf(
+            "2"	to "ORIMUNE",
+            "3"	to "M-M-R II",
+            "5"	to "ATTENUVAX",
+            "6"	to "MERUVAX II",
+            "7"	to "MUMPSVAX",
+            "8"	to "ENGERIX B-PEDS; RECOMBIVAX-PEDS",
+            "9"	to "TDVAX; Td, adsorbed",
+            "10"	to "IPOL",
+            "18"	to "Imovax; RabAvert",
+            "19"	to "MYCOBAX; TICE BCG",
+            "20"	to "ACEL-IMUNE; CERTIVA; INFANRIX; TRIPEDIA",
+            "21"	to "VARIVAX",
+            "22"	to "TETRAMUNE",
+            "24"	to "BIOTHRAX",
+            "25"	to "VIVOTIF BERNA; Vivotif",
+            "28"	to "DT(GENERIC)",
+            "32"	to "MENOMUNE",
+            "33"	to "PNEUMOVAX 23",
+            "35"	to "TETANUS TOXOID (GENERIC)",
+            "37"	to "YF-VAX",
+            "38"	to "BIAVAX II",
+            "39"	to "JE-VAX",
+            "40"	to "IMOVAX ID",
+            "43"	to "ENGERIX-B-ADULT; RECOMBIVAX-ADULT",
+            "44"	to "RECOMBIVAX-DIALYSIS",
+            "46"	to "PROHIBIT",
+            "47"	to "HIBTITER",
+            "48"	to "ACTHIB; HIBERIX; OMNIHIB",
+            "49"	to "PEDVAXHIB",
+            "50"	to "TRIHIBIT",
+            "51"	to "COMVAX",
+            "52"	to "HAVRIX-ADULT; VAQTA-ADULT",
+            "53"	to "TYPHOID-AKD",
+            "56"	to "DENGVAXIA",
+            "62"	to "GARDASIL",
+            "75"	to "ACAM2000; DRYVAX",
+            "83"	to "HAVRIX-PEDS; VAQTA-PEDS",
+            "94"	to "PROQUAD",
+            "100"	to "PREVNAR 7",
+            "101"	to "TYPHIM VI",
+            "104"	to "TWINRIX",
+            "106"	to "DAPTACEL",
+            "110"	to "PEDIARIX",
+            "111"	to "FLUMIST",
+            "113"	to "DECAVAC; Tenivac",
+            "114"	to "MENACTRA",
+            "115"	to "ADACEL; BOOSTRIX",
+            "116"	to "ROTATEQ",
+            "118"	to "CERVARIX",
+            "119"	to "ROTARIX",
+            "120"	to "PENTACEL",
+            "121"	to "ZOSTAVAX",
+            "125"	to "Novel Influenza-H1N1-09, nasal",
+            "126"	to "Novel influenza-H1N1-09, preservative-free",
+            "127"	to "Novel influenza-H1N1-09",
+            "130"	to "KINRIX; Quadracel",
+            "133"	to "PREVNAR 13",
+            "134"	to "IXIARO; Ixiaro",
+            "135"	to "FLUZONE-HIGH DOSE",
+            "136"	to "MENVEO; Menveo",
+            "140"	to "AGRIFLU; Afluria, preservative free; FLUARIX; FLUVIRIN-PRESERVATIVE FREE; FLUZONE-PRESERVATIVE FREE; Flulaval, preservative free; Fluvirin preservative free",
+            "141"	to "AFLURIA; Afluria; FLULAVAL; FLUVIRIN; FLUZONE; Fluvirin",
+            "143"	to "Adenovirus types 4 and 7",
+            "144"	to "Fluzone, intradermal",
+            "146"	to "VAXELIS",
+            "148"	to "MENHIBRIX",
+            "149"	to "Flumist quadrivalent",
+            "150"	to "Afluria quadrivalent preservative free; Fluarix, quadrivalent, preservative free; Flulaval, quadrivalent, preservative free; Fluzone, quadrivalent, preservative free",
+            "153"	to "Flucelvax",
+            "155"	to "Flublok",
+            "158"	to "Afluria, quadrivalent; Flulaval quadrivalent; Fluzone, Quadrivalent",
+            "160"	to "Influenza A (H5N1) -2013; Influenza A monovalent (H5N1), ADJUVANTED-2013",
+            "161"	to "Afluria quadrivalent, preservative free, pediatric; Fluzone Quadrivalent, pediatric",
+            "162"	to "Trumenba",
+            "163"	to "Bexsero",
+            "165"	to "Gardasil 9",
+            "166"	to "Fluzone Quad Intradermal",
+            "168"	to "Fluad",
+            "171"	to "flucelvax, quadrivalent, preservative free",
+            "174"	to "VAXCHORA",
+            "175"	to "IMOVAX",
+            "176"	to "RABAVERT",
+            "183"	to "Stamaril",
+            "185"	to "Flublok quadrivalent",
+            "186"	to "Flucelvax, quadrivalent, with preservative",
+            "187"	to "SHINGRIX",
+            "189"	to "HEPLISAV-B",
+            "197"	to "FLUZONE High-Dose Quadrivalent",
+            "200"	to "FLUZONE Quadrivalent Southern Hemisphere, Pediatric",
+            "201"	to "FLUZONE Quadrivalent Southern Hemisphere",
+            "202"	to "FLUZONE Quadrivalent Southern Hemisphere",
+            "203"	to "MenQuadfi",
+            "204"	to "ERVEBO (Ebola Zaire, Live)",
+            "205"	to "FLUAD Quadrivalent",
+            "206"	to "JYNNEOS",
+            "207"	to "Moderna COVID-19",
+            "208"	to "Pfizer-BioNTech COVID-19",
+            "210"	to "AstraZeneca COVID-19",
+            "211"	to "Novavax COVID-19",
+            "212"	to "Janssen (J&J) COVID-19",
+            "801"	to "AS03 adjuvant"
+    )
 
     val EXT_BRAND = "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineBrand"
     val EXT_MA_HOLDER = "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineMarketAuthorization"
@@ -39,7 +142,10 @@ class DDCCFormatter {
         val disease = formatVaccineAgainst(targetDisease)
         val procedure = "Vaccination"
 
-        return "$scanTime - $disease $procedure"
+        if (disease != null)
+            return "$scanTime - $disease $procedure"
+        else
+            return "$scanTime - $procedure"
     }
 
     private fun formatValidPeriod(from: Date?, until: Date?): String? {
@@ -97,21 +203,22 @@ class DDCCFormatter {
     private fun formatVaccineType(vaccines: CodeableConcept?): String? {
         if (vaccines == null) return null
         return vaccines.coding.groupBy {
-            VACCINE_PROPH.get(it.code)
+            VACCINE_PROPH.get(it.code) ?: CVX.get(it.code)
         }.keys.joinToString(", ")
     }
 
     private fun formatPractioner(practitioner: Practitioner?): String? {
         if (practitioner?.identifier == null) return null
         return practitioner.identifier.groupBy {
-            it.value
-        }.keys.joinToString(", ")
+                it.value
+            }.keys.joinToString(", ")
     }
 
     private fun formatPractioners(performer: List<Immunization.ImmunizationPerformerComponent>?): String? {
         if (performer == null || performer.isEmpty()) return null
+        //println((performer as Immunization.ImmunizationPerformerComponent).actor.display)
         return performer.filter { it.hasActor() }.groupBy {
-            formatPractioner(it.actor.resource as? Practitioner)
+            it.actor.display ?: formatPractioner(it.actor.resource as? Practitioner)
         }.keys.joinToString(", ")
     }
 
@@ -171,8 +278,7 @@ class DDCCFormatter {
     }
 
     private fun formatLocation(centre: Reference?, country: String?): String? {
-        println(country)
-        return when {
+       return when {
             centre?.display != null && country != null -> centre.display + ", " + country
             centre?.display != null && country == null -> centre.display
             centre?.display == null && country != null -> country

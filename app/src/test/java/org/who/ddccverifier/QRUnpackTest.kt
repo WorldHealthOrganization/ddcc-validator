@@ -5,6 +5,7 @@ import org.junit.Test
 
 import org.junit.Assert.*
 import org.who.ddccverifier.services.qrs.hcert.HCertVerifier
+import org.who.ddccverifier.services.qrs.shc.SHCVerifier
 
 class QRUnpackTest {
     private val mapper = ObjectMapper()
@@ -41,6 +42,13 @@ class QRUnpackTest {
         assertNotNull(CWT)
 
         val DCC = CWT!![-260][1]
-        jsonEquals(open("EUQR1Unpacked.json"), DCC.toString())
+        jsonEquals(open("EUQR1Unpacked.txt"), DCC.toString())
+    }
+
+    @Test
+    fun unpackSHCQR1() {
+        val qr1 = open("SHCQR1Contents.txt")
+        val JWT = SHCVerifier().unpack(qr1)
+        assertEquals(open("SHCQR1Unpacked.txt"), JWT)
     }
 }
