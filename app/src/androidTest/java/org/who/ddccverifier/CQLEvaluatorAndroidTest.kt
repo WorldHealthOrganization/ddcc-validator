@@ -15,11 +15,21 @@ import org.who.ddccverifier.services.fhir.CQLEvaluator
 import org.who.ddccverifier.services.fhir.FHIRLibraryLoader
 import org.who.ddccverifier.services.qrs.QRUnpacker
 import org.who.ddccverifier.services.qrs.shc.SHCVerifier
+import java.io.InputStream
 import java.io.StringReader
 import java.util.*
 
 @RunWith(AndroidJUnit4::class)
-class CQLEvaluatorAndroidTest: BaseTest() {
+class CQLEvaluatorAndroidTest {
+
+    public fun inputStream(assetName: String): InputStream? {
+        return javaClass.classLoader?.getResourceAsStream(assetName)
+    }
+
+    public fun open(assetName: String): String {
+        return inputStream(assetName)?.bufferedReader()
+            .use { bufferReader -> bufferReader?.readText() } ?: ""
+    }
 
     private val fhirContext = FhirContext.forCached(FhirVersionEnum.R4)
     private val jSONParser = fhirContext.newJsonParser()
