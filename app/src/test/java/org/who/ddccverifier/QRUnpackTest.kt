@@ -7,16 +7,11 @@ import org.junit.Assert.*
 import org.who.ddccverifier.services.qrs.hcert.HCertVerifier
 import org.who.ddccverifier.services.qrs.shc.SHCVerifier
 
-class QRUnpackTest {
+class QRUnpackTest: BaseTest() {
     private val mapper = ObjectMapper()
 
     private fun jsonEquals(v1: String, v2: String) {
         return assertEquals(mapper.readTree(v1), mapper.readTree(v2))
-    }
-
-    private fun open(assetName: String): String {
-        return javaClass.classLoader?.getResourceAsStream(assetName)?.bufferedReader()
-            .use { bufferReader -> bufferReader?.readText() } ?: ""
     }
 
     @Test

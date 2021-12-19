@@ -6,31 +6,16 @@ import org.junit.Assert.*
 import org.who.ddccverifier.services.qrs.hcert.HCertVerifier
 import ca.uhn.fhir.context.FhirContext
 import com.fasterxml.jackson.databind.ObjectMapper
-import org.junit.BeforeClass
 import org.who.ddccverifier.services.qrs.QRUnpacker
 import org.who.ddccverifier.services.qrs.shc.SHCVerifier
-import org.who.ddccverifier.services.trust.TrustRegistry
 
-class QRVerifyTest {
+class QRVerifyTest: BaseTest() {
 
     private val mapper = ObjectMapper()
     private val jsonParser = FhirContext.forR4().newJsonParser()
 
     private fun jsonEquals(v1: String, v2: String) {
         assertEquals(mapper.readTree(v1), mapper.readTree(v2))
-    }
-
-    private fun open(assetName: String): String {
-        return javaClass.classLoader?.getResourceAsStream(assetName)?.bufferedReader()
-            .use { bufferReader -> bufferReader?.readText() } ?: ""
-    }
-
-    companion object {
-        @BeforeClass
-        @JvmStatic
-        fun setupClass() {
-            TrustRegistry.init()
-        }
     }
 
     @Test

@@ -15,13 +15,12 @@ import org.hl7.fhir.r4.model.Composition
 import org.opencds.cqf.cql.engine.execution.JsonCqlLibraryReader
 import org.who.ddccverifier.services.fhir.CQLEvaluator
 import org.who.ddccverifier.services.fhir.FHIRLibraryLoader
-import java.io.InputStream
 import java.io.StringReader
 import java.lang.IllegalArgumentException
 import java.util.*
 import kotlin.collections.ArrayList
 
-class CQLEvaluatorTest {
+class CQLEvaluatorTest: BaseTest() {
 
     private val fhirContext = FhirContext.forCached(FhirVersionEnum.R4)
     private val jSONParser = fhirContext.newJsonParser()
@@ -29,14 +28,7 @@ class CQLEvaluatorTest {
     private val ddccPass = VersionedIdentifier().withId("DDCCPass").withVersion("0.0.1")
 
     private val cqlEvaluator = CQLEvaluator(FHIRLibraryLoader(::inputStream))
-    private fun inputStream(assetName: String): InputStream? {
-        return javaClass.classLoader?.getResourceAsStream(assetName)
-    }
 
-    private fun open(assetName: String): String {
-        return inputStream(assetName)?.bufferedReader()
-            .use { bufferReader -> bufferReader?.readText() } ?: ""
-    }
 
     /**
      * Translate CQL to Json

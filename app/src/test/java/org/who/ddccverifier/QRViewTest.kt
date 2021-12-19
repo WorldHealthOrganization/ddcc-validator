@@ -4,36 +4,17 @@ import org.cqframework.cql.elm.execution.VersionedIdentifier
 import org.junit.Test
 
 import org.junit.Assert.*
-import org.junit.BeforeClass
 import org.who.ddccverifier.services.*
 import org.who.ddccverifier.services.fhir.CQLEvaluator
 import org.who.ddccverifier.services.fhir.FHIRLibraryLoader
 import org.who.ddccverifier.services.qrs.QRUnpacker
-import org.who.ddccverifier.services.trust.TrustRegistry
-import java.io.InputStream
 import java.util.*
 
-class QRViewTest {
+class QRViewTest: BaseTest() {
 
     private val ddccPass = VersionedIdentifier().withId("DDCCPass").withVersion("0.0.1")
 
     private val cqlEvaluator = CQLEvaluator(FHIRLibraryLoader(::inputStream))
-    private fun inputStream(assetName: String): InputStream? {
-        return javaClass.classLoader?.getResourceAsStream(assetName)
-    }
-
-    private fun open(assetName: String): String {
-        return inputStream(assetName)?.bufferedReader()
-            .use { bufferReader -> bufferReader?.readText() } ?: ""
-    }
-
-    companion object {
-        @BeforeClass
-        @JvmStatic
-        fun setupClass() {
-            TrustRegistry.init()
-        }
-    }
 
     @Test
     fun viewWHOQR1() {

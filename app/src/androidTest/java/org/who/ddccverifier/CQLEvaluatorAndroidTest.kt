@@ -7,7 +7,6 @@ import org.cqframework.cql.elm.execution.VersionedIdentifier
 import org.hl7.fhir.r4.model.Bundle
 import org.hl7.fhir.r4.model.Composition
 import org.junit.Assert
-import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.opencds.cqf.cql.engine.execution.JsonCqlLibraryReader
@@ -16,36 +15,17 @@ import org.who.ddccverifier.services.fhir.CQLEvaluator
 import org.who.ddccverifier.services.fhir.FHIRLibraryLoader
 import org.who.ddccverifier.services.qrs.QRUnpacker
 import org.who.ddccverifier.services.qrs.shc.SHCVerifier
-import org.who.ddccverifier.services.trust.TrustRegistry
-import java.io.InputStream
 import java.io.StringReader
 import java.util.*
 
 @RunWith(AndroidJUnit4::class)
-class CQLEvaluatorAndroidTest {
+class CQLEvaluatorAndroidTest: BaseTest() {
 
     private val fhirContext = FhirContext.forCached(FhirVersionEnum.R4)
     private val jSONParser = fhirContext.newJsonParser()
 
     private val cqlEvaluator = CQLEvaluator(FHIRLibraryLoader(::inputStream))
     private val ddccPass = VersionedIdentifier().withId("DDCCPass").withVersion("0.0.1")
-
-    private fun inputStream(assetName: String): InputStream? {
-        return javaClass.classLoader?.getResourceAsStream(assetName)
-    }
-
-    companion object {
-        @BeforeClass
-        @JvmStatic
-        fun setupClass() {
-            TrustRegistry.init()
-        }
-    }
-
-    private fun open(assetName: String): String {
-        return inputStream(assetName)?.bufferedReader()
-            .use { bufferReader -> bufferReader?.readText() } ?: ""
-    }
 
     @Test
     fun evaluateDDCCPassOnWHOQR1FromCompositonTest() {
