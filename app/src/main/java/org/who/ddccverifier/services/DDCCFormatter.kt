@@ -204,7 +204,7 @@ class DDCCFormatter {
         if (vaccines == null) return null
         return vaccines.coding.groupBy {
             VACCINE_PROPH.get(it.code) ?: CVX.get(it.code)
-        }.keys.joinToString(", ")
+        }.keys.filterNotNull().joinToString(", ")
     }
 
     private fun formatPractioner(practitioner: Practitioner?): String? {
