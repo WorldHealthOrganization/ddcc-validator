@@ -157,10 +157,15 @@ class ResultFragment : Fragment() {
 
         uiScope.launch {
             withContext(Dispatchers.IO) {
-                val status = if (resolveStatus(DDCC)) "COVID Safe" else "COVID Vulnerable"
+                val status = resolveStatus(DDCC)
+                val statusStr = when (status) {
+                    true -> "COVID Safe"
+                    false -> "COVID Vulnerable"
+                    null -> "Unable to evaluate"
+                }
                 withContext(Dispatchers.Main){
                     _binding?.let {
-                        setTextView(binding.tvResultStatus, status, binding.tvResultStatus)
+                        setTextView(binding.tvResultStatus, statusStr, binding.tvResultStatus)
                     }
                 }
             }
@@ -194,12 +199,17 @@ class ResultFragment : Fragment() {
         return QRUnpacker().decode(qr)
     }
 
-    suspend fun resolveStatus(DDCC: Composition): Boolean {
+    suspend fun resolveStatus(DDCC: Composition): Boolean? {
         // Might be slow
-        return CQLEvaluator(FHIRLibraryLoader(::open)).resolve(
-            "CompletedImmunization",
-            VersionedIdentifier().withId("DDCCPass").withVersion("0.0.1"),
-            DDCC) as Boolean
+        return try {
+             CQLEvaluator(FHIRLibraryLoader(::open)).resolve(
+                "CompletedImmunization",
+                VersionedIdentifier().withId("DDCCPass").withVersion("0.0.1"),
+                DDCC) as Boolean
+        } catch (t: Throwable) {
+            t.printStackTrace()
+            null
+        }
     }
 
     override fun onDestroyView() {
