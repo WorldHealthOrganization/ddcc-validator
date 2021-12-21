@@ -12,6 +12,7 @@ class ContextLoader(val open: (String)-> InputStream?) : DocumentLoader {
     val cachedContexts = mapOf(
         uri("https://www.w3.org/2018/credentials/v1") to load("W32018CredentialsV1.json"),
         uri("https://cowin.gov.in/credentials/vaccination/v1") to load("DIVOCVaccinationContextV1.json"),
+        uri("https://cowin.gov.in/credentials/vaccination/v2") to load("DIVOCVaccinationContextV2.json"),
         uri("https://divoc.prod/vaccine/credentials/vaccination/v1") to load("DIVOCVaccinationContextV2.json"),
         uri("https://divoc.lgcc.gov.lk/credentials/vaccination/v1") to load("DIVOCVaccinationContextV2.json"),
         uri("https://w3id.org/security/v1") to load("security-v1.jsonld"),

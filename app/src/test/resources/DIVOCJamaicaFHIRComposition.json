@@ -1,0 +1,167 @@
+{
+  "resourceType": "Composition",
+  "id": "9874S1445691",
+  "contained": [
+    {
+      "resourceType": "Patient",
+      "id": "9874S1445691",
+      "name": [
+        {
+          "text": "test user"
+        }
+      ],
+      "gender": "male",
+      "birthDate": "1998-01-04"
+    },
+    {
+      "resourceType": "Immunization",
+      "id": "1",
+      "extension": [
+        {
+          "url": "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCCountryOfVaccination",
+          "valueCoding": {
+            "system": "urn:iso:std:iso:3166",
+            "code": "IND"
+          }
+        },
+        {
+          "url": "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineValidFrom",
+          "valueDateTime": "2022-04-14T20:00:00-04:00"
+        }
+      ],
+      "identifier": [
+        {
+          "value": "891244125"
+        }
+      ],
+      "vaccineCode": {
+        "coding": [
+          {
+            "display": "Pfizer"
+          }
+        ]
+      },
+      "patient": {
+        "reference": "#9874S1445691"
+      },
+      "occurrenceDateTime": "2021-04-14T20:00:00-04:00",
+      "location": {
+        "reference": "#2"
+      },
+      "manufacturer": {
+        "reference": "#3"
+      },
+      "lotNumber": "JM4561",
+      "performer": [
+        {
+          "actor": {
+            "reference": "#4"
+          }
+        }
+      ],
+      "protocolApplied": [
+        {
+          "authority": {
+            "reference": "#5"
+          },
+          "targetDisease": [
+            {
+              "coding": [
+                {
+                  "system": "http://snomed.info/sct",
+                  "code": "840539006"
+                }
+              ]
+            }
+          ],
+          "doseNumberPositiveInt": 2,
+          "seriesDosesPositiveInt": 2
+        }
+      ]
+    },
+    {
+      "resourceType": "Location",
+      "id": "2",
+      "name": "St, Jago Park Health Centre",
+      "address": {
+        "country": "IND"
+      }
+    },
+    {
+      "resourceType": "Organization",
+      "id": "3",
+      "name": "XYZ Company"
+    },
+    {
+      "resourceType": "Practitioner",
+      "id": "4",
+      "name": [
+        {
+          "text": "Sanderson, Brandon"
+        }
+      ]
+    },
+    {
+      "resourceType": "Organization",
+      "id": "5",
+      "name": "St, Jago Park Health Centre"
+    }
+  ],
+  "type": {
+    "coding": [
+      {
+        "system": "http://loinc.org",
+        "code": "82593-5",
+        "display": "Immunization summary report"
+      }
+    ]
+  },
+  "category": [
+    {
+      "coding": [
+        {
+          "code": "ddcc-vs"
+        }
+      ]
+    }
+  ],
+  "subject": {
+    "reference": "#9874S1445691"
+  },
+  "author": [
+    {
+      "reference": "#5"
+    }
+  ],
+  "title": "International Certificate of Vaccination or Prophylaxis",
+  "event": [
+    {
+      "period": {
+        "start": "2021-12-17"
+      }
+    }
+  ],
+  "section": [
+    {
+      "code": {
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "11369-6",
+            "display": "History of Immunization Narrative"
+          }
+        ]
+      },
+      "author": [
+        {
+          "reference": "#5"
+        }
+      ],
+      "entry": [
+        {
+          "reference": "#1"
+        }
+      ]
+    }
+  ]
+}

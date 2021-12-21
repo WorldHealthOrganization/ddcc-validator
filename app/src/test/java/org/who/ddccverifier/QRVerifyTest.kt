@@ -83,4 +83,17 @@ class QRVerifyTest: BaseTest() {
 
         jsonEquals(open("DIVOCQR1FHIRComposition.json"), json)
     }
+
+    @Test
+    fun verifyDIVOCJamaica() {
+        val qr1 = open("DIVOCJamaicaContents.txt")
+        val verified = DivocVerifier(::inputStream).unpackAndVerify(qr1)
+
+        assertNotNull(verified)
+        assertEquals(QRUnpacker.Status.INVALID_SIGNATURE, verified.status)
+
+        val json = jsonParser.encodeResourceToString(verified.contents!!)
+
+        jsonEquals(open("DIVOCJamaicaFHIRComposition.json"), json)
+    }
 }

@@ -231,4 +231,48 @@ class QRViewTest: BaseTest() {
 
         assertEquals(false, status)
     }
+
+    @Test
+    fun viewDIVOCJamaica() {
+        val qr1 = open("DIVOCJamaicaContents.txt")
+        val verified = qrUnpacker.decode(qr1)
+
+        assertEquals(QRUnpacker.Status.INVALID_SIGNATURE, verified.status)
+
+        val card2 = DDCCFormatter().run(verified.contents!!)
+        val status = cqlEvaluator.resolve(
+            "CompletedImmunization", ddccPass,
+            verified.contents!!) as Boolean
+
+        val context = cqlEvaluator.run(ddccPass, verified.contents!!)
+        assertEquals(true, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
+        assertNotEquals(Collections.EMPTY_LIST, context.resolveExpressionRef("GetFinalDose").evaluate(context))
+
+        // Credential
+        assertEquals("COVID-19 Vaccination", card2.cardTitle!!.split(" - ")[1])
+        assertEquals("Valid from Dec 17, 2021", card2.validUntil)
+
+        // Patient
+        assertEquals("test user", card2.personName)
+        assertEquals("Jan 4, 1998 - Male", card2.personDetails)
+        assertEquals(null, card2.identifier)
+
+        // Immunization
+        assertEquals("Pfizer", card2.vaccineType)
+        assertEquals("Dose: 2 of 2", card2.dose)
+        assertEquals("Apr 14, 2021", card2.doseDate)
+        assertEquals("Apr 14, 2022", card2.vaccineValid)
+        assertEquals("COVID-19", card2.vaccineAgainst)
+        assertEquals("Lot #JM4561", card2.vaccineInfo)
+        assertEquals(null, card2.vaccineInfo2)
+        assertEquals("IND", card2.location)
+        assertEquals("9874S1445691", card2.hcid)
+        assertEquals("St, Jago Park Health Centre", card2.pha)
+        assertEquals("Sanderson, Brandon", card2.hw)
+
+        // Recommendation
+        assertEquals(null, card2.nextDose)
+
+        assertEquals(true, status)
+    }
 }

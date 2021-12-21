@@ -18,6 +18,11 @@ class JsonLDTranslator {
         return DateType(dob.time)
     }
 
+    private fun parseDoB(date: Date?): DateType? {
+        if (date == null) return null
+        return DateType(date, TemporalPrecisionEnum.DAY)
+    }
+
     private fun parseDateType(date: Date?): DateTimeType? {
         if (date == null) return null
         return DateTimeType(date, TemporalPrecisionEnum.DAY)
@@ -83,7 +88,7 @@ class JsonLDTranslator {
             identifier = listOfNotNull(Identifier().apply {
                 this.value = vc.credentialSubject.id
             })
-            birthDateElement = parseAge(vc.issuanceDate, vc.credentialSubject.age)
+            birthDateElement = parseDoB(vc.credentialSubject.dob) ?: parseAge(vc.issuanceDate, vc.credentialSubject.age)
             gender = parseGender(vc.credentialSubject.gender)
             addAddress().apply {
                 addLine(vc.credentialSubject.address?.streetAddress)

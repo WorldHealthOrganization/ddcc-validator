@@ -39,7 +39,7 @@ class QRUnpacker(private val open: (String)-> InputStream?) {
         if (qrPayload.uppercase().startsWith("SHC:")) {
             return SHCVerifier().unpackAndVerify(qrPayload)
         }
-        if (qrPayload.uppercase().startsWith("B64:")) {
+        if (qrPayload.uppercase().startsWith("B64:") || qrPayload.uppercase().startsWith("PK")) {
             return DivocVerifier(open).unpackAndVerify(qrPayload)
         }
         return VerificationResult(Status.NOT_SUPPORTED, null, null, qrPayload)

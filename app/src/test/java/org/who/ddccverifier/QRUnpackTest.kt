@@ -54,4 +54,11 @@ class QRUnpackTest: BaseTest() {
         val jsonld = DivocVerifier(::inputStream).unpack(qr1)
         jsonEquals(open("DIVOCQR1Unpacked.json"), jsonld!!.toJson(true))
     }
+
+    @Test
+    fun unpackDIVOCJamaica() {
+        val qr1 = open("DIVOCJamaicaContents.txt")
+        val jsonld = DivocVerifier(::inputStream).unpack(qr1)
+        jsonEquals(open("DIVOCJamaicaUnpacked.json"), jsonld!!.toJson(true))
+    }
 }

@@ -174,7 +174,9 @@ class DDCCFormatter {
 
     private fun formatIDs(identifiers: List<Identifier>?): String? {
         if (identifiers == null || identifiers.isEmpty()) return null
-        return "ID: " + identifiers.groupBy { it.value }.keys.joinToString(", ")
+        val id = identifiers.groupBy { it.value }.keys.filterNotNull().joinToString(", ")
+        if (id == null  || id.isBlank()) return null
+        return "ID: " + id
     }
 
     // Immunization Info

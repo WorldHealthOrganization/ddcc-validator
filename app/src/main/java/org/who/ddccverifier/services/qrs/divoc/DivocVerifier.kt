@@ -4,6 +4,7 @@ import android.util.Base64
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import foundation.identity.jsonld.JsonLDObject
+import info.weboftrust.ldsignatures.verifier.Ed25519Signature2018LdVerifier
 import org.who.ddccverifier.services.trust.TrustRegistry
 import java.security.PublicKey
 
@@ -36,7 +37,8 @@ class DivocVerifier(private val open: (String)-> InputStream?) {
         val refId: String?,
         val name: String?,
         val gender: String?,
-        val age: String?,
+        val age: String?, //V1
+        val dob: Date?,   //V2
         val nationality: String?,
         val address: Address?
     )
@@ -74,7 +76,9 @@ class DivocVerifier(private val open: (String)-> InputStream?) {
         val dose: Int?,
         val totalDoses: Int?,
         val verifier: Verifier?,
-        val facility: Facility?
+        val facility: Facility?,
+        val icd11Code: String?,  //V2
+        val prophylaxis: String?  //V2
     )
 
     data class Verifier(
@@ -96,7 +100,7 @@ class DivocVerifier(private val open: (String)-> InputStream?) {
         }
     }
 
-    private fun buildJSonLDDocument(str: String):JsonLDObject? {
+    fun buildJSonLDDocument(str: String):JsonLDObject? {
         return try {
             val contexts = ContextLoader(open)
             val jsonLdObject = JsonLDObject.fromJson(str)
@@ -108,12 +112,14 @@ class DivocVerifier(private val open: (String)-> InputStream?) {
         }
     }
 
-    private fun prefixDecode(uri: String): String {
+    private fun prefixDecode(uri: String): ByteArray? {
         if (uri.uppercase().startsWith(URI_SCHEMA)) {
-            return uri.substring(URI_SCHEMA.length)
+            return Base64.decode(uri.substring(URI_SCHEMA.length), Base64.DEFAULT)
+        } else if (uri.uppercase().startsWith("PK")) {
+            println("B64:" + Base64.encodeToString(uri.toCharArray().map { it -> it.code.toByte() }.toByteArray(), Base64.DEFAULT))
+            return uri.toCharArray().map { it -> it.code.toByte() }.toByteArray()
         }
-
-        return uri
+        return null
     }
 
     private fun unzipFiles(array: ByteArray): Map<String, ByteArray>? {
@@ -132,8 +138,7 @@ class DivocVerifier(private val open: (String)-> InputStream?) {
     }
 
     fun unpack(uri: String): JsonLDObject? {
-        val b64 = prefixDecode(uri)
-        val array = Base64.decode(b64, Base64.DEFAULT)
+        val array = prefixDecode(uri) ?: return null
         return buildJSonLDDocument(String(unzipFiles(array)?.get("certificate.json")!!))
     }
 
@@ -147,8 +152,13 @@ class DivocVerifier(private val open: (String)-> InputStream?) {
 
     private fun verify(jsonLdObject: JsonLDObject, pubKey: PublicKey): Boolean {
         return try {
-            val verifier = RsaSignature2018withPS256Verifier(pubKey)
-            verifier.verify(jsonLdObject)
+            val signatureSuite = (jsonLdObject.jsonObject["proof"] as? Map<*, *>)?.get("type") as String?
+
+            when (signatureSuite) {
+                "RsaSignature2018" -> RsaSignature2018withPS256Verifier(pubKey).verify(jsonLdObject)
+                "Ed25519Signature2018" -> Ed25519Signature2018LdVerifier(pubKey.encoded).verify(jsonLdObject)
+                else -> false
+            }
         } catch (e: Throwable) {
             e.printStackTrace()
             false
@@ -156,8 +166,7 @@ class DivocVerifier(private val open: (String)-> InputStream?) {
     }
 
     fun unpackAndVerify(uri: String): QRUnpacker.VerificationResult {
-        val b64 = prefixDecode(uri)
-        val array = Base64.decode(b64, Base64.DEFAULT) ?: return QRUnpacker.VerificationResult(QRUnpacker.Status.INVALID_BASE45, null, null, uri)
+        val array = prefixDecode(uri) ?: return QRUnpacker.VerificationResult(QRUnpacker.Status.INVALID_BASE45, null, null, uri)
         val json = unzipFiles(array)?.get("certificate.json")?: return QRUnpacker.VerificationResult(QRUnpacker.Status.INVALID_ZIP, null, null, uri)
         val signedMessage = buildJSonLDDocument(String(json)) ?: return QRUnpacker.VerificationResult(QRUnpacker.Status.INVALID_COSE, null, null, uri)
 

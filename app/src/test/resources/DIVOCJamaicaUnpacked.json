@@ -1,0 +1,56 @@
+{
+  "@context": [
+    "https://www.w3.org/2018/credentials/v1",
+    "https://cowin.gov.in/credentials/vaccination/v2"
+  ],
+  "type": [
+    "VerifiableCredential",
+    "ProofOfVaccinationCredential"
+  ],
+  "credentialSubject": {
+    "type": "Person",
+    "id": "",
+    "refId": "9874S1445691",
+    "name": "test user",
+    "gender": "Male",
+    "dob": "1998-01-05"
+  },
+  "issuer": "https://www.moh.gov.jm",
+  "issuanceDate": "2021-12-17T18:41:49.791Z",
+  "evidence": [
+    {
+      "id": "https://cowin.gov.in/vaccine/891244125",
+      "certificateId": "891244125",
+      "type": [
+        "Vaccination"
+      ],
+      "batch": "JM4561",
+      "vaccine": "Pfizer",
+      "manufacturer": "XYZ Company",
+      "icd11Code": "XM0GQ8",
+      "prophylaxis": "COVID-19 vaccine, mRNA based vaccine",
+      "date": "2021-04-15",
+      "effectiveStart": "2021-04-15",
+      "effectiveUntil": "2022-04-15",
+      "dose": 2,
+      "totalDoses": 2,
+      "verifier": {
+        "name": "Sanderson, Brandon"
+      },
+      "facility": {
+        "name": "St, Jago Park Health Centre",
+        "address": {
+          "addressCountry": "IND"
+        }
+      }
+    }
+  ],
+  "nonTransferable": "true",
+  "proof": {
+    "type": "Ed25519Signature2018",
+    "created": "2021-12-17T18:41:49Z",
+    "verificationMethod": "did:india",
+    "proofPurpose": "assertionMethod",
+    "jws": "eyJhbGciOiJFZERTQSIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..1bqRGHxRKkAaxUK_PMCBoG8-LEa_7BoA0nHC-eFtxwNiMugcSZ_Q4fRZpdeWnC-twZUNspeUql6Zs48oYF9wBQ"
+  }
+}
