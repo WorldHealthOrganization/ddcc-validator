@@ -3,6 +3,8 @@ package org.who.ddccverifier.services.qrs.divoc
 import ca.uhn.fhir.model.api.TemporalPrecisionEnum
 import org.hl7.fhir.instance.model.api.IBaseDatatype
 import org.hl7.fhir.r4.model.*
+import java.text.SimpleDateFormat
+import java.time.Year
 import java.util.*
 
 /**
@@ -10,27 +12,29 @@ import java.util.*
  */
 class JsonLDTranslator {
 
-    private fun parseAge(issuanceDate: Date, age: String?): DateType? {
+    val isoFormatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+
+    private fun parseAge(issuanceDate: String?, age: String?): DateType? {
         if (age == null) return null
         val dob = Calendar.getInstance()
-            dob.time = issuanceDate
+            dob.time = isoFormatter.parse(issuanceDate)
             dob.add(Calendar.YEAR, -Integer.parseInt(age))
-        return DateType(dob.time)
+        return DateType(dob.get(Calendar.YEAR).toString())
     }
 
-    private fun parseDoB(date: Date?): DateType? {
+    private fun parseDoB(date: String?): DateType? {
         if (date == null) return null
-        return DateType(date, TemporalPrecisionEnum.DAY)
+        return DateType(date)
     }
 
-    private fun parseDateType(date: Date?): DateTimeType? {
+    private fun parseDateType(date: String?): DateTimeType? {
         if (date == null) return null
-        return DateTimeType(date, TemporalPrecisionEnum.DAY)
+        return DateTimeType(date)
     }
 
-    private fun parseDateTimeType(date: Date?): DateTimeType? {
+    private fun parseDateTimeType(date: String?): DateTimeType? {
         if (date == null) return null
-        return DateTimeType(date, TemporalPrecisionEnum.DAY)
+        return DateTimeType(date)
     }
 
     private fun parseGender(gender: String?): Enumerations.AdministrativeGender? {

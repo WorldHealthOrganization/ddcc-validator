@@ -210,14 +210,14 @@ class QRViewTest: BaseTest() {
 
         // Patient
         assertEquals("Third March User One", card2.personName)
-        assertEquals("Mar 2, 1956 - Male", card2.personDetails)
+        assertEquals("1956 - Male", card2.personDetails)
         assertEquals("ID: did:Passport:Dummy256", card2.identifier)
 
         // Immunization
         assertEquals("", card2.vaccineType)
         assertEquals("Dose: 1 of 2", card2.dose)
         assertEquals("Mar 2, 2021", card2.doseDate)
-        assertEquals("Mar 2, 2021", card2.vaccineValid)
+        assertEquals("Mar 3, 2021", card2.vaccineValid)
         assertEquals("COVID-19", card2.vaccineAgainst)
         assertEquals("COVISHIELD (#Dummy-TGN-Chamba)", card2.vaccineInfo)
         assertEquals(null, card2.vaccineInfo2)
@@ -254,14 +254,14 @@ class QRViewTest: BaseTest() {
 
         // Patient
         assertEquals("test user", card2.personName)
-        assertEquals("Jan 4, 1998 - Male", card2.personDetails)
+        assertEquals("Jan 5, 1998 - Male", card2.personDetails)
         assertEquals(null, card2.identifier)
 
         // Immunization
         assertEquals("COVID-19 vaccine, mRNA based vaccine", card2.vaccineType)
         assertEquals("Dose: 2 of 2", card2.dose)
-        assertEquals("Apr 14, 2021", card2.doseDate)
-        assertEquals("Apr 14, 2022", card2.vaccineValid)
+        assertEquals("Apr 15, 2021", card2.doseDate)
+        assertEquals("Apr 15, 2022", card2.vaccineValid)
         assertEquals("COVID-19", card2.vaccineAgainst)
         assertEquals("Pfizer (#JM4561)", card2.vaccineInfo)
         assertEquals(null, card2.vaccineInfo2)

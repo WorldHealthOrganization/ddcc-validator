@@ -16,7 +16,7 @@
         }
       ],
       "gender": "male",
-      "birthDate": "1956-03-02",
+      "birthDate": "1956",
       "address": [
         {
           "district": "Chamba",
@@ -49,7 +49,7 @@
         },
         {
           "url": "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineValidFrom",
-          "valueDateTime": "2021-03-02"
+          "valueDateTime": "2021-03-03"
         }
       ],
       "identifier": [
@@ -60,7 +60,7 @@
       "patient": {
         "reference": "#39791185041847"
       },
-      "occurrenceDateTime": "2021-03-02",
+      "occurrenceDateTime": "2021-03-03T04:28:43.134Z",
       "location": {
         "reference": "#39791185041849"
       },
@@ -158,7 +158,7 @@
   "event": [
     {
       "period": {
-        "start": "2021-03-02"
+        "start": "2021-03-03T04:28:46.012Z"
       }
     }
   ],

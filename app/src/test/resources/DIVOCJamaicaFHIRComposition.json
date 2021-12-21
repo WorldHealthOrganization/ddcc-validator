@@ -11,7 +11,7 @@
         }
       ],
       "gender": "male",
-      "birthDate": "1998-01-04"
+      "birthDate": "1998-01-05"
     },
     {
       "resourceType": "Immunization",
@@ -36,7 +36,7 @@
         },
         {
           "url": "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineValidFrom",
-          "valueDateTime": "2022-04-14"
+          "valueDateTime": "2022-04-15"
         }
       ],
       "identifier": [
@@ -56,7 +56,7 @@
       "patient": {
         "reference": "#9874S1445691"
       },
-      "occurrenceDateTime": "2021-04-14",
+      "occurrenceDateTime": "2021-04-15",
       "location": {
         "reference": "#2"
       },
@@ -149,7 +149,7 @@
   "event": [
     {
       "period": {
-        "start": "2021-12-17"
+        "start": "2021-12-17T18:41:49.791Z"
       }
     }
   ],

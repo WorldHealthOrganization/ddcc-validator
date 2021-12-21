@@ -1,5 +1,6 @@
 package org.who.ddccverifier.services
 
+import ca.uhn.fhir.model.api.TemporalPrecisionEnum
 import org.hl7.fhir.r4.model.*
 import org.who.ddccverifier.views.ResultFragment
 import java.text.SimpleDateFormat
@@ -10,6 +11,8 @@ import java.util.*
  */
 class DDCCFormatter {
     private val fmt = SimpleDateFormat("MMM d, yyyy")
+    private val fmtYear = SimpleDateFormat("yyyy")
+    private val fmtYearMonth = SimpleDateFormat("MMM, yyyy")
     private val fmtComplete = SimpleDateFormat("MMM d, h:mma")
 
     private val DISEASES = mapOf("840539006" to "COVID-19")
@@ -163,10 +166,19 @@ class DDCCFormatter {
         return names.groupBy { it.text ?: it.nameAsSingleString }.keys.joinToString(", ")
     }
 
-    private fun formatPersonDetails(dob: Date?, gender: Enumerations.AdministrativeGender?): String? {
+    private fun formatDateWithPrecision(date: DateType): String {
+        if (date.precision == TemporalPrecisionEnum.YEAR) {
+            return fmtYear.format(date.value)
+        } else if (date.precision == TemporalPrecisionEnum.MONTH) {
+            return fmtYearMonth.format(date.value)
+        } else
+            return fmt.format(date.value)
+    }
+
+    private fun formatPersonDetails(dob: DateType?, gender: Enumerations.AdministrativeGender?): String? {
         return when {
-            dob != null && gender != null -> fmt.format(dob) + " - " + gender.display
-            dob != null && gender == null -> fmt.format(dob)
+            dob != null && gender != null -> formatDateWithPrecision(dob) + " - " + gender.display
+            dob != null && gender == null -> formatDateWithPrecision(dob)
             dob == null && gender != null -> gender.display
             else -> null
         }
@@ -322,7 +334,7 @@ class DDCCFormatter {
             formatCardTitle(immunization?.protocolApplied?.firstOrNull()?.targetDisease),
             formatValidPeriod(DDCC.event[0].period.start, DDCC.event[0].period.end),
             formatName(patient.name),
-            formatPersonDetails(patient.birthDate, patient.gender),
+            formatPersonDetails(patient.birthDateElement, patient.gender),
             formatIDs(patient.identifier),
             formatDose(
                 immunization?.protocolApplied?.firstOrNull()?.doseNumberPositiveIntType,

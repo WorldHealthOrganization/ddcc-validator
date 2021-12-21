@@ -24,7 +24,7 @@ class DivocVerifier(private val open: (String)-> InputStream?) {
         val context: List<String>,
         val type: List<String>,
         val issuer: String,
-        val issuanceDate: Date,
+        val issuanceDate: String,  // Do not convert to Date to avoid creating precision/timezene problems
         val nonTransferable: Boolean?,
         val credentialSubject: CredentialSubject,
         val evidence: List<Evidence>,
@@ -37,8 +37,8 @@ class DivocVerifier(private val open: (String)-> InputStream?) {
         val refId: String?,
         val name: String?,
         val gender: String?,
-        val age: String?, //V1
-        val dob: Date?,   //V2
+        val age: String?, //V1 // Do not convert to Date to avoid creating precision/timezene problems
+        val dob: String?, //V2 // Do not convert to Date to avoid creating precision/timezene problems
         val nationality: String?,
         val address: Address?
     )
@@ -70,9 +70,9 @@ class DivocVerifier(private val open: (String)-> InputStream?) {
         val batch: String?,
         val vaccine: String?,
         val manufacturer: String?,
-        val date: Date?,
-        val effectiveStart: Date?,
-        val effectiveUntil: Date?,
+        val date: String?,           // Do not convert to Date to avoid creating precision/timezene problems
+        val effectiveStart: String?, // Do not convert to Date to avoid creating precision/timezene problems
+        val effectiveUntil: String?, // Do not convert to Date to avoid creating precision/timezene problems
         val dose: Int?,
         val totalDoses: Int?,
         val verifier: Verifier?,
