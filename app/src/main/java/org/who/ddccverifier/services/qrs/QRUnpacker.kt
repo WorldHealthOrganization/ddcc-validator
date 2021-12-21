@@ -1,6 +1,5 @@
 package org.who.ddccverifier.services.qrs
 
-import android.util.Log
 import org.hl7.fhir.r4.model.Composition
 import org.who.ddccverifier.services.qrs.divoc.DivocVerifier
 import org.who.ddccverifier.services.qrs.hcert.HCertVerifier

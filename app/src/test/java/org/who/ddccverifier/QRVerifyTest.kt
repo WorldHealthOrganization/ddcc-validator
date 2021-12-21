@@ -8,19 +8,7 @@ import ca.uhn.fhir.context.FhirContext
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.who.ddccverifier.services.qrs.QRUnpacker
 import org.who.ddccverifier.services.qrs.shc.SHCVerifier
-import com.apicatalog.jsonld.document.JsonDocument
-import com.apicatalog.jsonld.http.media.MediaType
-import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton
-import foundation.identity.jsonld.ConfigurableDocumentLoader
-import foundation.identity.jsonld.JsonLDObject
-import info.weboftrust.ldsignatures.jsonld.LDSecurityContexts
-import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.who.ddccverifier.services.qrs.divoc.DivocVerifier
-import org.who.ddccverifier.services.qrs.divoc.RsaSignature2018LdPS256Verifier
-import org.who.ddccverifier.services.trust.TrustRegistry
-import java.io.StringReader
-import java.net.URI
-import java.security.Security
 
 
 class QRVerifyTest: BaseTest() {

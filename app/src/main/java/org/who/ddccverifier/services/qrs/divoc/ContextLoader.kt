@@ -23,9 +23,7 @@ class ContextLoader(val open: (String)-> InputStream?) : DocumentLoader {
         uri("https://w3id.org/security/suites/ed25519-2020/v1") to load("suites-ed25519-2020.jsonld"),
         uri("https://w3id.org/security/suites/x25519-2019/v1") to load("suites-x25519-2019.jsonld"),
         uri("https://w3id.org/security/suites/jws-2020/v1") to load("suites-jws-2020.jsonld")
-    ).apply {
-        forEach { t, u -> u.documentUrl = t }
-    }
+    ).onEach { (t, u) -> u.documentUrl = t }
 
     fun uri(str: String): URI {
         return URI.create(str)
@@ -36,7 +34,6 @@ class ContextLoader(val open: (String)-> InputStream?) : DocumentLoader {
     }
 
     override fun loadDocument(url: URI?, options: DocumentLoaderOptions?): Document? {
-        print("ContextLoader " + url.toString() +": "+ cachedContexts.get(url))
-        return cachedContexts.get(url)
+        return cachedContexts[url]
     }
 }

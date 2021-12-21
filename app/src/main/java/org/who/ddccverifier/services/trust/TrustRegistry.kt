@@ -42,7 +42,7 @@ object TrustRegistry {
         override fun deserialize(p: JsonParser, ctxt: DeserializationContext): PublicKey {
             val node = p.readValueAsTree<JsonNode>()
 
-            return if (node.isTextual()) {
+            return if (node.isTextual) {
                 // PEM File
                 KeyUtils.publicKeyFromPEM(node.asText())
             } else {
@@ -60,7 +60,7 @@ object TrustRegistry {
         val entityType: Type,
         val status: Status,
         val statusDetail: String?,
-        val validFromDT: Date,
+        val validFromDT: Date?,
         val validUntilDT: Date?,
         @JsonDeserialize(using = DidDocumentDeserializer::class)
         val didDocument: PublicKey,
@@ -68,8 +68,8 @@ object TrustRegistry {
     )
 
     private val registry: MutableMap<Framework, MutableMap<String, TrustedEntity>> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
-        Security.addProvider(BouncyCastleProviderSingleton.getInstance());
+        Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME)
+        Security.addProvider(BouncyCastleProviderSingleton.getInstance())
 
         val result = URL("https://raw.githubusercontent.com/Path-Check/trust-registry/main/registry.json").readText()
         //TODO: Downloading this JSON takes 500ms
@@ -81,7 +81,7 @@ object TrustRegistry {
         //TODO: Parsing this JSON takes 5s
         val reg = mapper.readValue(result, typeRef)
         addTestKeys(reg)
-        return@lazy reg;
+        return@lazy reg
     }
 
     private fun addTestKeys(registry: MutableMap<Framework, MutableMap<String, TrustedEntity>>) {

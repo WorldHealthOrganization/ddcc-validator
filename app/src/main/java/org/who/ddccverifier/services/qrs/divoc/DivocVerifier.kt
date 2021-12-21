@@ -1,30 +1,17 @@
 package org.who.ddccverifier.services.qrs.divoc
 
 import android.util.Base64
-import com.apicatalog.jsonld.JsonLd
-import com.apicatalog.jsonld.JsonLdError
-import com.apicatalog.jsonld.JsonLdOptions
-import com.apicatalog.jsonld.api.ToRdfApi
-import com.apicatalog.jsonld.document.JsonDocument
-import com.apicatalog.jsonld.http.DefaultHttpClient
-import com.apicatalog.jsonld.http.media.MediaType
-import com.apicatalog.jsonld.loader.DocumentLoader
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import foundation.identity.jsonld.ConfigurableDocumentLoader
-import foundation.identity.jsonld.JsonLDException
 import foundation.identity.jsonld.JsonLDObject
 import org.who.ddccverifier.services.trust.TrustRegistry
 import java.security.PublicKey
 
 import org.who.ddccverifier.services.qrs.QRUnpacker
+import org.who.ddccverifier.services.qrs.divoc.jsonldcrypto.RsaSignature2018withPS256Verifier
 import java.io.ByteArrayInputStream
 import java.io.InputStream
-import java.io.StringReader
-import java.lang.reflect.Field
-import java.lang.reflect.Member
-import java.lang.reflect.Modifier
-import java.util.*
+import java.util.Date
 import java.util.zip.ZipInputStream
 
 
@@ -33,14 +20,14 @@ class DivocVerifier(private val open: (String)-> InputStream?) {
 
     data class W3CVC(
         @JsonProperty("@context")
-        val context: Array<String>,
-        val type: Array<String>,
+        val context: List<String>,
+        val type: List<String>,
         val issuer: String,
         val issuanceDate: Date,
         val nonTransferable: Boolean?,
         val credentialSubject: CredentialSubject,
-        val evidence: Array<Evidence>,
-        val proof: Proof?,
+        val evidence: List<Evidence>,
+        val proof: Proof?
     )
 
     data class CredentialSubject(
@@ -51,7 +38,7 @@ class DivocVerifier(private val open: (String)-> InputStream?) {
         val gender: String?,
         val age: String?,
         val nationality: String?,
-        val address: Address?,
+        val address: Address?
     )
 
     data class Proof(
@@ -59,7 +46,7 @@ class DivocVerifier(private val open: (String)-> InputStream?) {
         val created: String?,
         val verificationMethod: String?,
         val proofPurpose: String?,
-        val jws: String?,
+        val jws: String?
     )
 
     data class Address(
@@ -69,7 +56,7 @@ class DivocVerifier(private val open: (String)-> InputStream?) {
         val city: String?,
         val addressRegion: String?,
         val addressCountry: String?,
-        val postalCode: String?,
+        val postalCode: String?
     )
 
     data class Evidence(
@@ -77,7 +64,7 @@ class DivocVerifier(private val open: (String)-> InputStream?) {
         val feedbackUrl: String?,
         val infoUrl: String?,
         val certificateId: String?,
-        val type: Array<String>?,
+        val type: List<String>?,
         val batch: String?,
         val vaccine: String?,
         val manufacturer: String?,
@@ -87,7 +74,7 @@ class DivocVerifier(private val open: (String)-> InputStream?) {
         val dose: Int?,
         val totalDoses: Int?,
         val verifier: Verifier?,
-        val facility: Facility?,
+        val facility: Facility?
     )
 
     data class Verifier(
@@ -96,27 +83,27 @@ class DivocVerifier(private val open: (String)-> InputStream?) {
 
     data class Facility(
         val name: String?,
-        val address: Address?,
+        val address: Address?
     )
 
-    fun map(jsonStr: String): W3CVC? {
+    private fun map(jsonStr: String): W3CVC? {
         return try {
             val mapper = jacksonObjectMapper()
             return mapper.readValue(jsonStr, W3CVC::class.java)
         } catch (e: Throwable) {
-            e.printStackTrace();
+            e.printStackTrace()
             null
         }
     }
 
-    fun buildJSonLDDocument(str: String):JsonLDObject? {
+    private fun buildJSonLDDocument(str: String):JsonLDObject? {
         return try {
             val contexts = ContextLoader(open)
             val jsonLdObject = JsonLDObject.fromJson(str)
-            jsonLdObject.setDocumentLoader(contexts)
+            jsonLdObject.documentLoader = contexts
             return jsonLdObject
         } catch (e: Throwable) {
-            e.printStackTrace();
+            e.printStackTrace()
             null
         }
     }
@@ -129,7 +116,7 @@ class DivocVerifier(private val open: (String)-> InputStream?) {
         return uri
     }
 
-    fun unzipFiles(array: ByteArray): Map<String, ByteArray>? {
+    private fun unzipFiles(array: ByteArray): Map<String, ByteArray>? {
         return try {
             ZipInputStream(ByteArrayInputStream(array)).use { zipInputStream ->
                 generateSequence { zipInputStream.nextEntry }
@@ -139,7 +126,7 @@ class DivocVerifier(private val open: (String)-> InputStream?) {
                     }
             }
         } catch (e: Throwable) {
-            e.printStackTrace();
+            e.printStackTrace()
             null
         }
     }
@@ -151,7 +138,7 @@ class DivocVerifier(private val open: (String)-> InputStream?) {
     }
 
     private fun getKID(jsonld: JsonLDObject): String? {
-        return (jsonld.jsonObject.get("proof") as? Map<String,Any>)?.get("verificationMethod") as String?
+        return (jsonld.jsonObject["proof"] as? Map<*, *>)?.get("verificationMethod") as String?
     }
 
     private fun resolveIssuer(kid: String): TrustRegistry.TrustedEntity? {
@@ -160,9 +147,10 @@ class DivocVerifier(private val open: (String)-> InputStream?) {
 
     private fun verify(jsonLdObject: JsonLDObject, pubKey: PublicKey): Boolean {
         return try {
-            val verifier = RsaSignature2018LdPS256Verifier(pubKey)
+            val verifier = RsaSignature2018withPS256Verifier(pubKey)
             verifier.verify(jsonLdObject)
         } catch (e: Throwable) {
+            e.printStackTrace()
             false
         }
     }

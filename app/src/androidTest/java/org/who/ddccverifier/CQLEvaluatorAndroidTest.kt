@@ -3,6 +3,8 @@ package org.who.ddccverifier
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import ca.uhn.fhir.context.FhirContext
 import ca.uhn.fhir.context.FhirVersionEnum
+import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton
+import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.cqframework.cql.elm.execution.VersionedIdentifier
 import org.hl7.fhir.r4.model.Bundle
 import org.hl7.fhir.r4.model.Composition
@@ -18,6 +20,7 @@ import org.who.ddccverifier.services.qrs.divoc.DivocVerifier
 import org.who.ddccverifier.services.qrs.shc.SHCVerifier
 import java.io.InputStream
 import java.io.StringReader
+import java.security.Security
 import java.util.*
 
 @RunWith(AndroidJUnit4::class)

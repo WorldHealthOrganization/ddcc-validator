@@ -154,6 +154,7 @@ class SHCVerifier {
         return try {
             return SignedJWT.parse(decodedBytes)
         } catch (e: Throwable) {
+            e.printStackTrace()
             null
         }
     }
@@ -174,6 +175,7 @@ class SHCVerifier {
             val key = ECDSAVerifier(pubKey as ECPublicKey)
             signedMessage.verify(key)
         } catch (e: Throwable) {
+            e.printStackTrace()
             false
         }
     }

@@ -39,7 +39,8 @@ class QRCodeFinder(private val onQRCodeFound: (Set<String>)->Unit): ImageAnalysi
     /**
      * DIVOC QR codes are binary.
      */
-    private fun bytesToStr(array: ByteArray): String {
+    private fun bytesToStr(array: ByteArray?): String {
+        if (array == null) return ""
         return "B64:" + Base64.encodeToString(array, Base64.DEFAULT)
     }
  
