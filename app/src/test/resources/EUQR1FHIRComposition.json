@@ -29,6 +29,7 @@
         {
           "url": "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineBrand",
           "valueCoding": {
+            "system": "https://www.ema.europa.eu/en/medicines/human/EPAR/comirnaty",
             "code": "EU/1/20/1528"
           }
         },
@@ -126,8 +127,8 @@
   "event": [
     {
       "period": {
-        "end": "2022-06-30",
-        "start": "2021-06-30"
+        "start": "2021-06-30",
+        "end": "2022-06-30"
       }
     }
   ],

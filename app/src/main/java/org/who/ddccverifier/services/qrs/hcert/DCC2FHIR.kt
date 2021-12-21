@@ -156,7 +156,7 @@ class DCC2FHIR {
                         })
                     manufacturer = parseIdentifierReference(vax["ma"])
                     extension = listOfNotNull(
-                        parseExtension(parseCoding(vax["mp"], ""),"https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineBrand"),
+                        parseExtension(parseCoding(vax["mp"], "https://www.ema.europa.eu/en/medicines/human/EPAR/comirnaty"),"https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineBrand"),
                         parseExtension(parseCoding(vax["ma"], ""),"https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineMarketAuthorization"),
                         parseExtension(parseCoding(vax["co"], "urn:iso:std:iso:3166"),"https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCCountryOfVaccination"),
                     )
