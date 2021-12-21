@@ -190,6 +190,8 @@ class QRViewTest: BaseTest() {
 
     @Test
     fun viewDIVOCQR1() {
+        TimeZone.setDefault(TimeZone.getTimeZone( "UTC"))
+
         val qr1 = open("DIVOCQR1Contents.txt")
         val verified = qrUnpacker.decode(qr1)
 
@@ -206,7 +208,7 @@ class QRViewTest: BaseTest() {
 
         // Credential
         assertEquals("COVID-19 Vaccination", card2.cardTitle!!.split(" - ")[1])
-        assertEquals("Valid from Mar 2, 2021", card2.validUntil)
+        assertEquals("Valid from Mar 3, 2021", card2.validUntil)
 
         // Patient
         assertEquals("Third March User One", card2.personName)
@@ -216,7 +218,7 @@ class QRViewTest: BaseTest() {
         // Immunization
         assertEquals("", card2.vaccineType)
         assertEquals("Dose: 1 of 2", card2.dose)
-        assertEquals("Mar 2, 2021", card2.doseDate)
+        assertEquals("Mar 3, 2021", card2.doseDate)
         assertEquals("Mar 3, 2021", card2.vaccineValid)
         assertEquals("COVID-19", card2.vaccineAgainst)
         assertEquals("COVISHIELD (#Dummy-TGN-Chamba)", card2.vaccineInfo)
