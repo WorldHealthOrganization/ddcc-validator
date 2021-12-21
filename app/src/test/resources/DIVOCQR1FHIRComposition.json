@@ -31,6 +31,16 @@
       "id": "39791185041848",
       "extension": [
         {
+          "url": "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineBrand",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "display": "COVISHIELD"
+              }
+            ]
+          }
+        },
+        {
           "url": "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCCountryOfVaccination",
           "valueCoding": {
             "system": "urn:iso:std:iso:3166",
@@ -47,13 +57,6 @@
           "value": "92047670169"
         }
       ],
-      "vaccineCode": {
-        "coding": [
-          {
-            "display": "COVISHIELD"
-          }
-        ]
-      },
       "patient": {
         "reference": "#39791185041847"
       },

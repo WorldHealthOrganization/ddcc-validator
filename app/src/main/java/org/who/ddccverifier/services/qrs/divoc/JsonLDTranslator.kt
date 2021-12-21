@@ -70,11 +70,22 @@ class JsonLDTranslator {
         return PositiveIntType(value)
     }
 
-    private fun parseVaccine(vaccine: String?): CodeableConcept? {
-        if (vaccine == null || vaccine.isEmpty()) return null
+    private fun parseVaccine(vaccineBrand: String?): CodeableConcept? {
+        if (vaccineBrand == null) return null
         return CodeableConcept().apply {
             coding = listOf(Coding().apply {
-                display = vaccine
+                display = vaccineBrand
+            })
+        }
+    }
+
+    private fun parseVaccineCode(icd11Code: String?, profilaxys: String?): CodeableConcept? {
+        if (icd11Code == null && profilaxys == null) return null
+        return CodeableConcept().apply {
+            coding = listOf(Coding().apply {
+                code = icd11Code
+                display = profilaxys
+                system = "http://hl7.org/fhir/sid/icd-11"
             })
         }
     }
@@ -117,7 +128,7 @@ class JsonLDTranslator {
                     value = ev.certificateId
                 })
                 patient = Reference(myPatient)
-                vaccineCode = parseVaccine(ev.vaccine)
+                vaccineCode = parseVaccineCode(ev.icd11Code, ev.prophylaxis)
                 occurrence = parseDateTimeType(ev.date)
                 lotNumber = ev.batch
                 protocolApplied = listOfNotNull(Immunization.ImmunizationProtocolAppliedComponent().apply {
@@ -152,7 +163,7 @@ class JsonLDTranslator {
                     }
                 )
                 extension = listOfNotNull(
-                    //parseExtension(parseCoding(ev.vaccine), "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineBrand"),
+                    parseExtension(parseVaccine(ev.vaccine), "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineBrand"),
                     //parseExtension(parseCoding(DDCC["ma_holder"]), "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineMarketAuthorization"),
                     parseExtension(parseCoding(ev.facility?.address?.addressCountry, "urn:iso:std:iso:3166"), "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCCountryOfVaccination"),
                     parseExtension(parseDateTimeType(ev.effectiveUntil), "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineValidFrom"),

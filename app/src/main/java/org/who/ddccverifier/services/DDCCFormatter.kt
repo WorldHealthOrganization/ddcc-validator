@@ -244,7 +244,12 @@ class DDCCFormatter {
     private fun getCodeOrText(obj: Type?): String? {
         if (obj == null) return null
         if (obj is Coding) {
-            return obj.code
+            return obj.display ?: obj.code
+        }
+        if (obj is CodeableConcept) {
+            return obj.coding.groupBy {
+                it.display ?: it.code
+            }.keys.joinToString(", ")
         }
         return obj.toString()
     }
