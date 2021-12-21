@@ -36,7 +36,7 @@
         },
         {
           "url": "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineValidFrom",
-          "valueDateTime": "2022-04-14T20:00:00-04:00"
+          "valueDateTime": "2022-04-14"
         }
       ],
       "identifier": [
@@ -56,7 +56,7 @@
       "patient": {
         "reference": "#9874S1445691"
       },
-      "occurrenceDateTime": "2021-04-14T20:00:00-04:00",
+      "occurrenceDateTime": "2021-04-14",
       "location": {
         "reference": "#2"
       },

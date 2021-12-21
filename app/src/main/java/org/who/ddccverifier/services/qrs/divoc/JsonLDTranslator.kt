@@ -30,7 +30,7 @@ class JsonLDTranslator {
 
     private fun parseDateTimeType(date: Date?): DateTimeType? {
         if (date == null) return null
-        return DateTimeType(date)
+        return DateTimeType(date, TemporalPrecisionEnum.DAY)
     }
 
     private fun parseGender(gender: String?): Enumerations.AdministrativeGender? {
