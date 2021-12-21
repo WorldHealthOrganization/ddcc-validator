@@ -121,6 +121,20 @@ object TrustRegistry {
                 listOf("VS")
             )
         )
+
+        registry[Framework.DIVOC]?.put(
+            "did:jamaica", TrustedEntity(
+                mapOf("en" to "Test Keys for the Jamaican DIVOC"),
+                null,
+                Type.ISSUER,
+                Status.CURRENT,
+                "DIVOC Test Keys",
+                df.parse("2021-01-01T08:00:00.000Z"),
+                df.parse("2021-12-01T08:00:00.000Z"),
+                KeyUtils.rsaPublicKeyFromPEM("-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAhnCjjILI/H3XSG4vlX1UonWWCn1abJKS+yCJHPruJZfTIPC5IF+b6QA2VuOGJhF/+KvPSbSarQ3IuFZA4b/hariahVPfYQJaF9yzVpkVKii67lGq8QpbSs2Y0s9RvNKofhj2GYKT1zSEAA4sWwEC9gMA+B+sJ2pJIc0zFXbcH03aRkeuavxe8dh3QT190SjQioJx4kQyfVtHD5a3ITQIutHOHFLtAXlY9+urvog/0Q5IYf66q2UHxUYisJIyjXYc7yxbYGFnBBRZjm/6R56/MxCnLrhyzQVkFDpRYh8FEJKA3YXYmRKKkFPqpczHNdOsPoqUzoMf+PyIxVr8ihsH4wIDAQAB\n-----END PUBLIC KEY-----"),
+                listOf("VS")
+            )
+        )
     }
 
     fun init() {
