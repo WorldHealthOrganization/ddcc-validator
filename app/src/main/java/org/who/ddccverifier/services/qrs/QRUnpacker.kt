@@ -1,14 +1,17 @@
 package org.who.ddccverifier.services.qrs
 
+import android.util.Log
 import org.hl7.fhir.r4.model.Composition
+import org.who.ddccverifier.services.qrs.divoc.DivocVerifier
 import org.who.ddccverifier.services.qrs.hcert.HCertVerifier
 import org.who.ddccverifier.services.qrs.shc.SHCVerifier
 import org.who.ddccverifier.services.trust.TrustRegistry
+import java.io.InputStream
 
 /**
  * Finds the right processor for the QR Content and returns the DDCC Composition of that Content.
  */
-class QRUnpacker {
+class QRUnpacker(private val open: (String)-> InputStream?) {
     enum class Status {
         NOT_SUPPORTED,
         INVALID_BASE45,
@@ -36,6 +39,9 @@ class QRUnpacker {
         }
         if (qrPayload.uppercase().startsWith("SHC:")) {
             return SHCVerifier().unpackAndVerify(qrPayload)
+        }
+        if (qrPayload.uppercase().startsWith("B64:")) {
+            return DivocVerifier(open).unpackAndVerify(qrPayload)
         }
         return VerificationResult(Status.NOT_SUPPORTED, null, null, qrPayload)
     }

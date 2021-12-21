@@ -4,6 +4,8 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         jcenter() // Warning: this repository is going to shut down soon
+        maven { url 'https://jitpack.io' } // for info.weboftrust:ld-signatures-java
+        maven { url 'https://repo.danubetech.com/repository/maven-public/' } // for info.weboftrust:ld-signatures-java
     }
 }
 rootProject.name = "DDCC Verifier"

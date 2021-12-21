@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.Test
 
 import org.junit.Assert.*
+import org.who.ddccverifier.services.qrs.divoc.DivocVerifier
 import org.who.ddccverifier.services.qrs.hcert.HCertVerifier
 import org.who.ddccverifier.services.qrs.shc.SHCVerifier
 
@@ -45,5 +46,12 @@ class QRUnpackTest: BaseTest() {
         val qr1 = open("SHCQR1Contents.txt")
         val JWT = SHCVerifier().unpack(qr1)
         assertEquals(open("SHCQR1Unpacked.txt"), JWT)
+    }
+
+    @Test
+    fun unpackDIVOCQR1() {
+        val qr1 = open("DIVOCQR1Contents.txt")
+        val jsonld = DivocVerifier(::inputStream).unpack(qr1)
+        jsonEquals(open("DIVOCQR1Unpacked.json"), jsonld!!.toJson(true))
     }
 }

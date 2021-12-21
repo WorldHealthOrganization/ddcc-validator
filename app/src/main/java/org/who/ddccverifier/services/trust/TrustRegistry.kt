@@ -13,6 +13,9 @@ import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonDeserializer
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton
+import org.bouncycastle.jce.provider.BouncyCastleProvider
+import java.security.Security
 
 /**
  * Resolve Keys for Verifiers
@@ -65,6 +68,9 @@ object TrustRegistry {
     )
 
     private val registry: MutableMap<Framework, MutableMap<String, TrustedEntity>> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
+        Security.addProvider(BouncyCastleProviderSingleton.getInstance());
+
         val result = URL("https://raw.githubusercontent.com/Path-Check/trust-registry/main/registry.json").readText()
         //TODO: Downloading this JSON takes 500ms
 

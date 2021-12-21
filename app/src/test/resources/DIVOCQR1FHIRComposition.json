@@ -1,0 +1,185 @@
+{
+  "resourceType": "Composition",
+  "id": "39791185041847",
+  "contained": [
+    {
+      "resourceType": "Patient",
+      "id": "39791185041847",
+      "identifier": [
+        {
+          "value": "did:Passport:Dummy256"
+        }
+      ],
+      "name": [
+        {
+          "text": "Third March User One"
+        }
+      ],
+      "gender": "male",
+      "birthDate": "1956-03-02",
+      "address": [
+        {
+          "district": "Chamba",
+          "state": "Himachal",
+          "postalCode": "176207",
+          "country": "IN"
+        }
+      ]
+    },
+    {
+      "resourceType": "Immunization",
+      "id": "39791185041848",
+      "extension": [
+        {
+          "url": "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCCountryOfVaccination",
+          "valueCoding": {
+            "system": "urn:iso:std:iso:3166",
+            "code": "IN"
+          }
+        },
+        {
+          "url": "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineValidFrom",
+          "valueDateTime": "2021-03-02T19:00:00-05:00"
+        }
+      ],
+      "identifier": [
+        {
+          "value": "92047670169"
+        }
+      ],
+      "vaccineCode": {
+        "coding": [
+          {
+            "display": "COVISHIELD"
+          }
+        ]
+      },
+      "patient": {
+        "reference": "#39791185041847"
+      },
+      "occurrenceDateTime": "2021-03-02T23:28:43-05:00",
+      "location": {
+        "reference": "#39791185041849"
+      },
+      "manufacturer": {
+        "reference": "#39791185041850"
+      },
+      "lotNumber": "Dummy-TGN-Chamba",
+      "performer": [
+        {
+          "actor": {
+            "reference": "#39791185041851"
+          }
+        }
+      ],
+      "protocolApplied": [
+        {
+          "authority": {
+            "reference": "#39791185041852"
+          },
+          "targetDisease": [
+            {
+              "coding": [
+                {
+                  "system": "http://snomed.info/sct",
+                  "code": "840539006"
+                }
+              ]
+            }
+          ],
+          "doseNumberPositiveInt": 1,
+          "seriesDosesPositiveInt": 2
+        }
+      ]
+    },
+    {
+      "resourceType": "Location",
+      "id": "39791185041849",
+      "name": "Himachal Site Name 176207",
+      "address": {
+        "line": [
+          "Address Of Site 176207"
+        ],
+        "district": "Chamba",
+        "state": "Himachal",
+        "country": "IN"
+      }
+    },
+    {
+      "resourceType": "Organization",
+      "id": "39791185041850",
+      "name": "Serum Institute of India"
+    },
+    {
+      "resourceType": "Practitioner",
+      "id": "39791185041851",
+      "name": [
+        {
+          "text": "Dummy Vaccinator"
+        }
+      ]
+    },
+    {
+      "resourceType": "Organization",
+      "id": "39791185041852",
+      "name": "Himachal Site Name 176207"
+    }
+  ],
+  "type": {
+    "coding": [
+      {
+        "system": "http://loinc.org",
+        "code": "82593-5",
+        "display": "Immunization summary report"
+      }
+    ]
+  },
+  "category": [
+    {
+      "coding": [
+        {
+          "code": "ddcc-vs"
+        }
+      ]
+    }
+  ],
+  "subject": {
+    "reference": "#39791185041847"
+  },
+  "author": [
+    {
+      "reference": "#39791185041852"
+    }
+  ],
+  "title": "International Certificate of Vaccination or Prophylaxis",
+  "event": [
+    {
+      "period": {
+        "start": "2021-03-02"
+      }
+    }
+  ],
+  "section": [
+    {
+      "code": {
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "11369-6",
+            "display": "History of Immunization Narrative"
+          }
+        ]
+      },
+      "author": [
+        {
+          "reference": "#39791185041852"
+        }
+      ],
+      "entry": [
+        {
+          "reference": "#39791185041848"
+        }
+      ]
+    }
+  ]
+}

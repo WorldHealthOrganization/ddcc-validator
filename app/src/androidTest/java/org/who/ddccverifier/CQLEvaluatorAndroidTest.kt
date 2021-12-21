@@ -14,6 +14,7 @@ import org.who.ddccverifier.services.qrs.hcert.HCertVerifier
 import org.who.ddccverifier.services.fhir.CQLEvaluator
 import org.who.ddccverifier.services.fhir.FHIRLibraryLoader
 import org.who.ddccverifier.services.qrs.QRUnpacker
+import org.who.ddccverifier.services.qrs.divoc.DivocVerifier
 import org.who.ddccverifier.services.qrs.shc.SHCVerifier
 import java.io.InputStream
 import java.io.StringReader
@@ -22,11 +23,11 @@ import java.util.*
 @RunWith(AndroidJUnit4::class)
 class CQLEvaluatorAndroidTest {
 
-    public fun inputStream(assetName: String): InputStream? {
+    fun inputStream(assetName: String): InputStream? {
         return javaClass.classLoader?.getResourceAsStream(assetName)
     }
 
-    public fun open(assetName: String): String {
+    fun open(assetName: String): String {
         return inputStream(assetName)?.bufferedReader()
             .use { bufferReader -> bufferReader?.readText() } ?: ""
     }
@@ -114,6 +115,20 @@ class CQLEvaluatorAndroidTest {
         val context = cqlEvaluator.run(ddccPass, verified.contents!!)
 
         Assert.assertEquals(true, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
+        Assert.assertEquals(Collections.EMPTY_LIST, context.resolveExpressionRef("GetFinalDose").evaluate(context))
+        Assert.assertEquals(Collections.EMPTY_LIST, context.resolveExpressionRef("GetSingleDose").evaluate(context))
+    }
+
+    @Test
+    fun evaluateDDCCPassOnDIVOCQR1FromQRTest() {
+        val qr1 = open("DIVOCQR1Contents.txt")
+        val verified = DivocVerifier(::inputStream).unpackAndVerify(qr1)
+
+        Assert.assertEquals(QRUnpacker.Status.VERIFIED, verified.status)
+
+        val context = cqlEvaluator.run(ddccPass, verified.contents!!)
+
+        Assert.assertEquals(false, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
         Assert.assertEquals(Collections.EMPTY_LIST, context.resolveExpressionRef("GetFinalDose").evaluate(context))
         Assert.assertEquals(Collections.EMPTY_LIST, context.resolveExpressionRef("GetSingleDose").evaluate(context))
     }

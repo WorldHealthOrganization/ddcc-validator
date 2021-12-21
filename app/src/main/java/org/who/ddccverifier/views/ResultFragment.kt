@@ -1,6 +1,7 @@
 package org.who.ddccverifier.views
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -87,7 +88,6 @@ class ResultFragment : Fragment() {
 
     fun updateScreen(DDCC: QRUnpacker.VerificationResult) {
         binding.tvResultHeader.visibility = TextView.VISIBLE
-        binding.tvResultCard.visibility = TextView.VISIBLE
 
         when (DDCC.status) {
             QRUnpacker.Status.NOT_SUPPORTED -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_base45)
@@ -120,6 +120,8 @@ class ResultFragment : Fragment() {
         }
 
         if (DDCC.contents != null) {
+            binding.tvResultCard.visibility = TextView.VISIBLE
+
             val card = DDCCFormatter().run(DDCC.contents!!)
 
             // Credential
@@ -196,7 +198,7 @@ class ResultFragment : Fragment() {
 
     suspend fun resolveQR(qr: String): QRUnpacker.VerificationResult {
         // Triggers Networking
-        return QRUnpacker().decode(qr)
+        return QRUnpacker(::open).decode(qr)
     }
 
     suspend fun resolveStatus(DDCC: Composition): Boolean? {

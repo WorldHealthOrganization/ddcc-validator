@@ -66,10 +66,10 @@ object KeyUtils {
         return try {
             ecPublicKeyFromPEM(pem)
         } catch (e: InvalidKeyException) {
-            e.printStackTrace()
+            //e.printStackTrace()
             rsaPublicKeyFromPEM(pem)
         } catch (e: InvalidKeySpecException) {
-            e.printStackTrace()
+            //e.printStackTrace()
             rsaPublicKeyFromPEM(pem)
         }
     }

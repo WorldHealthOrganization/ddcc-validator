@@ -67,10 +67,10 @@ dependencies {
     // Necessary to open a camera.
     implementation 'androidx.camera:camera-camera2:1.0.2'
     implementation 'androidx.camera:camera-lifecycle:1.0.2'
-    implementation 'androidx.camera:camera-view:1.0.0-alpha31'
+    implementation 'androidx.camera:camera-view:1.0.0-alpha32'
 
     // Necessary to find a QR Code in camera preview frame
-    implementation 'com.google.mlkit:barcode-scanning:17.0.0'
+    implementation 'com.google.mlkit:barcode-scanning:17.0.1'
 
     // Necessary to show the "Verified" Checkmark on the UI
     implementation 'info.androidhive:fontawesome:0.0.5'
@@ -78,15 +78,31 @@ dependencies {
     // Necessary to unpack the EU's DDC HCERT QR Codes.
     implementation 'io.github.ehn-digital-green-development:base45:0.0.3'
     implementation 'com.augustcellars.cose:cose-java:1.1.0'
+
     // Necessary to unpack SHC QR Codes
     implementation "com.nimbusds:nimbus-jose-jwt:9.15.2"
+
+    // Necessary to unpack DIVOC QR Codes
+    // LD-signatures requires Jakarta JSON and HTTP Client
+    implementation (group: 'javax.json', name: 'javax.json-api', version: '1.1')
+    implementation (group: 'org.glassfish', name: 'jakarta.json', version: '2.0.0')
+    implementation group: 'com.apicatalog', name: 'titanium-json-ld', version: '1.2.0' //https://github.com/decentralized-identity/jsonld-common-java/pull/6
+    implementation 'io.setl:rdf-urdna:1.1' //https://github.com/decentralized-identity/jsonld-common-java/pull/6
+    implementation ('info.weboftrust:ld-signatures-java:0.7.0') {
+        exclude group: 'net.jcip', module: 'jcip-annotations'
+        exclude group: 'org.bouncycastle', module: 'bcprov-jdk15on'
+
+        // using from Libs remove when this PR gets approved: https://github.com/decentralized-identity/jsonld-common-java/pull/6
+        exclude group: 'decentralized-identity', module: 'jsonld-common-java'
+    }
 
     // Necessary to Convert the QR into the DDCC FHIR Composite
     implementation 'com.google.android.fhir:engine:0.1.0-alpha05'
 
     // Use BouncyCastle to not rely on each Android's version hability to unpack and load public keys
     // Android 10+ issues due to the move to Conscrypt on a older verion of BC
-    implementation group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.70'
+    // It's already imported by the LD-Signatures dependencies
+    //implementation group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.70'
 
     // Necessary to Load Jackson-based FHIR Libraries (FHIR Helper, Model Info, and CQL Rules)
     implementation group: 'xerces', name: 'xercesImpl', version: '2.12.1'

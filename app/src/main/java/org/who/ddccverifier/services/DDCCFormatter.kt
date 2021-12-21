@@ -203,20 +203,19 @@ class DDCCFormatter {
     private fun formatVaccineType(vaccines: CodeableConcept?): String? {
         if (vaccines == null) return null
         return vaccines.coding.groupBy {
-            VACCINE_PROPH.get(it.code) ?: CVX.get(it.code)
+            it.display ?: VACCINE_PROPH.get(it.code) ?: CVX.get(it.code)
         }.keys.filterNotNull().joinToString(", ")
     }
 
     private fun formatPractioner(practitioner: Practitioner?): String? {
         if (practitioner?.identifier == null) return null
-        return practitioner.identifier.groupBy {
+        return practitioner.nameFirstRep?.text ?: practitioner.identifier.groupBy {
                 it.value
             }.keys.joinToString(", ")
     }
 
     private fun formatPractioners(performer: List<Immunization.ImmunizationPerformerComponent>?): String? {
         if (performer == null || performer.isEmpty()) return null
-        //println((performer as Immunization.ImmunizationPerformerComponent).actor.display)
         return performer.filter { it.hasActor() }.groupBy {
             it.actor.display ?: formatPractioner(it.actor.resource as? Practitioner)
         }.keys.joinToString(", ")
@@ -224,7 +223,7 @@ class DDCCFormatter {
 
     private fun formatOrganization(org: Organization?): String? {
         if (org?.identifier == null) return null
-        return org.identifier.groupBy {
+        return org.name ?: org.identifier.groupBy {
             it.value
         }.keys.joinToString(", ")
     }

@@ -1,10 +1,11 @@
 package org.who.ddccverifier.services
 
 import android.annotation.SuppressLint
+import android.util.Base64
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
-import com.google.mlkit.vision.barcode.Barcode
 import com.google.mlkit.vision.barcode.BarcodeScanning
+import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
 
 /**
@@ -34,6 +35,13 @@ class QRCodeFinder(private val onQRCodeFound: (Set<String>)->Unit): ImageAnalysi
                 }
         }
     }
+
+    /**
+     * DIVOC QR codes are binary.
+     */
+    private fun bytesToStr(array: ByteArray): String {
+        return "B64:" + Base64.encodeToString(array, Base64.DEFAULT)
+    }
  
     private fun readBarcodeData(barcodes: List<Barcode>) {
         if (barcodes.isEmpty()) return
@@ -42,7 +50,8 @@ class QRCodeFinder(private val onQRCodeFound: (Set<String>)->Unit): ImageAnalysi
             onlyTheFirstFrame = true
         }
 
-        val qrStrings = barcodes.groupBy { it.rawValue }.keys
+        val qrStrings = barcodes.groupBy { it.rawValue ?: bytesToStr(it.rawBytes) }.keys
+
         onQRCodeFound(qrStrings)
     }
 }

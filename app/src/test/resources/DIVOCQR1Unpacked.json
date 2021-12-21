@@ -1,0 +1,72 @@
+{
+  "@context": [
+    "https://www.w3.org/2018/credentials/v1",
+    "https://cowin.gov.in/credentials/vaccination/v1"
+  ],
+  "type": [
+    "VerifiableCredential",
+    "ProofOfVaccinationCredential"
+  ],
+  "credentialSubject": {
+    "type": "Person",
+    "id": "did:Passport:Dummy256",
+    "refId": "39791185041847",
+    "name": "Third March User One",
+    "gender": "Male",
+    "age": "65",
+    "nationality": "Indian",
+    "address": {
+      "streetAddress": "",
+      "streetAddress2": "",
+      "district": "Chamba",
+      "city": "",
+      "addressRegion": "Himachal",
+      "addressCountry": "IN",
+      "postalCode": 176207
+    }
+  },
+  "issuer": "https://cowin.gov.in/",
+  "issuanceDate": "2021-03-03T04:28:46.012Z",
+  "evidence": [
+    {
+      "id": "https://cowin.gov.in/vaccine/92047670169",
+      "feedbackUrl": "https://cowin.gov.in/?92047670169",
+      "infoUrl": "https://cowin.gov.in/?92047670169",
+      "certificateId": "92047670169",
+      "type": [
+        "Vaccination"
+      ],
+      "batch": "Dummy-TGN-Chamba",
+      "vaccine": "COVISHIELD",
+      "manufacturer": "Serum Institute of India",
+      "date": "2021-03-03T04:28:43.134Z",
+      "effectiveStart": "2021-03-03",
+      "effectiveUntil": "2021-03-03",
+      "dose": 1,
+      "totalDoses": 2,
+      "verifier": {
+        "name": "Dummy Vaccinator"
+      },
+      "facility": {
+        "name": "Himachal Site Name 176207",
+        "address": {
+          "streetAddress": "Address Of Site 176207",
+          "streetAddress2": "",
+          "district": "Chamba",
+          "city": "",
+          "addressRegion": "Himachal",
+          "addressCountry": "IN",
+          "postalCode": ""
+        }
+      }
+    }
+  ],
+  "nonTransferable": "true",
+  "proof": {
+    "type": "RsaSignature2018",
+    "created": "2021-03-03T04:28:46Z",
+    "verificationMethod": "did:india",
+    "proofPurpose": "assertionMethod",
+    "jws": "eyJhbGciOiJQUzI1NiIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..nE-3iYDcKok-CmTm3pbpyZQheqpVDor_f0YQt4ukWDGyZuqtZuu8NROtJjOZ-LNAavN-JZtCAdunofe19-mcC2HC20W_yxzGfB1Idft15CruJWOuvkkKXX0UoezZhsk_Cd-HmeHeCCUgoyLiDtpSqzXd9WqiHG_XN39PUMvIHnZAPo54sodtzAEX88L1GSSd37JBrOlKoeMMJaC0JDIEDSFV-SaVk_vH5e06Vq86WrkMj5oj4pqmgnql7W_qt3NAgNqQQgUUNhsMOHwHXKBr5j80yjp1LRMidB81u0SQJvbxQVxLnphUbPcTI4h6nLJeZJjOiecOLESgIELpC2_SDg"
+  }
+}

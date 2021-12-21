@@ -15,11 +15,12 @@ class QRViewTest: BaseTest() {
     private val ddccPass = VersionedIdentifier().withId("DDCCPass").withVersion("0.0.1")
 
     private val cqlEvaluator = CQLEvaluator(FHIRLibraryLoader(::inputStream))
+    private val qrUnpacker = QRUnpacker(::inputStream)
 
     @Test
     fun viewWHOQR1() {
         val qr1 = open("WHOQR1Contents.txt")
-        val verified = QRUnpacker().decode(qr1)
+        val verified = qrUnpacker.decode(qr1)
 
         assertEquals(QRUnpacker.Status.VERIFIED, verified.status)
 
@@ -63,7 +64,7 @@ class QRViewTest: BaseTest() {
     @Test
     fun viewWHOQR2() {
         val qr2 = open("WHOQR2Contents.txt")
-        val verified = QRUnpacker().decode(qr2)
+        val verified = qrUnpacker.decode(qr2)
 
         assertEquals(QRUnpacker.Status.VERIFIED, verified.status)
 
@@ -104,7 +105,7 @@ class QRViewTest: BaseTest() {
     @Test
     fun viewEUQR1() {
         val qr1 = open("EUQR1Contents.txt")
-        val verified = QRUnpacker().decode(qr1)
+        val verified = qrUnpacker.decode(qr1)
 
         assertEquals(QRUnpacker.Status.VERIFIED, verified.status)
 
@@ -148,7 +149,7 @@ class QRViewTest: BaseTest() {
     @Test
     fun viewSHCQR1() {
         val qr1 = open("SHCQR1Contents.txt")
-        val verified = QRUnpacker().decode(qr1)
+        val verified = qrUnpacker.decode(qr1)
 
         assertEquals(QRUnpacker.Status.VERIFIED, verified.status)
 
@@ -185,5 +186,49 @@ class QRViewTest: BaseTest() {
         assertEquals(null, card2.nextDose)
 
         assertEquals(true, status)
+    }
+
+    @Test
+    fun viewDIVOCQR1() {
+        val qr1 = open("DIVOCQR1Contents.txt")
+        val verified = qrUnpacker.decode(qr1)
+
+        assertEquals(QRUnpacker.Status.VERIFIED, verified.status)
+
+        val card2 = DDCCFormatter().run(verified.contents!!)
+        val status = cqlEvaluator.resolve(
+            "CompletedImmunization", ddccPass,
+            verified.contents!!) as Boolean
+
+        val context = cqlEvaluator.run(ddccPass, verified.contents!!)
+        assertEquals(false, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
+        assertEquals(Collections.EMPTY_LIST, context.resolveExpressionRef("GetFinalDose").evaluate(context))
+
+        // Credential
+        assertEquals("COVID-19 Vaccination", card2.cardTitle!!.split(" - ")[1])
+        assertEquals("Valid from Mar 2, 2021", card2.validUntil)
+
+        // Patient
+        assertEquals("Third March User One", card2.personName)
+        assertEquals("Mar 2, 1956 - Male", card2.personDetails)
+        assertEquals("ID: did:Passport:Dummy256", card2.identifier)
+
+        // Immunization
+        assertEquals("COVISHIELD", card2.vaccineType)
+        assertEquals("Dose: 1 of 2", card2.dose)
+        assertEquals("Mar 2, 2021", card2.doseDate)
+        assertEquals("Mar 2, 2021", card2.vaccineValid)
+        assertEquals("COVID-19", card2.vaccineAgainst)
+        assertEquals("Lot #Dummy-TGN-Chamba", card2.vaccineInfo)
+        assertEquals(null, card2.vaccineInfo2)
+        assertEquals("IN", card2.location)
+        assertEquals("39791185041847", card2.hcid)
+        assertEquals("Himachal Site Name 176207", card2.pha)
+        assertEquals("Dummy Vaccinator", card2.hw)
+
+        // Recommendation
+        assertEquals(null, card2.nextDose)
+
+        assertEquals(false, status)
     }
 }
