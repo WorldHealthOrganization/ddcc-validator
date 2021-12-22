@@ -17,28 +17,40 @@ import org.who.ddccverifier.services.trust.TrustRegistry
 /**
  * Screen / Class flow:
  *
- * ┌──────────────────────────────────────────────────┐
- * │                  MainActivity                    │
- * └──────────────────────────────────────────────────┘
+ * ┌──────────────────────────────────────────────────┐    ┌────────────────┐ ┌──────────┐
+ * │                  MainActivity                    │    │ TrustRegistry  ├↔┤ KeyUtils │
+ * └──────────────────────────────────────────────────┘    └────────────────┘ └──────────┘
  * ┌──────────────┐ ┌──────────────┐ ┌────────────────┐
- * │ HomeFragment ├→┤ ScanFragment ├→┤ ResultFragment │
- * └──────────────┘ └─────┬──▲─────┘ └──▲──────┬──────┘
- *                   Image│  │QRContent │Card  │QRContent
- *                  ┌─────▼──┴─────┐    │ ┌────▼───────┐
- *                  │ QRCodeFinder │    │ │ QRUnpacker │
- *                  └──────────────┘    │ └────┬───────┘
- *                                      │      │HCERT QRContent
- *     ┌──────────┐ ┌─────────────────┐ │ ┌────▼───────────┐  ┌────────────────┐
- *     │ KeyUtils ├↔┤ TrustRegistry   ├←┼→┤ HCertVerifier  ├─→│ CBORTranslator │
- *     └──────────┘ └─────────────────┘ │ └────┬───────────┘  └────┬────────┬──┘
- *  ┌──────────────┐                    │      │DDCC Composite     │        │
- *  │ Assets       │ ┌────────────────┐ │ ┌────▼───────────┐  ┌────▼─────┐┌─▼────────┐
- *  │ - ModelInfo  ├↔┤ FHIRLib..Loader├←┼→┤ CQLEvaluator   │  │ WHO2FHIR ││ DCC2FHIR │
- *  │ - FHIRHelper │ └────────────────┘ │ └────┬───────────┘  └──────────┘└──────────┘
- *  │ - DDCCPass   │                    │      │DDCC Composite (FHIR)
- *  └──────────────┘                    │ ┌────▼───────────┐
- *                                      └─┤ DDCCFormatter  │
- *                                        └────────────────┘
+ * │ HomeFragment ├→┤ ScanFragment ├→┤ ResultFragment │←─DDCC UI Card────────────────┐
+ * └──────────────┘ └─────┬──▲─────┘ └────────┬───────┘                              │
+ *                   Image│  │QRContent       │QRContent                             │
+ *                  ┌─────▼──┴─────┐     ┌────▼───────┐                              │
+ *                  │ QRCodeFinder │     │ QRUnpacker │                              │
+ *                  └──────────────┘     └────┬───────┘                              │
+ *                                            │QRContent                             │
+ *             ┌─────────────────┬────────────┴─────┬───────────────────┐            │
+ *    ┌────────▼───────┐  ┌──────▼──────┐   ┌───────▼───────┐   ┌───────▼───────┐    │
+ *    │  HCertVerifier │  │ SHCVerifier │   │ DivocVerifier │   │ ICAOVerifier  │    │
+ *    └────┬───────────┘  └──────┬──────┘   └───────┬───────┘   └───────┬───────┘    │
+ *         │HCERT CBOR           │JWT               │JSONLD             │iJSON       │
+ *    ┌────▼───────────┐ ┌───────▼───────┐ ┌────────▼─────────┐ ┌───────▼─────────┐  │
+ *    │ CBORTranslator │ │ JWTTranslator │ │ JSONLDTranslator │ │ iJSONTranslator │  │
+ *    └────┬────────┬──┘ └───────┬───────┘ └────────┬─────────┘ └───────┬─────────┘  │
+ *     FHIR│Struct  │DCC CWT     │FHIR DDCC         │FHIR DDCC          │FHIR DDCC   │
+ *    ┌────▼─────┐┌─▼────────┐   │                  │                   │            │
+ *    │ WHO2FHIR ││ DCC2FHIR │   │                  │                   │            │
+ *    └────┬─────┘└────┬─────┘   │                  │                   │            │
+ *     FHIR│DDCC   FHIR│DDCC     │                  │                   │            │
+ *         └───────────┴─────────┴────────────┬─────┴───────────────────┘            │
+ *                                            │                                      │
+ *  ┌──────────────┐                          │DDCC Composite                        │
+ *  │ Assets       │ ┌────────────────┐  ┌────▼───────────┐                          │
+ *  │ - ModelInfo  ├↔┤ FHIRLib..Loader├←→┤ CQLEvaluator   │                          │
+ *  │ - FHIRHelper │ └────────────────┘  └────┬───────────┘                          │
+ *  │ - DDCCPass   │                          │DDCC Composite                        │
+ *  └──────────────┘                     ┌────▼───────────┐                          │
+ *                                       │ DDCCFormatter  ├→─DDCC UI Card────────────┘
+ *                                       └────────────────┘
  */
 class MainActivity : AppCompatActivity() {
 
