@@ -9,9 +9,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
 import kotlinx.coroutines.*
-import org.hl7.fhir.r4.model.Composition
 import org.who.ddccverifier.databinding.ActivityMainBinding
-import org.who.ddccverifier.services.qrs.QRUnpacker
 import org.who.ddccverifier.services.trust.TrustRegistry
 
 /**
@@ -25,7 +23,7 @@ import org.who.ddccverifier.services.trust.TrustRegistry
  * └──────────────┘ └─────┬──▲─────┘ └────────┬───────┘                              │
  *                   Image│  │QRContent       │QRContent                             │
  *                  ┌─────▼──┴─────┐     ┌────▼───────┐                              │
- *                  │ QRCodeFinder │     │ QRUnpacker │                              │
+ *                  │   QRFinder   │     │ QRDecoder  │                              │
  *                  └──────────────┘     └────┬───────┘                              │
  *                                            │QRContent                             │
  *             ┌─────────────────┬────────────┴─────┬───────────────────┐            │
@@ -45,7 +43,7 @@ import org.who.ddccverifier.services.trust.TrustRegistry
  *                                            │                                      │
  *  ┌──────────────┐                          │DDCC Composite                        │
  *  │ Assets       │ ┌────────────────┐  ┌────▼───────────┐                          │
- *  │ - ModelInfo  ├↔┤ FHIRLib..Loader├←→┤ CQLEvaluator   │                          │
+ *  │ - ModelInfo  ├↔┤CQLLibraryLoader├←→┤ CQLEvaluator   │                          │
  *  │ - FHIRHelper │ └────────────────┘  └────┬───────────┘                          │
  *  │ - DDCCPass   │                          │DDCC Composite                        │
  *  └──────────────┘                     ┌────▼───────────┐                          │

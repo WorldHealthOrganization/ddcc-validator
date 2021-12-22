@@ -11,7 +11,7 @@ import com.google.mlkit.vision.common.InputImage
 /**
  * Turns camera preview frames into QR Codes when found.
  */
-class QRCodeFinder(private val onQRCodeFound: (Set<String>)->Unit): ImageAnalysis.Analyzer {
+class QRFinder(private val onQRCodeFound: (Set<String>)->Unit): ImageAnalysis.Analyzer {
 
     private var onlyTheFirstFrame: Boolean = false
 

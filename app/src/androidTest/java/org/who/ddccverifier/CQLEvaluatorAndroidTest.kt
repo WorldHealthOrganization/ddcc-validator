@@ -3,8 +3,6 @@ package org.who.ddccverifier
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import ca.uhn.fhir.context.FhirContext
 import ca.uhn.fhir.context.FhirVersionEnum
-import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton
-import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.cqframework.cql.elm.execution.VersionedIdentifier
 import org.hl7.fhir.r4.model.Bundle
 import org.hl7.fhir.r4.model.Composition
@@ -13,14 +11,13 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.opencds.cqf.cql.engine.execution.JsonCqlLibraryReader
 import org.who.ddccverifier.services.qrs.hcert.HCertVerifier
-import org.who.ddccverifier.services.fhir.CQLEvaluator
-import org.who.ddccverifier.services.fhir.FHIRLibraryLoader
-import org.who.ddccverifier.services.qrs.QRUnpacker
+import org.who.ddccverifier.services.cql.CQLEvaluator
+import org.who.ddccverifier.services.cql.FHIRLibraryLoader
+import org.who.ddccverifier.services.QRDecoder
 import org.who.ddccverifier.services.qrs.divoc.DivocVerifier
 import org.who.ddccverifier.services.qrs.shc.SHCVerifier
 import java.io.InputStream
 import java.io.StringReader
-import java.security.Security
 import java.util.*
 
 @RunWith(AndroidJUnit4::class)
@@ -71,7 +68,7 @@ class CQLEvaluatorAndroidTest {
         val qr1 = open("WHOQR1Contents.txt")
         val verified = HCertVerifier().unpackAndVerify(qr1)
 
-        Assert.assertEquals(QRUnpacker.Status.VERIFIED, verified.status)
+        Assert.assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
         val context = cqlEvaluator.run(ddccPass, verified.contents!!)
 
@@ -85,7 +82,7 @@ class CQLEvaluatorAndroidTest {
         val qr1 = open("WHOQR2Contents.txt")
         val verified = HCertVerifier().unpackAndVerify(qr1)
 
-        Assert.assertEquals(QRUnpacker.Status.VERIFIED, verified.status)
+        Assert.assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
         val context = cqlEvaluator.run(ddccPass, verified.contents!!)
 
@@ -99,7 +96,7 @@ class CQLEvaluatorAndroidTest {
         val qr1 = open("EUQR1Contents.txt")
         val verified = HCertVerifier().unpackAndVerify(qr1)
 
-        Assert.assertEquals(QRUnpacker.Status.VERIFIED, verified.status)
+        Assert.assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
         val context = cqlEvaluator.run(ddccPass, verified.contents!!)
 
@@ -113,7 +110,7 @@ class CQLEvaluatorAndroidTest {
         val qr1 = open("SHCQR1Contents.txt")
         val verified = SHCVerifier().unpackAndVerify(qr1)
 
-        Assert.assertEquals(QRUnpacker.Status.VERIFIED, verified.status)
+        Assert.assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
         val context = cqlEvaluator.run(ddccPass, verified.contents!!)
 
@@ -127,7 +124,7 @@ class CQLEvaluatorAndroidTest {
         val qr1 = open("DIVOCQR1Contents.txt")
         val verified = DivocVerifier(::inputStream).unpackAndVerify(qr1)
 
-        Assert.assertEquals(QRUnpacker.Status.VERIFIED, verified.status)
+        Assert.assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
         val context = cqlEvaluator.run(ddccPass, verified.contents!!)
 

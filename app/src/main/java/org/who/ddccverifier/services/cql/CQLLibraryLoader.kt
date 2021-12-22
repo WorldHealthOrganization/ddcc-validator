@@ -1,4 +1,4 @@
-package org.who.ddccverifier.services.fhir
+package org.who.ddccverifier.services.cql
 
 import org.cqframework.cql.elm.execution.Library
 import org.cqframework.cql.elm.execution.VersionedIdentifier
@@ -28,7 +28,6 @@ class FHIRLibraryLoader(private val open: (String)->InputStream?) : LibraryLoade
 
     private fun loadFromResource(libraryIdentifier: VersionedIdentifier): Library {
         val fileName = String.format("%s-%s.json", libraryIdentifier.id, libraryIdentifier.version)
-        //Log.i("Loading: ", fileName)
 
         val result = open(fileName)
             ?: throw IOException(String.format("Required library file %s was not found", fileName))
@@ -37,7 +36,6 @@ class FHIRLibraryLoader(private val open: (String)->InputStream?) : LibraryLoade
     }
 
     override fun load(libraryIdentifier: VersionedIdentifier): Library {
-        //Log.i("Loading: ", libraryIdentifier.toString())
         var library = LibraryCache[libraryIdentifier]
 
         if (library == null) {

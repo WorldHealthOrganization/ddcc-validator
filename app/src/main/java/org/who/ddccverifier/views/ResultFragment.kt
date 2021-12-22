@@ -1,7 +1,6 @@
 package org.who.ddccverifier.views
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -15,9 +14,9 @@ import org.hl7.fhir.r4.model.Composition
 import org.who.ddccverifier.R
 import org.who.ddccverifier.databinding.FragmentResultBinding
 import org.who.ddccverifier.services.*
-import org.who.ddccverifier.services.fhir.CQLEvaluator
-import org.who.ddccverifier.services.fhir.FHIRLibraryLoader
-import org.who.ddccverifier.services.qrs.QRUnpacker
+import org.who.ddccverifier.services.cql.CQLEvaluator
+import org.who.ddccverifier.services.cql.FHIRLibraryLoader
+import org.who.ddccverifier.services.QRDecoder
 import java.io.InputStream
 
 /**
@@ -86,21 +85,21 @@ class ResultFragment : Fragment() {
         }
     }
 
-    fun updateScreen(DDCC: QRUnpacker.VerificationResult) {
+    fun updateScreen(DDCC: QRDecoder.VerificationResult) {
         binding.tvResultHeader.visibility = TextView.VISIBLE
 
         when (DDCC.status) {
-            QRUnpacker.Status.NOT_SUPPORTED -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_base45)
-            QRUnpacker.Status.INVALID_BASE45 -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_base45)
-            QRUnpacker.Status.INVALID_ZIP -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_zip)
-            QRUnpacker.Status.INVALID_COSE -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_cose)
-            QRUnpacker.Status.KID_NOT_INCLUDED -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_kid_not_included)
-            QRUnpacker.Status.ISSUER_NOT_TRUSTED -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_issuer_not_trusted)
-            QRUnpacker.Status.TERMINATED_KEYS -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_terminated_keys)
-            QRUnpacker.Status.EXPIRED_KEYS -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_expired_keys)
-            QRUnpacker.Status.REVOKED_KEYS -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_revoked_keys)
-            QRUnpacker.Status.INVALID_SIGNATURE -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_signature)
-            QRUnpacker.Status.VERIFIED -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_verified)
+            QRDecoder.Status.NOT_SUPPORTED -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_base45)
+            QRDecoder.Status.INVALID_BASE45 -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_base45)
+            QRDecoder.Status.INVALID_ZIP -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_zip)
+            QRDecoder.Status.INVALID_COSE -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_cose)
+            QRDecoder.Status.KID_NOT_INCLUDED -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_kid_not_included)
+            QRDecoder.Status.ISSUER_NOT_TRUSTED -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_issuer_not_trusted)
+            QRDecoder.Status.TERMINATED_KEYS -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_terminated_keys)
+            QRDecoder.Status.EXPIRED_KEYS -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_expired_keys)
+            QRDecoder.Status.REVOKED_KEYS -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_revoked_keys)
+            QRDecoder.Status.INVALID_SIGNATURE -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_signature)
+            QRDecoder.Status.VERIFIED -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_verified)
         }
 
         if (binding.tvResultTitle.text == resources.getString(R.string.verification_status_verified)) {
@@ -196,9 +195,9 @@ class ResultFragment : Fragment() {
         return resources.assets.open(file);
     }
 
-    suspend fun resolveQR(qr: String): QRUnpacker.VerificationResult {
+    suspend fun resolveQR(qr: String): QRDecoder.VerificationResult {
         // Triggers Networking
-        return QRUnpacker(::open).decode(qr)
+        return QRDecoder(::open).decode(qr)
     }
 
     suspend fun resolveStatus(DDCC: Composition): Boolean? {

@@ -14,7 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.fragment.findNavController
 import com.google.common.util.concurrent.ListenableFuture
-import org.who.ddccverifier.services.QRCodeFinder
+import org.who.ddccverifier.services.QRFinder
 import org.who.ddccverifier.databinding.FragmentScanBinding
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -29,7 +29,7 @@ class ScanFragment : Fragment() {
 
     private lateinit var cameraProviderFuture: ListenableFuture<ProcessCameraProvider>
     private lateinit var cameraExecutor: ExecutorService
-    private lateinit var analyzer: QRCodeFinder
+    private lateinit var analyzer: QRFinder
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
@@ -71,7 +71,7 @@ class ScanFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        analyzer = QRCodeFinder(::onQRCodeFound)
+        analyzer = QRFinder(::onQRCodeFound)
         cameraExecutor = Executors.newSingleThreadExecutor()
         cameraProviderFuture = ProcessCameraProvider.getInstance(this.requireActivity())
         cameraProviderFuture.addListener({

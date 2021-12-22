@@ -18,7 +18,7 @@ import java.security.PublicKey
 import java.security.interfaces.ECPublicKey
 import java.util.zip.Inflater
 
-import org.who.ddccverifier.services.qrs.QRUnpacker
+import org.who.ddccverifier.services.QRDecoder
 
 
 class SHCVerifier {
@@ -180,28 +180,29 @@ class SHCVerifier {
         }
     }
 
-    fun unpackAndVerify(uri: String): QRUnpacker.VerificationResult {
+    fun unpackAndVerify(uri: String): QRDecoder.VerificationResult {
         val hc1Decoded = prefixDecode(uri)
-        val decodedBytes = fromBase10(hc1Decoded) ?: return QRUnpacker.VerificationResult(QRUnpacker.Status.INVALID_BASE45, null, null, uri)
-        val jwtRaw = parseJWT(decodedBytes) ?: return QRUnpacker.VerificationResult(QRUnpacker.Status.INVALID_BASE45, null, null, uri)
-        val jwt = parsePayload(jwtRaw) ?: return QRUnpacker.VerificationResult(QRUnpacker.Status.INVALID_ZIP, null, null, uri)
-        val signedMessage = decodeSignedMessage(decodedBytes) ?: return QRUnpacker.VerificationResult(QRUnpacker.Status.INVALID_COSE, null, null, uri)
+        val decodedBytes = fromBase10(hc1Decoded) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_BASE45, null, null, uri)
+        val jwtRaw = parseJWT(decodedBytes) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_BASE45, null, null, uri)
+        val jwt = parsePayload(jwtRaw) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_ZIP, null, null, uri)
+        val signedMessage = decodeSignedMessage(decodedBytes) ?: return QRDecoder.VerificationResult(
+            QRDecoder.Status.INVALID_COSE, null, null, uri)
 
         val contents = JWTTranslator().toFhir(jwt.payload)
 
-        val kid = getKID(jwt) ?: return QRUnpacker.VerificationResult(QRUnpacker.Status.KID_NOT_INCLUDED, contents, null, uri)
-        val issuer = resolveIssuer(kid) ?: return QRUnpacker.VerificationResult(QRUnpacker.Status.ISSUER_NOT_TRUSTED, contents, null, uri)
+        val kid = getKID(jwt) ?: return QRDecoder.VerificationResult(QRDecoder.Status.KID_NOT_INCLUDED, contents, null, uri)
+        val issuer = resolveIssuer(kid) ?: return QRDecoder.VerificationResult(QRDecoder.Status.ISSUER_NOT_TRUSTED, contents, null, uri)
 
         when (issuer.status) {
-            TrustRegistry.Status.TERMINATED -> return QRUnpacker.VerificationResult(QRUnpacker.Status.TERMINATED_KEYS, contents, issuer, uri)
-            TrustRegistry.Status.EXPIRED -> return QRUnpacker.VerificationResult(QRUnpacker.Status.EXPIRED_KEYS, contents, issuer, uri)
-            TrustRegistry.Status.REVOKED -> return QRUnpacker.VerificationResult(QRUnpacker.Status.REVOKED_KEYS, contents, issuer, uri)
+            TrustRegistry.Status.TERMINATED -> return QRDecoder.VerificationResult(QRDecoder.Status.TERMINATED_KEYS, contents, issuer, uri)
+            TrustRegistry.Status.EXPIRED -> return QRDecoder.VerificationResult(QRDecoder.Status.EXPIRED_KEYS, contents, issuer, uri)
+            TrustRegistry.Status.REVOKED -> return QRDecoder.VerificationResult(QRDecoder.Status.REVOKED_KEYS, contents, issuer, uri)
         }
 
         if (verify(signedMessage, issuer.didDocument)) {
-            return QRUnpacker.VerificationResult(QRUnpacker.Status.VERIFIED, contents, issuer, uri)
+            return QRDecoder.VerificationResult(QRDecoder.Status.VERIFIED, contents, issuer, uri)
         }
 
-        return QRUnpacker.VerificationResult(QRUnpacker.Status.INVALID_SIGNATURE, contents, issuer, uri)
+        return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_SIGNATURE, contents, issuer, uri)
     }
 }

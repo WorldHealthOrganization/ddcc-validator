@@ -13,8 +13,8 @@ import org.fhir.ucum.UcumEssenceService
 import org.junit.Assert.*
 import org.hl7.fhir.r4.model.Composition
 import org.opencds.cqf.cql.engine.execution.JsonCqlLibraryReader
-import org.who.ddccverifier.services.fhir.CQLEvaluator
-import org.who.ddccverifier.services.fhir.FHIRLibraryLoader
+import org.who.ddccverifier.services.cql.CQLEvaluator
+import org.who.ddccverifier.services.cql.FHIRLibraryLoader
 import java.io.StringReader
 import java.lang.IllegalArgumentException
 import java.util.*

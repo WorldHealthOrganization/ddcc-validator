@@ -104,7 +104,7 @@ Build the app:
 └──────────────┘ └─────┬──▲─────┘ └────────┬───────┘                              │
                   Image│  │QRContent       │QRContent                             │
                  ┌─────▼──┴─────┐     ┌────▼───────┐                              │
-                 │ QRCodeFinder │     │ QRUnpacker │                              │
+                 │   QRFinder   │     │ QRDecoder  │                              │
                  └──────────────┘     └────┬───────┘                              │
                                            │QRContent                             │
             ┌─────────────────┬────────────┴─────┬───────────────────┐            │
@@ -124,7 +124,7 @@ Build the app:
                                            │                                      │
  ┌──────────────┐                          │DDCC Composite                        │
  │ Assets       │ ┌────────────────┐  ┌────▼───────────┐                          │
- │ - ModelInfo  ├↔┤ FHIRLib..Loader├←→┤ CQLEvaluator   │                          │
+ │ - ModelInfo  ├↔┤CQLLibraryLoader├←→┤ CQLEvaluator   │                          │
  │ - FHIRHelper │ └────────────────┘  └────┬───────────┘                          │
  │ - DDCCPass   │                          │DDCC Composite                        │
  └──────────────┘                     ┌────▼───────────┐                          │

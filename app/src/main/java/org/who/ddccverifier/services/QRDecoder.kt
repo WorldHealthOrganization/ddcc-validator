@@ -1,4 +1,4 @@
-package org.who.ddccverifier.services.qrs
+package org.who.ddccverifier.services
 
 import org.hl7.fhir.r4.model.Composition
 import org.who.ddccverifier.services.qrs.divoc.DivocVerifier
@@ -10,7 +10,7 @@ import java.io.InputStream
 /**
  * Finds the right processor for the QR Content and returns the DDCC Composition of that Content.
  */
-class QRUnpacker(private val open: (String)-> InputStream?) {
+class QRDecoder(private val open: (String)-> InputStream?) {
     enum class Status {
         NOT_SUPPORTED,
         INVALID_BASE45,

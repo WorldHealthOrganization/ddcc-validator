@@ -8,7 +8,7 @@ import COSE.OneKey
 import COSE.Sign1Message
 import android.util.Base64
 import com.upokecenter.cbor.CBORObject
-import org.who.ddccverifier.services.qrs.QRUnpacker
+import org.who.ddccverifier.services.QRDecoder
 import org.who.ddccverifier.services.trust.TrustRegistry
 import java.security.PublicKey
 
@@ -81,27 +81,29 @@ class HCertVerifier {
         return getContent(signedMessage)
     }
 
-    fun unpackAndVerify(qr: String): QRUnpacker.VerificationResult {
+    fun unpackAndVerify(qr: String): QRDecoder.VerificationResult {
         val hc1Decoded = prefixDecode(qr)
-        val decodedBytes = base45Decode(hc1Decoded) ?: return QRUnpacker.VerificationResult(QRUnpacker.Status.INVALID_BASE45, null, null, qr)
-        val deflatedBytes = deflate(decodedBytes) ?: return QRUnpacker.VerificationResult(QRUnpacker.Status.INVALID_ZIP, null, null, qr)
-        val signedMessage = decodeSignedMessage(deflatedBytes) ?: return QRUnpacker.VerificationResult(QRUnpacker.Status.INVALID_COSE, null, null, qr)
+        val decodedBytes = base45Decode(hc1Decoded) ?: return QRDecoder.VerificationResult(
+            QRDecoder.Status.INVALID_BASE45, null, null, qr)
+        val deflatedBytes = deflate(decodedBytes) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_ZIP, null, null, qr)
+        val signedMessage = decodeSignedMessage(deflatedBytes) ?: return QRDecoder.VerificationResult(
+            QRDecoder.Status.INVALID_COSE, null, null, qr)
 
         val contents = CBORTranslator().toFhir(getContent(signedMessage))
 
-        val kid = getKID(signedMessage) ?: return QRUnpacker.VerificationResult(QRUnpacker.Status.KID_NOT_INCLUDED, contents, null, qr)
-        val issuer = resolveIssuer(kid) ?: return QRUnpacker.VerificationResult(QRUnpacker.Status.ISSUER_NOT_TRUSTED, contents, null, qr)
+        val kid = getKID(signedMessage) ?: return QRDecoder.VerificationResult(QRDecoder.Status.KID_NOT_INCLUDED, contents, null, qr)
+        val issuer = resolveIssuer(kid) ?: return QRDecoder.VerificationResult(QRDecoder.Status.ISSUER_NOT_TRUSTED, contents, null, qr)
 
         when (issuer.status) {
-            TrustRegistry.Status.TERMINATED -> return QRUnpacker.VerificationResult(QRUnpacker.Status.TERMINATED_KEYS, contents, issuer, qr)
-            TrustRegistry.Status.EXPIRED -> return QRUnpacker.VerificationResult(QRUnpacker.Status.EXPIRED_KEYS, contents, issuer, qr)
-            TrustRegistry.Status.REVOKED -> return QRUnpacker.VerificationResult(QRUnpacker.Status.REVOKED_KEYS, contents, issuer, qr)
+            TrustRegistry.Status.TERMINATED -> return QRDecoder.VerificationResult(QRDecoder.Status.TERMINATED_KEYS, contents, issuer, qr)
+            TrustRegistry.Status.EXPIRED -> return QRDecoder.VerificationResult(QRDecoder.Status.EXPIRED_KEYS, contents, issuer, qr)
+            TrustRegistry.Status.REVOKED -> return QRDecoder.VerificationResult(QRDecoder.Status.REVOKED_KEYS, contents, issuer, qr)
         }
 
         if (verify(signedMessage, issuer.didDocument)) {
-            return QRUnpacker.VerificationResult(QRUnpacker.Status.VERIFIED, contents, issuer, qr)
+            return QRDecoder.VerificationResult(QRDecoder.Status.VERIFIED, contents, issuer, qr)
         }
 
-        return QRUnpacker.VerificationResult(QRUnpacker.Status.INVALID_SIGNATURE, contents, issuer, qr)
+        return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_SIGNATURE, contents, issuer, qr)
     }
 }

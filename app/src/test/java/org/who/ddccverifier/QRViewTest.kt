@@ -5,9 +5,9 @@ import org.junit.Test
 
 import org.junit.Assert.*
 import org.who.ddccverifier.services.*
-import org.who.ddccverifier.services.fhir.CQLEvaluator
-import org.who.ddccverifier.services.fhir.FHIRLibraryLoader
-import org.who.ddccverifier.services.qrs.QRUnpacker
+import org.who.ddccverifier.services.cql.CQLEvaluator
+import org.who.ddccverifier.services.cql.FHIRLibraryLoader
+import org.who.ddccverifier.services.QRDecoder
 import java.util.*
 
 class QRViewTest: BaseTest() {
@@ -15,14 +15,14 @@ class QRViewTest: BaseTest() {
     private val ddccPass = VersionedIdentifier().withId("DDCCPass").withVersion("0.0.1")
 
     private val cqlEvaluator = CQLEvaluator(FHIRLibraryLoader(::inputStream))
-    private val qrUnpacker = QRUnpacker(::inputStream)
+    private val qrUnpacker = QRDecoder(::inputStream)
 
     @Test
     fun viewWHOQR1() {
         val qr1 = open("WHOQR1Contents.txt")
         val verified = qrUnpacker.decode(qr1)
 
-        assertEquals(QRUnpacker.Status.VERIFIED, verified.status)
+        assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
         val card2 = DDCCFormatter().run(verified.contents!!)
         val status = cqlEvaluator.resolve(
@@ -66,7 +66,7 @@ class QRViewTest: BaseTest() {
         val qr2 = open("WHOQR2Contents.txt")
         val verified = qrUnpacker.decode(qr2)
 
-        assertEquals(QRUnpacker.Status.VERIFIED, verified.status)
+        assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
         val card2 = DDCCFormatter().run(verified.contents!!)
 
@@ -107,7 +107,7 @@ class QRViewTest: BaseTest() {
         val qr1 = open("EUQR1Contents.txt")
         val verified = qrUnpacker.decode(qr1)
 
-        assertEquals(QRUnpacker.Status.VERIFIED, verified.status)
+        assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
         val card2 = DDCCFormatter().run(verified.contents!!)
         val status = cqlEvaluator.resolve(
@@ -151,7 +151,7 @@ class QRViewTest: BaseTest() {
         val qr1 = open("SHCQR1Contents.txt")
         val verified = qrUnpacker.decode(qr1)
 
-        assertEquals(QRUnpacker.Status.VERIFIED, verified.status)
+        assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
         val card2 = DDCCFormatter().run(verified.contents!!)
         val status = cqlEvaluator.resolve("CompletedImmunization", ddccPass, verified.contents!!) as Boolean
@@ -195,7 +195,7 @@ class QRViewTest: BaseTest() {
         val qr1 = open("DIVOCQR1Contents.txt")
         val verified = qrUnpacker.decode(qr1)
 
-        assertEquals(QRUnpacker.Status.VERIFIED, verified.status)
+        assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
         val card2 = DDCCFormatter().run(verified.contents!!)
         val status = cqlEvaluator.resolve(
@@ -239,7 +239,7 @@ class QRViewTest: BaseTest() {
         val qr1 = open("DIVOCJamaicaContents.txt")
         val verified = qrUnpacker.decode(qr1)
 
-        assertEquals(QRUnpacker.Status.INVALID_SIGNATURE, verified.status)
+        assertEquals(QRDecoder.Status.INVALID_SIGNATURE, verified.status)
 
         val card2 = DDCCFormatter().run(verified.contents!!)
         val status = cqlEvaluator.resolve(

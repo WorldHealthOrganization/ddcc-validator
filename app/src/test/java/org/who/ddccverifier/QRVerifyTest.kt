@@ -6,7 +6,7 @@ import org.junit.Assert.*
 import org.who.ddccverifier.services.qrs.hcert.HCertVerifier
 import ca.uhn.fhir.context.FhirContext
 import com.fasterxml.jackson.databind.ObjectMapper
-import org.who.ddccverifier.services.qrs.QRUnpacker
+import org.who.ddccverifier.services.QRDecoder
 import org.who.ddccverifier.services.qrs.shc.SHCVerifier
 import org.who.ddccverifier.services.qrs.divoc.DivocVerifier
 
@@ -26,7 +26,7 @@ class QRVerifyTest: BaseTest() {
         val verified = HCertVerifier().unpackAndVerify(qr1)
 
         assertNotNull(verified)
-        assertEquals(QRUnpacker.Status.VERIFIED, verified.status)
+        assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
         val json = jsonParser.encodeResourceToString(verified.contents!!)
 
@@ -38,7 +38,7 @@ class QRVerifyTest: BaseTest() {
         val qr2 = open("WHOQR2Contents.txt")
         val verified = HCertVerifier().unpackAndVerify(qr2)
         assertNotNull(verified)
-        assertEquals(QRUnpacker.Status.VERIFIED, verified.status)
+        assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
         val json = jsonParser.encodeResourceToString(verified.contents!!)
 
@@ -51,7 +51,7 @@ class QRVerifyTest: BaseTest() {
         val verified = HCertVerifier().unpackAndVerify(qr1)
 
         assertNotNull(verified)
-        assertEquals(QRUnpacker.Status.VERIFIED, verified.status)
+        assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
         val json = jsonParser.encodeResourceToString(verified.contents!!)
 
@@ -64,7 +64,7 @@ class QRVerifyTest: BaseTest() {
         val verified = SHCVerifier().unpackAndVerify(qr1)
 
         assertNotNull(verified)
-        assertEquals(QRUnpacker.Status.VERIFIED, verified.status)
+        assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
         val json = jsonParser.encodeResourceToString(verified.contents!!)
 
@@ -77,7 +77,7 @@ class QRVerifyTest: BaseTest() {
         val verified = DivocVerifier(::inputStream).unpackAndVerify(qr1)
 
         assertNotNull(verified)
-        assertEquals(QRUnpacker.Status.VERIFIED, verified.status)
+        assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
         val json = jsonParser.encodeResourceToString(verified.contents!!)
 
@@ -90,7 +90,7 @@ class QRVerifyTest: BaseTest() {
         val verified = DivocVerifier(::inputStream).unpackAndVerify(qr1)
 
         assertNotNull(verified)
-        assertEquals(QRUnpacker.Status.INVALID_SIGNATURE, verified.status)
+        assertEquals(QRDecoder.Status.INVALID_SIGNATURE, verified.status)
 
         val json = jsonParser.encodeResourceToString(verified.contents!!)
 
