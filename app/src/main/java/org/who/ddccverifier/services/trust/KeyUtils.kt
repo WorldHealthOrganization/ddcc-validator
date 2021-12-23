@@ -1,6 +1,7 @@
 package org.who.ddccverifier.services.trust
 
 import android.util.Base64
+import io.ipfs.multibase.Base58
 import org.bouncycastle.jcajce.util.BCJcaJceHelper
 import java.io.ByteArrayInputStream
 import java.math.BigInteger
@@ -9,6 +10,12 @@ import java.security.interfaces.ECPublicKey
 import java.security.spec.*
 import org.bouncycastle.util.io.pem.PemReader
 import java.io.StringReader
+import java.security.cert.Certificate
+import org.bouncycastle.asn1.edec.EdECObjectIdentifiers
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo
+import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey
+
 
 /**
  * Converts Key formats into Key objects
@@ -51,16 +58,20 @@ object KeyUtils {
         return BCJcaJceHelper().createKeyFactory("EC").generatePublic(keySpec)
     }
 
-    fun certificateFromPEM(pem: String): PublicKey {
+    fun certificatePublicKeyFromPEM(pem: String): PublicKey {
+        return certificateFromPEM(pem)?.publicKey
+    }
+
+    fun certificateFromPEM(pem: String): Certificate {
         val reader = PemReader(StringReader(pem))
         val stream = ByteArrayInputStream(reader.readPemObject().content)
         return BCJcaJceHelper().createCertificateFactory("X.509")
-                               .generateCertificate(stream).publicKey
+                               .generateCertificate(stream)
     }
 
     fun publicKeyFromPEM(pem: String): PublicKey{
         if (pem.startsWith("-----BEGIN CERTIFICATE-----"))
-            return certificateFromPEM(pem)
+            return certificatePublicKeyFromPEM(pem)
 
         //TODO: Figure out a way to get the OID from the PEM bytes to set the right params
         return try {
@@ -90,5 +101,12 @@ object KeyUtils {
         val reader = PemReader(StringReader(pem))
         val keySpec = X509EncodedKeySpec(reader.readPemObject().content)
         return BCJcaJceHelper().createKeyFactory("RSA").generatePublic(keySpec)
+    }
+
+    fun eddsaFromBase58(base58: String): PublicKey {
+        val publicKeyBytes = Base58.decode(base58)
+        val pubKeyInfo = SubjectPublicKeyInfo(AlgorithmIdentifier(EdECObjectIdentifiers.id_Ed25519), publicKeyBytes)
+        val x509KeySpec = X509EncodedKeySpec(pubKeyInfo.encoded)
+        return BCJcaJceHelper().createKeyFactory("Ed25519").generatePublic(x509KeySpec) as BCEdDSAPublicKey
     }
 }

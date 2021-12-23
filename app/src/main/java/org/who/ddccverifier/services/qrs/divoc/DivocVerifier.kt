@@ -4,12 +4,12 @@ import android.util.Base64
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import foundation.identity.jsonld.JsonLDObject
-import info.weboftrust.ldsignatures.verifier.Ed25519Signature2018LdVerifier
 import org.who.ddccverifier.services.trust.TrustRegistry
 import java.security.PublicKey
 
 import org.who.ddccverifier.services.QRDecoder
 import org.who.ddccverifier.services.qrs.divoc.jsonldcrypto.RsaSignature2018withPS256Verifier
+import org.who.ddccverifier.services.qrs.divoc.jsonldcrypto.Ed25519Signature2018Verifier
 import java.io.ByteArrayInputStream
 import java.io.InputStream
 import java.util.zip.ZipInputStream
@@ -155,7 +155,7 @@ class DivocVerifier(private val open: (String)-> InputStream?) {
 
             when (signatureSuite) {
                 "RsaSignature2018" -> RsaSignature2018withPS256Verifier(pubKey).verify(jsonLdObject)
-                "Ed25519Signature2018" -> Ed25519Signature2018LdVerifier(pubKey.encoded).verify(jsonLdObject)
+                "Ed25519Signature2018" -> Ed25519Signature2018Verifier(pubKey).verify(jsonLdObject)
                 else -> false
             }
         } catch (e: Throwable) {
@@ -166,10 +166,8 @@ class DivocVerifier(private val open: (String)-> InputStream?) {
 
     fun unpackAndVerify(uri: String): QRDecoder.VerificationResult {
         val array = prefixDecode(uri) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_BASE45, null, null, uri)
-        val json = unzipFiles(array)?.get("certificate.json")?: return QRDecoder.VerificationResult(
-            QRDecoder.Status.INVALID_ZIP, null, null, uri)
-        val signedMessage = buildJSonLDDocument(String(json)) ?: return QRDecoder.VerificationResult(
-            QRDecoder.Status.INVALID_COSE, null, null, uri)
+        val json = unzipFiles(array)?.get("certificate.json")?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_ZIP, null, null, uri)
+        val signedMessage = buildJSonLDDocument(String(json)) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_COSE, null, null, uri)
 
         val mapped = map(String(json)) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_COSE, null, null, uri)
 
