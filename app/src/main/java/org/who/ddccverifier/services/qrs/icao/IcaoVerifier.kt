@@ -4,37 +4,40 @@ import android.util.Base64
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.nimbusds.jose.JWSHeader
-import com.nimbusds.jose.crypto.ECDSAVerifier
 import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton
 import com.nimbusds.jose.crypto.impl.ECDSA
-import com.nimbusds.jwt.SignedJWT
-import org.bouncycastle.jce.provider.BouncyCastleProvider
-import org.bouncycastle.util.io.pem.PemReader
+import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier
+import org.bouncycastle.asn1.x509.Extension
+import org.bouncycastle.asn1.x509.Extensions
 import org.erdtman.jcs.JsonCanonicalizer
 import org.who.ddccverifier.services.QRDecoder
-import org.who.ddccverifier.services.qrs.shc.JWTTranslator
-import org.who.ddccverifier.services.qrs.shc.SHCVerifier
 import org.who.ddccverifier.services.trust.KeyUtils
 import org.who.ddccverifier.services.trust.TrustRegistry
-import java.io.StringReader
 import java.security.MessageDigest
 import java.security.PublicKey
-import java.security.Signature
 import java.security.cert.Certificate
-import java.security.interfaces.ECPublicKey
+import java.security.cert.CertificateFactory
+import java.security.cert.X509Certificate
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo
+import org.bouncycastle.x509.extension.X509ExtensionUtil
+import org.bouncycastle.asn1.ASN1OctetString
+import org.bouncycastle.asn1.isismtt.ocsp.RequestedCertificate
+import java.security.Signature
 import java.security.spec.MGF1ParameterSpec
 import java.security.spec.PSSParameterSpec
+import org.bouncycastle.asn1.isismtt.ocsp.RequestedCertificate.certificate
+import java.lang.Exception
+
 
 class IcaoVerifier {
 
-    val ALGOS = mapOf(
+    private val ALGOS = mapOf(
         "ES256" to "SHA256withECDSA",
         "ES384" to "SHA384withECDSA",
         "ES512" to "SHA512withECDSA"
-    );
+    )
 
-    data class iJSON(
+    data class IJson(
         val data: Data,
         val sig: Signature,
     )
@@ -126,40 +129,51 @@ class IcaoVerifier {
         val sigvl: String,
     )
 
-    fun unpack(uri: String): String? {
+    fun unpack(uri: String): String {
         return uri
     }
 
-    private fun parsePayload(iJson: String): iJSON? {
+    private fun parsePayload(iJson: String): IJson? {
         return try {
             val mapper = jacksonObjectMapper()
-            return mapper.readValue(iJson, iJSON::class.java)
+            mapper.readValue(iJson, IJson::class.java)
         } catch (e: Throwable) {
             e.printStackTrace()
-            return null
+            null
         }
     }
 
     private fun base64URLtoBase64(thing: String): String {
-        return thing.replace("-", "+").replace("_", "/");
+        return thing.replace("-", "+").replace("_", "/")
     }
 
-    private fun base64toBase64URL(thing: String): String {
-        return thing.replace("+", "-").replace("/", "_");
+    fun getAuthorityKeyId(cert: X509Certificate): ByteArray? {
+        val fullExtValue = cert.getExtensionValue(Extension.authorityKeyIdentifier.id) ?: return null
+        val extValue = ASN1OctetString.getInstance(fullExtValue).octets
+        return AuthorityKeyIdentifier.getInstance(extValue).keyIdentifier
     }
 
-    private fun getHashFromPEM(cer: String): String {
-        val cert = "-----BEGIN CERTIFICATE-----\n" + base64URLtoBase64(cer) + "\n-----END CERTIFICATE-----";
-        val der = PemReader(StringReader(cert)).readPemObject().content
+    /**
+     * Produces a chain of certificates where 0 is the certificate found int the QR.
+     */
+    private fun getChainHashFromPEM(cer: String): List<String> {
+        val cert = getCertificate(cer)
 
-        val bytes = MessageDigest.getInstance("SHA-256", BouncyCastleProviderSingleton.getInstance()).digest(der)
-        return Base64.encodeToString(bytes, Base64.DEFAULT)
+        val cf: CertificateFactory = CertificateFactory.getInstance("X.509")
+        val chain = cf.generateCertPath(listOf(cert))
+        val sha256 = MessageDigest.getInstance("SHA-256", BouncyCastleProviderSingleton.getInstance())
+
+        var hashes = mutableListOf<String>()
+        hashes.addAll(chain.certificates.map { Base64.encodeToString(sha256.digest(it.encoded), Base64.DEFAULT) })
+        hashes.addAll(chain.certificates.map { Base64.encodeToString(getAuthorityKeyId(it as X509Certificate), Base64.DEFAULT) }.filterNotNull())
+
+        return hashes
     }
 
-    private fun getCertificate(cer: String): Certificate? {
+    private fun getCertificate(cer: String): X509Certificate? {
         return try {
-            val cert = "-----BEGIN CERTIFICATE-----\n" + base64URLtoBase64(cer) + "\n-----END CERTIFICATE-----";
-            KeyUtils.certificateFromPEM(cert)
+            val cert = "-----BEGIN CERTIFICATE-----\n" + base64URLtoBase64(cer) + "\n-----END CERTIFICATE-----"
+            KeyUtils.certificateFromPEM(cert) as X509Certificate
         } catch (e: Throwable) {
             e.printStackTrace()
             null
@@ -170,28 +184,50 @@ class IcaoVerifier {
         return try {
             val mapper = jacksonObjectMapper()
             mapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
-            val json = mapper.writeValueAsString(json)
-            JsonCanonicalizer(json).encodedUTF8
+            JsonCanonicalizer(mapper.writeValueAsString(json)).encodedUTF8
         } catch (e: Throwable) {
             e.printStackTrace()
             null
         }
     }
 
-    private fun getKID(payload: iJSON): String? {
-        if (payload.data.hdr.iss == null || payload.sig.cer == null)
-            return null
+    /**
+     * Walks the chain of certificates to create resolvable Kids with PathCheck's Trust Registry
+     */
+    private fun getKIDs(payload: IJson): List<String>? {
+        val certHash = getChainHashFromPEM(payload.sig.cer)
+        if (certHash.isEmpty()) return null
 
-        val certHash = getHashFromPEM(payload.sig.cer)
-
-        return "${payload.data.hdr.iss}#${certHash}"
+        return certHash.map { "${payload.data.hdr.iss}#${it}" }
     }
 
-    private fun resolveIssuer(kid: String): TrustRegistry.TrustedEntity? {
-        return TrustRegistry.resolve(TrustRegistry.Framework.ICAO, kid)
+    /**
+     * Returns the first known issuer from the Certificate Chain
+     */
+    private fun resolveIssuer(kids: List<String>): TrustRegistry.TrustedEntity? {
+        return kids.firstNotNullOfOrNull { TrustRegistry.resolve(TrustRegistry.Framework.ICAO, it) }
     }
 
-    private fun verify(payload: iJSON, pubKey: PublicKey): Boolean {
+    private fun isSame(certificate: PublicKey, issuer: PublicKey): Boolean {
+        return Base64.encodeToString(certificate.encoded, Base64.DEFAULT)
+            .equals(Base64.encodeToString(issuer.encoded, Base64.DEFAULT))
+    }
+
+    private fun isSignedBy(certificate: X509Certificate, issuer: PublicKey): Boolean {
+        return try {
+            certificate.verify(issuer)
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    private fun isTrusted(certificate: X509Certificate, issuer: TrustRegistry.TrustedEntity): Boolean {
+        return isSame(certificate.publicKey, issuer.didDocument)
+            || isSignedBy(certificate, issuer.didDocument)
+    }
+
+    private fun verify(payload: IJson, pubKey: PublicKey): Boolean {
         return try {
             val signature = Base64.decode(payload.sig.sigvl, Base64.URL_SAFE)
             val derSignature = ECDSA.transcodeSignatureToDER(signature)
@@ -211,8 +247,8 @@ class IcaoVerifier {
 
         val contents = IJsonTranslator().toFhir(iJSON)
 
-        val kid = getKID(iJSON) ?: return QRDecoder.VerificationResult(QRDecoder.Status.KID_NOT_INCLUDED, contents, null, qr)
-        val issuer = resolveIssuer(kid) ?: return QRDecoder.VerificationResult(QRDecoder.Status.ISSUER_NOT_TRUSTED, contents, null, qr)
+        val kids = getKIDs(iJSON) ?: return QRDecoder.VerificationResult(QRDecoder.Status.KID_NOT_INCLUDED, contents, null, qr)
+        val issuer = resolveIssuer(kids) ?: return QRDecoder.VerificationResult(QRDecoder.Status.ISSUER_NOT_TRUSTED, contents, null, qr)
 
         when (issuer.status) {
             TrustRegistry.Status.TERMINATED -> return QRDecoder.VerificationResult(QRDecoder.Status.TERMINATED_KEYS, contents, issuer, qr)
@@ -220,7 +256,7 @@ class IcaoVerifier {
             TrustRegistry.Status.REVOKED -> return QRDecoder.VerificationResult(QRDecoder.Status.REVOKED_KEYS, contents, issuer, qr)
         }
 
-        if (verify(iJSON, certificate.publicKey)) {
+        if (verify(iJSON, certificate.publicKey) && isTrusted(certificate, issuer)) {
             return QRDecoder.VerificationResult(QRDecoder.Status.VERIFIED, contents, issuer, qr)
         }
 

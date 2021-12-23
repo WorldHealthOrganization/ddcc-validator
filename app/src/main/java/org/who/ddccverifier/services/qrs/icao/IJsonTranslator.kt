@@ -1,10 +1,8 @@
 package org.who.ddccverifier.services.qrs.icao
 
-import ca.uhn.fhir.model.api.TemporalPrecisionEnum
 import org.hl7.fhir.instance.model.api.IBaseDatatype
 import org.hl7.fhir.r4.model.*
 import java.text.SimpleDateFormat
-import java.time.Year
 import java.util.*
 
 /**
@@ -120,7 +118,7 @@ class IJsonTranslator {
         }
     }
 
-    fun toFhir(vc: IcaoVerifier.iJSON): Composition {
+    fun toFhir(vc: IcaoVerifier.IJson): Composition {
         val myPatient = Patient().apply{
             identifier = listOfNotNull(
                 parseIdentifier(vc.data.msg.pid?.i),
