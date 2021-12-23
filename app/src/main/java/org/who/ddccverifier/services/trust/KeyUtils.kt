@@ -59,14 +59,13 @@ object KeyUtils {
     }
 
     fun certificatePublicKeyFromPEM(pem: String): PublicKey {
-        return certificateFromPEM(pem)?.publicKey
+        return certificateFromPEM(pem).publicKey
     }
 
     fun certificateFromPEM(pem: String): Certificate {
         val reader = PemReader(StringReader(pem))
         val stream = ByteArrayInputStream(reader.readPemObject().content)
-        return BCJcaJceHelper().createCertificateFactory("X.509")
-                               .generateCertificate(stream)
+        return BCJcaJceHelper().createCertificateFactory("X.509").generateCertificate(stream);
     }
 
     fun publicKeyFromPEM(pem: String): PublicKey{

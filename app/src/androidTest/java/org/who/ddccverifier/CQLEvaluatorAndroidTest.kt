@@ -145,7 +145,7 @@ class CQLEvaluatorAndroidTest {
 
         Assert.assertEquals(true, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
         Assert.assertEquals(Collections.EMPTY_LIST, context.resolveExpressionRef("GetFinalDose").evaluate(context))
-        Assert.assertEquals(Collections.EMPTY_LIST, context.resolveExpressionRef("GetSingleDose").evaluate(context))
+        Assert.assertNotEquals(Collections.EMPTY_LIST, context.resolveExpressionRef("GetSingleDose").evaluate(context))
     }
 
     @Test

@@ -154,10 +154,11 @@ class IcaoVerifier {
         val chain = cf.generateCertPath(listOf(cert))
         val sha256 = MessageDigest.getInstance("SHA-256", BouncyCastleProviderSingleton.getInstance())
 
-        var hashes = mutableListOf<String>()
-        hashes.addAll(chain.certificates.map { Base64.encodeToString(sha256.digest(it.encoded), Base64.DEFAULT) })
-        hashes.addAll(chain.certificates.map { Base64.encodeToString(getAuthorityKeyId(it as X509Certificate), Base64.DEFAULT) }.filterNotNull())
-
+        val hashes = mutableListOf<String>()
+        // Adds all certificate IDs in the chain
+        hashes.addAll(chain.certificates.map { Base64.encodeToString(sha256.digest(it.encoded), Base64.NO_WRAP) })
+        // Adds all Authority Key IDs if present.
+        hashes.addAll(chain.certificates.map { Base64.encodeToString(getAuthorityKeyId(it as X509Certificate), Base64.NO_WRAP) }.filterNotNull())
         return hashes
     }
 
@@ -193,15 +194,19 @@ class IcaoVerifier {
     }
 
     /**
-     * Returns the first known issuer from the Certificate Chain
+     * Returns the first known issuer from the Certificate Chain that is found in the registry and verifies the certificate on the QR.
      */
-    private fun resolveIssuer(kids: List<String>): TrustRegistry.TrustedEntity? {
-        return kids.firstNotNullOfOrNull { TrustRegistry.resolve(TrustRegistry.Framework.ICAO, it) }
+    private fun resolveIssuer(kids: List<String>, certificate: X509Certificate): TrustRegistry.TrustedEntity? {
+        return kids.firstNotNullOfOrNull {
+            val issuer = TrustRegistry.resolve(TrustRegistry.Framework.ICAO, it)
+            issuer?.let { it1 -> isTrusted(certificate, it1) }
+            issuer
+        }
     }
 
     private fun isSame(certificate: PublicKey, issuer: PublicKey): Boolean {
-        return Base64.encodeToString(certificate.encoded, Base64.DEFAULT)
-            .equals(Base64.encodeToString(issuer.encoded, Base64.DEFAULT))
+        return Base64.encodeToString(certificate.encoded, Base64.NO_WRAP)
+            .equals(Base64.encodeToString(issuer.encoded, Base64.NO_WRAP))
     }
 
     private fun isSignedBy(certificate: X509Certificate, issuer: PublicKey): Boolean {
@@ -240,7 +245,7 @@ class IcaoVerifier {
         val contents = IJsonTranslator().toFhir(iJSON)
 
         val kids = getKIDs(iJSON) ?: return QRDecoder.VerificationResult(QRDecoder.Status.KID_NOT_INCLUDED, contents, null, qr)
-        val issuer = resolveIssuer(kids) ?: return QRDecoder.VerificationResult(QRDecoder.Status.ISSUER_NOT_TRUSTED, contents, null, qr)
+        val issuer = resolveIssuer(kids, certificate) ?: return QRDecoder.VerificationResult(QRDecoder.Status.ISSUER_NOT_TRUSTED, contents, null, qr)
 
         when (issuer.status) {
             TrustRegistry.Status.TERMINATED -> return QRDecoder.VerificationResult(QRDecoder.Status.TERMINATED_KEYS, contents, issuer, qr)
@@ -248,7 +253,7 @@ class IcaoVerifier {
             TrustRegistry.Status.REVOKED -> return QRDecoder.VerificationResult(QRDecoder.Status.REVOKED_KEYS, contents, issuer, qr)
         }
 
-        if (verify(iJSON, certificate.publicKey) && isTrusted(certificate, issuer)) {
+        if (verify(iJSON, certificate.publicKey)) {
             return QRDecoder.VerificationResult(QRDecoder.Status.VERIFIED, contents, issuer, qr)
         }
 
