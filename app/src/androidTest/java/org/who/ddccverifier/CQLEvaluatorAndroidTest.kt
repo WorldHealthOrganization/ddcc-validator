@@ -15,6 +15,7 @@ import org.who.ddccverifier.services.cql.CQLEvaluator
 import org.who.ddccverifier.services.cql.FHIRLibraryLoader
 import org.who.ddccverifier.services.QRDecoder
 import org.who.ddccverifier.services.qrs.divoc.DivocVerifier
+import org.who.ddccverifier.services.qrs.icao.IcaoVerifier
 import org.who.ddccverifier.services.qrs.shc.SHCVerifier
 import java.io.InputStream
 import java.io.StringReader
@@ -129,6 +130,20 @@ class CQLEvaluatorAndroidTest {
         val context = cqlEvaluator.run(ddccPass, verified.contents!!)
 
         Assert.assertEquals(false, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
+        Assert.assertEquals(Collections.EMPTY_LIST, context.resolveExpressionRef("GetFinalDose").evaluate(context))
+        Assert.assertEquals(Collections.EMPTY_LIST, context.resolveExpressionRef("GetSingleDose").evaluate(context))
+    }
+
+    @Test
+    fun evaluateDDCCPassOnICAOQR1FromQRTest() {
+        val qr1 = open("ICAOQR1Contents.txt")
+        val verified = IcaoVerifier().unpackAndVerify(qr1)
+
+        Assert.assertEquals(QRDecoder.Status.VERIFIED, verified.status)
+
+        val context = cqlEvaluator.run(ddccPass, verified.contents!!)
+
+        Assert.assertEquals(true, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
         Assert.assertEquals(Collections.EMPTY_LIST, context.resolveExpressionRef("GetFinalDose").evaluate(context))
         Assert.assertEquals(Collections.EMPTY_LIST, context.resolveExpressionRef("GetSingleDose").evaluate(context))
     }

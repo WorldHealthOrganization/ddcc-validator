@@ -209,6 +209,7 @@ class IcaoVerifier {
             certificate.verify(issuer)
             true
         } catch (e: Exception) {
+            e.printStackTrace()
             false
         }
     }
