@@ -3,6 +3,7 @@ package org.who.ddccverifier.services
 import org.hl7.fhir.r4.model.Composition
 import org.who.ddccverifier.services.qrs.divoc.DivocVerifier
 import org.who.ddccverifier.services.qrs.hcert.HCertVerifier
+import org.who.ddccverifier.services.qrs.icao.IcaoVerifier
 import org.who.ddccverifier.services.qrs.shc.SHCVerifier
 import org.who.ddccverifier.services.trust.TrustRegistry
 import java.io.InputStream
@@ -42,6 +43,10 @@ class QRDecoder(private val open: (String)-> InputStream?) {
         if (qrPayload.uppercase().startsWith("B64:") || qrPayload.uppercase().startsWith("PK")) {
             return DivocVerifier(open).unpackAndVerify(qrPayload)
         }
+        if (qrPayload.uppercase().contains("ICAO")) {
+            return IcaoVerifier().unpackAndVerify(qrPayload)
+        }
+
         return VerificationResult(Status.NOT_SUPPORTED, null, null, qrPayload)
     }
 }

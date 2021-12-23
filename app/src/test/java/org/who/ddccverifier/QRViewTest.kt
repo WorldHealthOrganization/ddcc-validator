@@ -277,4 +277,46 @@ class QRViewTest: BaseTest() {
 
         assertEquals(true, status)
     }
+
+    @Test
+    fun viewICAOQR1() {
+        val qr1 = open("ICAOQR1Contents.txt")
+        val verified = qrUnpacker.decode(qr1)
+
+        assertEquals(QRDecoder.Status.VERIFIED, verified.status)
+
+        val card2 = DDCCFormatter().run(verified.contents!!)
+        val status = cqlEvaluator.resolve("CompletedImmunization", ddccPass, verified.contents!!) as Boolean
+
+        val context = cqlEvaluator.run(ddccPass, verified.contents!!)
+        assertEquals(true, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
+        assertNotNull(context.resolveExpressionRef("GetFinalDose").evaluate(context))
+
+        // Credential
+        assertEquals("COVID-19 Vaccination", card2.cardTitle!!.split(" - ")[1])
+        assertEquals(null, card2.validUntil)
+
+        // Patient
+        assertEquals("CITIZEN  JANE SUE", card2.personName)
+        assertEquals("May 15, 1961 - Female", card2.personDetails)
+        assertEquals("ID: PA0941262", card2.identifier)
+
+        // Immunization
+        assertEquals("", card2.vaccineType)
+        assertEquals("Dose: 1", card2.dose)
+        assertEquals("Sep 15, 2021", card2.doseDate)
+        assertEquals(null, card2.vaccineValid)
+        assertEquals("COVID-19", card2.vaccineAgainst)
+        assertEquals("AstraZeneca Vaxzevria (#300157P)", card2.vaccineInfo)
+        assertEquals(null, card2.vaccineInfo2)
+        assertEquals("AUS", card2.location)
+        assertEquals("VB0009990012", card2.hcid)
+        assertEquals("General Practitioner", card2.pha)
+        assertEquals(null, card2.hw)
+
+        // Recommendation
+        assertEquals(null, card2.nextDose)
+
+        assertEquals(true, status)
+    }
 }

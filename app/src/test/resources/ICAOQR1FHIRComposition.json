@@ -1,0 +1,139 @@
+{
+  "resourceType": "Composition",
+  "id": "VB0009990012",
+  "contained": [
+    {
+      "resourceType": "Patient",
+      "id": "1",
+      "identifier": [
+        {
+          "value": "PA0941262"
+        }
+      ],
+      "name": [
+        {
+          "text": "CITIZEN  JANE SUE"
+        }
+      ],
+      "gender": "female",
+      "birthDate": "1961-05-15"
+    },
+    {
+      "resourceType": "Immunization",
+      "id": "2",
+      "extension": [
+        {
+          "url": "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineBrand",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "display": "AstraZeneca Vaxzevria"
+              }
+            ]
+          }
+        },
+        {
+          "url": "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCCountryOfVaccination",
+          "valueCoding": {
+            "system": "urn:iso:std:iso:3166",
+            "code": "AUS"
+          }
+        }
+      ],
+      "vaccineCode": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-11",
+            "code": "XM68M6"
+          }
+        ]
+      },
+      "patient": {
+        "reference": "#1"
+      },
+      "occurrenceDateTime": "2021-09-15",
+      "manufacturer": {
+        "reference": "#3"
+      },
+      "lotNumber": "300157P",
+      "protocolApplied": [
+        {
+          "authority": {
+            "reference": "#4"
+          },
+          "targetDisease": [
+            {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/sid/icd-11",
+                  "code": "RA01.0"
+                }
+              ]
+            }
+          ],
+          "doseNumberPositiveInt": 1
+        }
+      ]
+    },
+    {
+      "resourceType": "Organization",
+      "id": "3",
+      "name": "General Practitioner"
+    },
+    {
+      "resourceType": "Organization",
+      "id": "4",
+      "name": "General Practitioner"
+    }
+  ],
+  "type": {
+    "coding": [
+      {
+        "system": "http://loinc.org",
+        "code": "82593-5",
+        "display": "Immunization summary report"
+      }
+    ]
+  },
+  "category": [
+    {
+      "coding": [
+        {
+          "code": "ddcc-vs"
+        }
+      ]
+    }
+  ],
+  "subject": {
+    "reference": "#1"
+  },
+  "author": [
+    {
+      "reference": "#4"
+    }
+  ],
+  "title": "International Certificate of Vaccination or Prophylaxis",
+  "section": [
+    {
+      "code": {
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "11369-6",
+            "display": "History of Immunization Narrative"
+          }
+        ]
+      },
+      "author": [
+        {
+          "reference": "#4"
+        }
+      ],
+      "entry": [
+        {
+          "reference": "#2"
+        }
+      ]
+    }
+  ]
+}

@@ -6,6 +6,7 @@ import org.junit.Test
 import org.junit.Assert.*
 import org.who.ddccverifier.services.qrs.divoc.DivocVerifier
 import org.who.ddccverifier.services.qrs.hcert.HCertVerifier
+import org.who.ddccverifier.services.qrs.icao.IcaoVerifier
 import org.who.ddccverifier.services.qrs.shc.SHCVerifier
 
 class QRUnpackTest: BaseTest() {
@@ -60,5 +61,12 @@ class QRUnpackTest: BaseTest() {
         val qr1 = open("DIVOCJamaicaContents.txt")
         val jsonld = DivocVerifier(::inputStream).unpack(qr1)
         jsonEquals(open("DIVOCJamaicaUnpacked.json"), jsonld!!.toJson(true))
+    }
+
+    @Test
+    fun unpackICAOQR1() {
+        val qr1 = open("ICAOQR1Contents.txt")
+        val json = IcaoVerifier().unpack(qr1)
+        jsonEquals(open("ICAOQR1Unpacked.json"), json!!)
     }
 }

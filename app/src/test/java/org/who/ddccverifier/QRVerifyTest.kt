@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.who.ddccverifier.services.QRDecoder
 import org.who.ddccverifier.services.qrs.shc.SHCVerifier
 import org.who.ddccverifier.services.qrs.divoc.DivocVerifier
+import org.who.ddccverifier.services.qrs.icao.IcaoVerifier
 
 
 class QRVerifyTest: BaseTest() {
@@ -95,5 +96,18 @@ class QRVerifyTest: BaseTest() {
         val json = jsonParser.encodeResourceToString(verified.contents!!)
 
         jsonEquals(open("DIVOCJamaicaFHIRComposition.json"), json)
+    }
+
+    @Test
+    fun verifyICAOQR1() {
+        val qr1 = open("ICAOQR1Contents.txt")
+        val verified = IcaoVerifier().unpackAndVerify(qr1)
+
+        assertNotNull(verified)
+        assertEquals(QRDecoder.Status.VERIFIED, verified.status)
+
+        val json = jsonParser.encodeResourceToString(verified.contents!!)
+
+        jsonEquals(open("ICAOQR1FHIRComposition.json"), json)
     }
 }

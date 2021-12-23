@@ -15,7 +15,33 @@ class DDCCFormatter {
     private val fmtYearMonth = SimpleDateFormat("MMM, yyyy")
     private val fmtComplete = SimpleDateFormat("MMM d, h:mma")
 
-    private val DISEASES = mapOf("840539006" to "COVID-19")
+    private val DISEASES = mapOf(
+        "840539006" to "COVID-19"
+    )
+
+    private val ICD11_TARGETS = mapOf(
+        "RA01" to "COVID-19",
+        "RA01.0" to "COVID-19",
+    )
+
+    private val ICD11_DIAGNOSIS = mapOf(
+        "RA01" to "COVID-19",
+        "RA01.0" to "COVID-19, virus identified",
+        "RA01.1" to "COVID-19, virus not identified",
+        "RA01.0/CA40.1" to "COVID-19 with pneumonia, SARS-CoV-2 identified",
+        "RA01.1/CA40.1" to "COVID-19 with pneumonia, SARS-CoV-2 not identified"
+    )
+
+    private val ICD11 = mapOf(
+        "RA01" to "COVID-19",
+        "RA01.0" to "COVID-19, virus identified",
+        "RA01.1" to "COVID-19, virus not identified",
+        "RA01.0/CA40.1" to "COVID-19 with pneumonia, SARS-CoV-2 identified",
+        "RA01.1/CA40.1" to "COVID-19 with pneumonia, SARS-CoV-2 not identified"
+    )
+
+    //vaccinationEvent.dis, "http://hl7.org/fhir/sid/icd-11"
+
     private val VACCINE_PROPH = mapOf(
         "1119349007" to "SARS-CoV-2 mRNA Vaccine" ,
         "1119305005" to "SARS-CoV-2 Antigen Vaccine",
@@ -187,7 +213,7 @@ class DDCCFormatter {
     private fun formatIDs(identifiers: List<Identifier>?): String? {
         if (identifiers == null || identifiers.isEmpty()) return null
         val id = identifiers.groupBy { it.value }.keys.filterNotNull().joinToString(", ")
-        if (id == null  || id.isBlank()) return null
+        if (id.isBlank()) return null
         return "ID: " + id
     }
 
@@ -209,7 +235,7 @@ class DDCCFormatter {
         if (diseases == null) return null
         return diseases.groupBy {
             it.coding.groupBy {
-                DISEASES.get(it.code)
+                DISEASES[it.code] ?: ICD11_TARGETS[it.code]
             }.keys.joinToString(", ")
         }.keys.joinToString(", ")
     }
@@ -332,7 +358,7 @@ class DDCCFormatter {
         return ResultFragment.ResultCard(
             DDCC.id,
             formatCardTitle(immunization?.protocolApplied?.firstOrNull()?.targetDisease),
-            formatValidPeriod(DDCC.event[0].period.start, DDCC.event[0].period.end),
+            formatValidPeriod(DDCC.eventFirstRep.period.start, DDCC.eventFirstRep.period.end),
             formatName(patient.name),
             formatPersonDetails(patient.birthDateElement, patient.gender),
             formatIDs(patient.identifier),
