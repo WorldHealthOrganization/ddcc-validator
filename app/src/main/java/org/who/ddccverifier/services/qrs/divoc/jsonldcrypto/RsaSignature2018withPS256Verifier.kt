@@ -20,7 +20,7 @@ import java.text.ParseException
 
 class RsaSignature2018withPS256Verifier
     constructor(verifier: ByteVerifier?) : LdVerifier<RsaSignature2018SignatureSuite?>(SignatureSuites.SIGNATURE_SUITE_RSASIGNATURE2018, verifier, AndroidURDNA2015Canonicalizer()) {
-    constructor(publicKey: PublicKey?) : this(RSAPS256BouncyCastlePublicKeyVerifier(publicKey as RSAPublicKey))
+    constructor(publicKey: PublicKey?) : this(RsaPS256BouncyCastlePublicKeyVerifier(publicKey as RSAPublicKey))
 
     override fun verify(signingInput: ByteArray, ldProof: LdProof): Boolean {
         try {

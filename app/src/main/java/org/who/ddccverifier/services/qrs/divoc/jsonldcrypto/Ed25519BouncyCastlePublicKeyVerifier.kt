@@ -6,6 +6,10 @@ import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton
 import java.security.PublicKey
 import java.security.Signature
 
+/**
+ * Override com.danubetech.keyformats.crypto.impl.Ed25519_PublicKeyVerifier to force
+ * the use of BouncyCastle's provider
+ */
 class Ed25519BouncyCastlePublicKeyVerifier(publicKey: PublicKey) :
     PublicKeyVerifier<PublicKey>(publicKey, JWSAlgorithm.EdDSA) {
 
