@@ -34,7 +34,7 @@ import org.who.ddccverifier.services.trust.TrustRegistry
  *  ╚══════╪═════════════════════╪══════════════════╪═══════════════════╪═════════╝  │
  *         │HCERT CBOR           │JWT               │JSONLD             │iJSON       │
  *    ┌────▼───────────┐ ┌───────▼───────┐ ┌────────▼─────────┐ ┌───────▼─────────┐  │
- *    │ CBORTranslator │ │ JWTTranslator │ │ JSONLDTranslator │ │ iJSONTranslator │  │
+ *    │ CBORTranslator │ │ JWTTranslator │ │ JSONLDTranslator │ │ IJsonTranslator │  │
  *    └──┬──────────┬──┘ └───────┬───────┘ └────────┬─────────┘ └───────┬─────────┘  │
  *   FHIR│Struct    │DCC CWT     │FHIR DDCC         │FHIR DDCC          │FHIR DDCC   │
  * ┌─────▼────┐┌────▼─────┐      │                  │                   │            │

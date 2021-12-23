@@ -49,10 +49,11 @@ COVID-19 Credential Verifier app for Android using the WHO's Digital Documentati
 - [x] 10.3. Display Vacination Info on Screen
 - [ ] 10.4. Display Test Info on Screen
 - [ ] 10.5. Display Recovery Info on Screen
-- [ ] 11. ICAO Processing.
-- [ ] 11.1. Unpack and Verify
-- [ ] 11.2. Trust Registry check
-- [ ] 11.3. Display Info on Screen
+- [x] 11. ICAO Processing.
+- [x] 11.1. Unpack and Verify
+- [x] 11.2. Trust Registry check
+- [x] 11.3. Display Vaccination Info on Screen
+- [ ] 11.4. Display Test Result Info on Screen
 - [x] 12. EU DCC Processing.
 - [x] 12.1. Unpack and Verify
 - [x] 12.2. Trust Registry check
@@ -115,7 +116,7 @@ Build the app:
  ╚══════╪═════════════════════╪══════════════════╪═══════════════════╪═════════╝  │
         │HCERT CBOR           │JWT               │JSONLD             │iJSON       │
    ┌────▼───────────┐ ┌───────▼───────┐ ┌────────▼─────────┐ ┌───────▼─────────┐  │
-   │ CBORTranslator │ │ JWTTranslator │ │ JSONLDTranslator │ │ iJSONTranslator │  │
+   │ CBORTranslator │ │ JWTTranslator │ │ JSONLDTranslator │ │ IJsonTranslator │  │
    └──┬──────────┬──┘ └───────┬───────┘ └────────┬─────────┘ └───────┬─────────┘  │
   FHIR│Struct    │DCC CWT     │FHIR DDCC         │FHIR DDCC          │FHIR DDCC   │
 ┌─────▼────┐┌────▼─────┐      │                  │                   │            │
