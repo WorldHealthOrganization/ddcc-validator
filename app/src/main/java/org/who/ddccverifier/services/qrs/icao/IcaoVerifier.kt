@@ -8,24 +8,15 @@ import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton
 import com.nimbusds.jose.crypto.impl.ECDSA
 import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier
 import org.bouncycastle.asn1.x509.Extension
-import org.bouncycastle.asn1.x509.Extensions
 import org.erdtman.jcs.JsonCanonicalizer
 import org.who.ddccverifier.services.QRDecoder
 import org.who.ddccverifier.services.trust.KeyUtils
 import org.who.ddccverifier.services.trust.TrustRegistry
 import java.security.MessageDigest
 import java.security.PublicKey
-import java.security.cert.Certificate
 import java.security.cert.CertificateFactory
 import java.security.cert.X509Certificate
-import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo
-import org.bouncycastle.x509.extension.X509ExtensionUtil
 import org.bouncycastle.asn1.ASN1OctetString
-import org.bouncycastle.asn1.isismtt.ocsp.RequestedCertificate
-import java.security.Signature
-import java.security.spec.MGF1ParameterSpec
-import java.security.spec.PSSParameterSpec
-import org.bouncycastle.asn1.isismtt.ocsp.RequestedCertificate.certificate
 import java.lang.Exception
 
 
