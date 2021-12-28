@@ -72,7 +72,7 @@ object TrustRegistry {
         Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME)
         Security.addProvider(BouncyCastleProviderSingleton.getInstance())
 
-        val result = URL(BuildConfig.TRUST_REGISTRY_URL).readText()
+        val resultStream = URL(BuildConfig.TRUST_REGISTRY_URL)
         //TODO: Downloading this JSON takes 500ms
 
         val mapper = jacksonObjectMapper()
@@ -80,7 +80,7 @@ object TrustRegistry {
             object : TypeReference<MutableMap<Framework, MutableMap<String, TrustedEntity>>>() {}
 
         //TODO: Parsing this JSON takes 5s
-        val reg = mapper.readValue(result, typeRef)
+        val reg = mapper.readValue(resultStream, typeRef)
         addTestKeys(reg)
         return@lazy reg
     }
