@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">DDCC Verifier</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="action_logout">Logout</string>
     <!-- Strings used for fragments for navigation -->
     <string name="home_fragment_label">WHO DDCC Verifier</string>
     <string name="qrscan_fragment_label">QR Scan</string>

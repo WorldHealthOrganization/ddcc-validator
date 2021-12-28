@@ -14,7 +14,13 @@ android {
         versionCode 10
         versionName "0.0.10"
 
+        buildConfigField "String", "OPENID_SERVER_URL", "\"http://192.168.0.11:8080/auth/realms/master/\""
+        buildConfigField "String", "OPENID_CLIENT_ID", "\"verifier-app\""
+        buildConfigField "String", "OPENID_REDIRECT_URI", "\"org.who.ddccverifier:/redirect\""
+        buildConfigField "String", "TRUST_REGISTRY_URL", "\"https://raw.githubusercontent.com/Path-Check/trust-registry/main/registry.json\""
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        manifestPlaceholders = [ 'appAuthRedirectScheme': 'org.who.ddccverifier' ]
     }
 
     buildTypes {
@@ -96,7 +102,11 @@ dependencies {
         exclude group: 'decentralized-identity', module: 'jsonld-common-java'
     }
 
+    // Required for ICAO QR Codes
     implementation 'io.github.erdtman:java-json-canonicalization:1.1'
+
+    // Required for the Online update of a Credential
+    implementation 'net.openid:appauth:0.11.1'
 
     // Necessary to Convert the QR into the DDCC FHIR Composite
     implementation 'com.google.android.fhir:engine:0.1.0-alpha05'

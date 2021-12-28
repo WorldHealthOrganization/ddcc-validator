@@ -83,6 +83,26 @@ Build the app:
 ./gradlew assembleDebug
 ```
 
+## KeyCloak instructions
+
+Follow server setup [here](https://www.keycloak.org/getting-started/getting-started-zip)
+
+Create a client with: 
+- id: verifier-app
+- redirect URIs: org.who.ddccverifier:/redirect
+
+Start keycloak with a network IP the phone can reach:
+```bash
+bin/standalone.sh -b 10.1.10.98
+```
+
+Change the IP of the address on the app's Main Activity: 
+```kotlin
+private val mDiscoveryURI = Uri.parse("http://10.1.10.98:8080/auth/realms/master/")
+```
+
+
+
 ## Testing
 ```bash
 ./gradlew test

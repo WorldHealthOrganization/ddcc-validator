@@ -1,14 +1,12 @@
 package org.who.ddccverifier
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
-import kotlinx.coroutines.*
 import org.who.ddccverifier.databinding.ActivityMainBinding
 import org.who.ddccverifier.services.trust.TrustRegistry
 
@@ -52,18 +50,18 @@ import org.who.ddccverifier.services.trust.TrustRegistry
  *                                       │ DDCCFormatter  ├→─DDCC UI Card────────────┘
  *                                       └────────────────┘
  */
-class MainActivity : AppCompatActivity() {
+class MainActivity : AuthActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
 
+    private lateinit var mMenu: Menu
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        init()
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         setSupportActionBar(binding.toolbar)
 
         val navController = findNavController(R.id.nav_host_fragment_content_main)
@@ -71,18 +69,14 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
     }
 
-    fun init() = runBlocking {
-        var viewModelJob = Job()
-        val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
-
-        uiScope.launch {
-            withContext(Dispatchers.IO) {
-                backgroundInit()
-            }
-        }
+    override fun onAccountState(isAuthorized: Boolean) {
+        super.onAccountState(isAuthorized)
+        mMenu.findItem(R.id.action_sign_in).isVisible = !isAuthorized
+        mMenu.findItem(R.id.action_logout).isVisible = isAuthorized
     }
 
-    suspend fun backgroundInit() {
+    override fun backgroundInit() {
+        super.backgroundInit()
         // Triggers Networking
         TrustRegistry.init()
     }
@@ -90,6 +84,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
+        mMenu = menu
+        updateAccountState()
         return true
     }
 
@@ -98,14 +94,14 @@ class MainActivity : AppCompatActivity() {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
-            R.id.action_settings -> true
+            R.id.action_sign_in -> { requestAuthorization(); return true; }
+            R.id.action_logout -> { requestSignOff(); return true; }
             else -> super.onOptionsItemSelected(item)
         }
     }
 
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
-        return navController.navigateUp(appBarConfiguration)
-                || super.onSupportNavigateUp()
+        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 }
