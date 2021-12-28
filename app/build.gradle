@@ -14,17 +14,22 @@ android {
         versionCode 10
         versionName "0.0.10"
 
-        buildConfigField "String", "OPENID_SERVER_URL", "\"${OPENID_SERVER_URL}\""
         buildConfigField "String", "OPENID_CLIENT_ID", "\"verifier-app\""
         buildConfigField "String", "OPENID_REDIRECT_URI", "\"org.who.ddccverifier:/redirect\""
-        buildConfigField "String", "TRUST_REGISTRY_URL", "\"https://raw.githubusercontent.com/Path-Check/trust-registry/main/registry.json\""
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         manifestPlaceholders = [ 'appAuthRedirectScheme': 'org.who.ddccverifier' ]
     }
 
     buildTypes {
+        debug {
+            buildConfigField "String", "OPENID_SERVER_URL", "\"http://${getDevHost()}:8080/auth/realms/master/\""
+            buildConfigField "String", "TRUST_REGISTRY_URL", "\"https://raw.githubusercontent.com/Path-Check/trust-registry/main/registry.json\""
+        }
         release {
+            buildConfigField "String", "OPENID_SERVER_URL", "\"https://yourkeycloak.com/auth/realms/your_realm/\""
+            buildConfigField "String", "TRUST_REGISTRY_URL", "\"https://raw.githubusercontent.com/Path-Check/trust-registry/main/registry.json\""
+
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -145,4 +150,26 @@ dependencies {
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+}
+
+/**
+ * Find the first LAN address of the development machine.
+ */
+def getDevHost() {
+    def defaultDevHost = InetAddress.getLocalHost().getCanonicalHostName()
+
+    return NetworkInterface.getNetworkInterfaces().findResult(defaultDevHost) {
+        def ifOk = it.isUp() &&
+                !it.isVirtual() &&
+                !it.isPointToPoint() &&
+                !it.isLoopback() &&
+                !it.getName().startsWith("br-") //
+
+        if (ifOk)
+            return it.getInetAddresses().find {
+                it instanceof Inet4Address && !it.isLoopbackAddress()
+            }
+        else
+            return null
+    }
 }

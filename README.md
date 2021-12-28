@@ -113,10 +113,7 @@ Start keycloak with the local network's IP a phone can reach:
 bin/standalone.sh -b <YOUR LOCAL IP>
 ```
 
-Change the IP of the address on the gradle.properties:
-```
-OPENID_SERVER_URL=http://<YOUR LOCAL IP>:8080/auth/realms/<YOUR REALM>/
-```
+Android will connect with your local IP. Just make sure the phone is in the same WIFI as the dev's computer
 
 ## Screen + Class flow overview
 
