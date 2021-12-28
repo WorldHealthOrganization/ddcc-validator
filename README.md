@@ -37,8 +37,8 @@ COVID-19 Credential Verifier app for Android using the WHO's Digital Documentati
 - [x] 7.1. Load FHIR Models & Context
 - [x] 7.2. Load Rules Library
 - [x] 7.3. Run Rule engines on the FHIR dataset.
-- [ ] 8. Key Cloak Integration
-- [ ] 8.1. Define the need for screens.
+- [x] 8. Key Cloak Integration
+- [x] 8.1. Define the need for screens.
 - [x] 9. DIVOC Processing.
 - [x] 9.1. Unpack and Verify
 - [x] 9.2. Trust Registry check
