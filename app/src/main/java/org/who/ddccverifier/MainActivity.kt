@@ -7,8 +7,11 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
+import net.openid.appauth.AuthorizationException
 import org.who.ddccverifier.databinding.ActivityMainBinding
 import org.who.ddccverifier.services.trust.TrustRegistry
+import java.lang.Exception
 
 /**
  * Screen / Class flow:
@@ -69,10 +72,16 @@ class MainActivity : AuthActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
     }
 
-    override fun onAccountState(isAuthorized: Boolean) {
-        super.onAccountState(isAuthorized)
+    override fun onAccountState(isReady: Boolean, isAuthorized: Boolean) {
+        if (!this::mMenu.isInitialized) return
+        mMenu.findItem(R.id.action_sign_in).isEnabled = isReady
+        mMenu.findItem(R.id.action_logout).isEnabled = isReady
         mMenu.findItem(R.id.action_sign_in).isVisible = !isAuthorized
         mMenu.findItem(R.id.action_logout).isVisible = isAuthorized
+    }
+
+    override fun onNewUserInfo(user: User) {
+        Toast.makeText(this, "Welcome " + user.name, Toast.LENGTH_SHORT).show()
     }
 
     override fun backgroundInit() {

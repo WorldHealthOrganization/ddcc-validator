@@ -83,26 +83,6 @@ Build the app:
 ./gradlew assembleDebug
 ```
 
-## KeyCloak instructions
-
-Follow server setup [here](https://www.keycloak.org/getting-started/getting-started-zip)
-
-Create a client with: 
-- id: verifier-app
-- redirect URIs: org.who.ddccverifier:/redirect
-
-Start keycloak with a network IP the phone can reach:
-```bash
-bin/standalone.sh -b 10.1.10.98
-```
-
-Change the IP of the address on the app's Main Activity: 
-```kotlin
-private val mDiscoveryURI = Uri.parse("http://10.1.10.98:8080/auth/realms/master/")
-```
-
-
-
 ## Testing
 ```bash
 ./gradlew test
@@ -112,6 +92,30 @@ private val mDiscoveryURI = Uri.parse("http://10.1.10.98:8080/auth/realms/master
 ## Installing on device
 ```bash
 ./gradlew installDebug
+```
+
+## KeyCloak instructions
+
+Follow server setup [here](https://www.keycloak.org/getting-started/getting-started-zip): 
+1. Download Keycloak
+2. Start Keycloak
+3. Create an admin user
+4. Login to the admin console
+5. Create a realm
+6. Create a user (which we will connect from the app)
+8. Create a client with: 
+  - Client Id: verifier-app 
+  - Client Protocol: openid-connect
+  - Redirect URIs: org.who.ddccverifier:/redirect
+
+Start keycloak with the local network's IP a phone can reach:
+```bash
+bin/standalone.sh -b <YOUR LOCAL IP>
+```
+
+Change the IP of the address on the gradle.properties:
+```
+OPENID_SERVER_URL=http://<YOUR LOCAL IP>:8080/auth/realms/<YOUR REALM>/
 ```
 
 ## Screen + Class flow overview

@@ -6,25 +6,29 @@ import kotlinx.coroutines.*
 import org.who.ddccverifier.services.AuthStateManager
 import android.content.Intent
 import android.net.Uri
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.PropertyNamingStrategies
+import com.fasterxml.jackson.databind.PropertyNamingStrategy
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import net.openid.appauth.*
 
 import org.who.ddccverifier.services.ConnectionBuilderForTesting
-import net.openid.appauth.*
-import net.openid.appauth.EndSessionRequest
+import org.who.ddccverifier.services.trust.TrustRegistry
 
-import net.openid.appauth.AuthorizationService
-import net.openid.appauth.AuthorizationException
-import net.openid.appauth.AppAuthConfiguration
-import net.openid.appauth.browser.AnyBrowserMatcher
-import net.openid.appauth.AuthState
+import java.net.URL
+import java.util.concurrent.atomic.AtomicReference
 
 
+abstract class AuthActivity : AppCompatActivity() {
+    private lateinit var mAuthStateManager: AuthStateManager
+    private lateinit var mAuthService: AuthorizationService
 
-
-open class AuthActivity : AppCompatActivity() {
-    private lateinit var authState: AuthStateManager
+    private val mUserInfo: AtomicReference<User> = AtomicReference()
 
     private val RC_AUTH = 100
     private val RC_END_SESSION = 101
+    private val KEY_USER_INFO = "userInfo"
 
     private val CLIENT_ID = BuildConfig.OPENID_CLIENT_ID
     private val mRedirectURI = Uri.parse(BuildConfig.OPENID_REDIRECT_URI)
@@ -32,71 +36,102 @@ open class AuthActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        authState = AuthStateManager.getInstance(this)
+        mAuthStateManager = AuthStateManager.getInstance(this)
+
+        val builder = AppAuthConfiguration.Builder()
+        builder.setConnectionBuilder(ConnectionBuilderForTesting)
+        mAuthService = AuthorizationService(this, builder.build())
+
         init()
-    }
 
-    private fun init() = runBlocking {
-        val uiScope = CoroutineScope(Dispatchers.Main + Job())
-
-        uiScope.launch {
-            withContext(Dispatchers.IO) {
-                backgroundInit()
-            }
+        if (savedInstanceState != null) {
+            mUserInfo.set(jacksonObjectMapper().readValue(savedInstanceState.getString(KEY_USER_INFO), User::class.java))
         }
     }
 
-    fun updateAccountState() {
-        onAccountState(authState.current.isAuthorized)
+    override fun onSaveInstanceState(state: Bundle) {
+        super.onSaveInstanceState(state)
+
+        if (mUserInfo.get() != null) {
+            state.putString(KEY_USER_INFO, jacksonObjectMapper().writeValueAsString(mUserInfo.get()))
+        }
     }
-    
-    open fun onAccountState(isAuthorized: Boolean) {}
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mAuthService.dispose()
+    }
+
+    private fun init() {
+        val uiScope = CoroutineScope(Dispatchers.Main + Job())
+        uiScope.launch(Dispatchers.IO) {
+            backgroundInit()
+        }
+    }
+
+    fun updateAccountState() = runOnUiThread {
+        onAccountState(
+            mAuthStateManager.current.authorizationServiceConfiguration?.discoveryDoc != null,
+            mAuthStateManager.current.isAuthorized)
+    }
+
+    fun updateNewUserInfo() = runOnUiThread {
+        onNewUserInfo(mUserInfo.get())
+    }
+
+    abstract fun onAccountState(isReady: Boolean, isAuthorized: Boolean)
+    abstract fun onNewUserInfo(userInfo: User)
 
     open fun backgroundInit() {
-        AuthorizationServiceConfiguration.fetchFromIssuer(mDiscoveryURI, { config, ex ->
-            config?.let {
-                authState.replace(AuthState(it))
-            }
-            ex?.let { ex.printStackTrace() }
-        }, ConnectionBuilderForTesting)
+        fetchAuthConfig()
+    }
+
+    fun fetchAuthConfig() {
+        AuthorizationServiceConfiguration.fetchFromIssuer(
+            mDiscoveryURI,
+            this::fetchAuthConfigCallback,
+            ConnectionBuilderForTesting)
+    }
+
+    fun fetchAuthConfigCallback(config: AuthorizationServiceConfiguration?, ex: AuthorizationException?) {
+        config?.let {
+            mAuthStateManager.replace(AuthState(it))
+            updateAccountState()
+        }
+        ex?.let {
+            it.printStackTrace();
+        }
     }
 
     fun requestAuthorization() {
         val authRequest = AuthorizationRequest.Builder(
-            authState.current.authorizationServiceConfiguration!!,
+            mAuthStateManager.current.authorizationServiceConfiguration!!,
             CLIENT_ID,
             ResponseTypeValues.CODE,
             mRedirectURI).build()
 
-        val authService = newAuthService()
-        val intentBuilder = authService.createCustomTabsIntentBuilder(authRequest.toUri())
-        val authIntent = authService.getAuthorizationRequestIntent(authRequest, intentBuilder.build())
+        val intentBuilder = mAuthService.createCustomTabsIntentBuilder(authRequest.toUri())
+        val authIntent = mAuthService.getAuthorizationRequestIntent(authRequest, intentBuilder.build())
         startActivityForResult(authIntent, RC_AUTH)
-    }
-
-    private fun newAuthService(): AuthorizationService {
-        val builder = AppAuthConfiguration.Builder()
-        //builder.setBrowserMatcher(AnyBrowserMatcher.INSTANCE)
-        builder.setConnectionBuilder(ConnectionBuilderForTesting)
-
-        return AuthorizationService(this, builder.build())
     }
 
     fun requestSignOff() {
         val endSessionRequest = EndSessionRequest.Builder(
-            authState.current.authorizationServiceConfiguration!!)
-            .setIdTokenHint(authState.current.idToken)
+            mAuthStateManager.current.authorizationServiceConfiguration!!)
+            .setIdTokenHint(mAuthStateManager.current.idToken)
             .setPostLogoutRedirectUri(mRedirectURI)
             .build()
 
-        val endSessionItent = newAuthService().getEndSessionRequestIntent(endSessionRequest)
+        val endSessionItent = mAuthService.getEndSessionRequestIntent(endSessionRequest)
         startActivityForResult(endSessionItent, RC_END_SESSION)
     }
 
     fun requestToken(request: TokenRequest) {
-        val authService = newAuthService()
-        authService.performTokenRequest(request) { resp, ex ->
-            authState.updateAfterTokenResponse(resp, ex)
+        mAuthService.performTokenRequest(request) { resp, ex ->
+            mAuthStateManager.updateAfterTokenResponse(resp, ex)
+            mAuthService.performTokenRequest(mAuthStateManager.current.createTokenRefreshRequest()) { resp, ex ->
+                fetchUserInfo()
+            }
             updateAccountState()
         }
     }
@@ -117,19 +152,62 @@ open class AuthActivity : AppCompatActivity() {
             // Canceled log in
         } else if (requestCode == RC_AUTH && data != null) {
             AuthorizationResponse.fromIntent(data)?.let {
-                authState.updateAfterAuthorization(it, AuthorizationException.fromIntent(data))
+                mAuthStateManager.updateAfterAuthorization(it, AuthorizationException.fromIntent(data))
                 requestTokenAsync(it.createTokenExchangeRequest())
             }
         } else if (requestCode == RC_END_SESSION) {
             // discard the authorization and token state, but retain the configuration and
             // dynamic client registration (if applicable), to save from retrieving them again.
-            val clearedState = AuthState(authState.current.authorizationServiceConfiguration!!)
-            if (authState.current.lastRegistrationResponse != null) {
-                clearedState.update(authState.current.lastRegistrationResponse)
+            val clearedState = AuthState(mAuthStateManager.current.authorizationServiceConfiguration!!)
+            if (mAuthStateManager.current.lastRegistrationResponse != null) {
+                clearedState.update(mAuthStateManager.current.lastRegistrationResponse)
             }
-            authState.replace(clearedState)
+            mAuthStateManager.replace(clearedState)
+            mUserInfo.set(null)
         }
 
         updateAccountState()
+    }
+
+    /**
+     * User Info
+     */
+    data class User(
+        val sub: String,
+        val name: String?,
+        val preferredUsername: String?,
+        val givenName: String?,
+        val familyName: String?,
+        val email: String?,
+        val emailVerified: Boolean?,
+    )
+
+    fun fetchUserInfo() {
+        mAuthStateManager.current.performActionWithFreshTokens(mAuthService, this::fetchUserInfoCallback)
+    }
+
+    fun fetchUserInfoCallback(accessToken: String?, idToken: String?, ex: AuthorizationException?) {
+        if (ex != null) {
+            ex.printStackTrace();
+            return
+        }
+
+        val uiScope = CoroutineScope(Dispatchers.Main + Job())
+        uiScope.launch {
+            withContext(Dispatchers.IO) {
+                val uri = mAuthStateManager.current.authorizationServiceConfiguration?.discoveryDoc?.userinfoEndpoint
+
+                val conn1 = URL(uri.toString()).openConnection()
+                conn1.setRequestProperty("Authorization", "Bearer " + accessToken)
+
+                val conn = URL(uri.toString()).openConnection()
+                conn.setRequestProperty("Authorization", "Bearer " + accessToken)
+
+                val mapper = jacksonObjectMapper()
+                mapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
+                mUserInfo.set(mapper.readValue(conn.getInputStream(), User::class.java))
+                updateNewUserInfo()
+            }
+        }
     }
 }

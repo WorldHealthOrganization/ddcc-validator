@@ -14,7 +14,7 @@ android {
         versionCode 10
         versionName "0.0.10"
 
-        buildConfigField "String", "OPENID_SERVER_URL", "\"http://192.168.0.11:8080/auth/realms/master/\""
+        buildConfigField "String", "OPENID_SERVER_URL", "\"${OPENID_SERVER_URL}\""
         buildConfigField "String", "OPENID_CLIENT_ID", "\"verifier-app\""
         buildConfigField "String", "OPENID_REDIRECT_URI", "\"org.who.ddccverifier:/redirect\""
         buildConfigField "String", "TRUST_REGISTRY_URL", "\"https://raw.githubusercontent.com/Path-Check/trust-registry/main/registry.json\""
