@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:text="@string/fa_check_circle_solid"
             android:textSize="28dp"
-            android:textColor="#fff"
+            android:textColor="@color/white"
             app:solid_icon="true" />
 
         <TextView
@@ -42,397 +42,378 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:textAlignment="center"
-            android:textColor="#fff" />
+            android:textColor="@color/white" />
     </LinearLayout>
 
-    <LinearLayout
+    <androidx.cardview.widget.CardView
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:id="@+id/tv_result_card"
+        android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        card_view:cardElevation="15dp"
+        card_view:cardCornerRadius="20dp"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
-        android:padding="15dp"
-        android:orientation="vertical"
-        android:background="@drawable/rounded_card"
         app:layout_constraintTop_toBottomOf="@id/tv_result_header"
         app:layout_constraintBottom_toTopOf="@id/bt_result_close"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <TextView
-            android:id="@+id/tv_result_scan_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="April 06, 1:23pm - COVID-19 Vaccination"
-            android:textSize="16dp"
-            android:textColor="#ffffff"
-            />
-
-        <TextView
-            android:id="@+id/tv_result_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="John Anyperson"
-            android:textSize="26dp"
-            android:textColor="#ffffff"
-             />
-
-        <TextView
-            android:id="@+id/tv_result_person_details"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="DoB: Feb 24, 1982, Female"
-            android:textSize="16dp"
-            android:textColor="#ffffff"
-            />
-
-        <TextView
-            android:id="@+id/tv_result_identifier"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="ID: 2342342343"
-            android:textSize="16dp"
-            android:textColor="#ffffff"
-            />
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dip"
-            android:background="#BBBBBB"
-            android:layout_marginBottom="3dp"
-            android:layout_marginTop="3dp"/>
-
-        <TextView
-            android:id="@+id/tv_result_status"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:text="COVID Safe"
-            android:textSize="24dp"
-            android:textColor="#ffffff"
-            />
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dip"
-            android:background="#BBBBBB"
-            android:layout_marginBottom="3dp"
-            android:layout_marginTop="3dp"/>
-
-        <TextView
-            android:id="@+id/tv_result_vaccine_type"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:text="SARS-CoV-2 mRNA Vaccine"
-            android:textSize="24dp"
-            android:textColor="#ffffff"
-            />
-
-        <TextView
-            android:id="@+id/tv_result_dose_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:text="Dose: 1 of 2"
-            android:textSize="20dp"
-            android:textColor="#ffffff"
-            />
-
         <LinearLayout
-            android:id="@+id/ll_result_dose_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:id="@+id/tv_result_card2"
+            android:orientation="vertical"
+            android:padding="20dp">
 
             <TextView
-                android:id="@+id/tv_result_dose_date_label"
+                android:id="@+id/tv_result_scan_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/dose_date_label"
+                android:text="April 06, 1:23pm - COVID-19 Vaccination"
                 android:textSize="16dp"
-                android:textColor="#ffffff"
                 />
 
             <TextView
-                android:id="@+id/tv_result_dose_date"
+                android:id="@+id/tv_result_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Jul 12, 2021"
+                android:text="John Anyperson"
+                android:textSize="26dp"
+                 />
+
+            <TextView
+                android:id="@+id/tv_result_person_details"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="DoB: Feb 24, 1982, Female"
                 android:textSize="16dp"
-                android:textColor="#ffffff"
                 />
 
+            <TextView
+                android:id="@+id/tv_result_identifier"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ID: 2342342343"
+                android:textSize="16dp"
+                />
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dip"
+                android:background="#BBBBBB"
+                android:layout_marginBottom="3dp"
+                android:layout_marginTop="3dp"/>
+
+            <TextView
+                android:id="@+id/tv_result_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:text="COVID Safe"
+                android:textSize="24dp"
+                />
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dip"
+                android:background="#BBBBBB"
+                android:layout_marginBottom="3dp"
+                android:layout_marginTop="3dp"/>
+
+            <TextView
+                android:id="@+id/tv_result_vaccine_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:text="SARS-CoV-2 mRNA Vaccine"
+                android:textSize="24dp"
+                />
+
+            <TextView
+                android:id="@+id/tv_result_dose_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:text="Dose: 1 of 2"
+                android:textSize="20dp"
+                />
+
+            <LinearLayout
+                android:id="@+id/ll_result_dose_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_result_dose_date_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/dose_date_label"
+                    android:textSize="16dp"
+                        />
+
+                <TextView
+                    android:id="@+id/tv_result_dose_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Jul 12, 2021"
+                    android:textSize="16dp"
+                        />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_result_next_dose"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_result_next_dose_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/dose_next_dose_label"
+                    android:textSize="16dp"
+                        />
+
+                <TextView
+                    android:id="@+id/tv_result_next_dose"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Aug 1, 2021"
+                    android:textSize="16dp"
+                        />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_result_vaccine_valid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_result_vaccine_valid_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/dose_valid_label"
+                    android:textSize="16dp"
+                        />
+
+                <TextView
+                    android:id="@+id/tv_result_vaccine_valid"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Dec 12, 2021"
+                    android:textSize="16dp"
+                        />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_result_vaccine_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_result_vaccine_info_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/dose_product_label"
+                    android:textSize="16dp"
+                        />
+
+                <TextView
+                    android:id="@+id/tv_result_vaccine_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Spikevax (#PT123F), Moderna"
+                    android:textSize="16dp"
+                        />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_result_vaccine_info2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_result_vaccine_info2_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/dose_ma_holder_label"
+                    android:textSize="16dp"
+                        />
+
+                <TextView
+                    android:id="@+id/tv_result_vaccine_info2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Moderna Inc"
+                    android:textSize="16dp"
+                        />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_result_centre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_result_centre_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/dose_location_label"
+                    android:textSize="16dp"
+                        />
+
+                <TextView
+                    android:id="@+id/tv_result_centre"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Vaccination Site, USA"
+                    android:textSize="16dp"
+                        />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_result_hcid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_result_hcid_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/dose_hcpi_label"
+                    android:textSize="16dp"
+                        />
+
+                <TextView
+                    android:id="@+id/tv_result_hcid"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2342342343"
+                    android:textSize="16dp"
+                        />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_result_pha"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_result_pha_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/dose_pha_label"
+                    android:textSize="16dp"
+                        />
+
+                <TextView
+                    android:id="@+id/tv_result_pha"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2342342343"
+                    android:textSize="16dp"
+                        />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_result_hw"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_result_hw_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/dose_hw_label"
+                    android:textSize="16dp"
+                        />
+
+                <TextView
+                    android:id="@+id/tv_result_hw"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2342342343"
+                    android:textSize="16dp"
+                        />
+            </LinearLayout>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dip"
+                android:background="#BBBBBB"
+                android:layout_marginBottom="3dp"
+                android:layout_marginTop="3dp"/>
+
+            <LinearLayout
+                android:id="@+id/ll_result_signed_by"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <info.androidhive.fontawesome.FontTextView
+                    android:id="@+id/tv_result_signed_by_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fa_check_circle_solid"
+                    android:textSize="16dp"
+                    android:textColor="@color/success100"
+                    app:solid_icon="true" />
+
+                <TextView
+                    android:id="@+id/tv_result_signed_by"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="5dp"
+                    android:textSize="16dp"
+                    android:text="Signed by CVS Health on Sep 26, 2021"
+                        />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_result_valid_until"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <info.androidhive.fontawesome.FontTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fa_check_circle_solid"
+                    android:textSize="16dp"
+                    android:textColor="@color/success100"
+                    app:solid_icon="true" />
+
+                <TextView
+                    android:id="@+id/tv_result_valid_until"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="5dp"
+                    android:text="Valid Until on Jun 13, 2023"
+                    android:textSize="16dp"
+                        />
+            </LinearLayout>
         </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ll_result_next_dose"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/tv_result_next_dose_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/dose_next_dose_label"
-                android:textSize="16dp"
-                android:textColor="#ffffff"
-                />
-
-            <TextView
-                android:id="@+id/tv_result_next_dose"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Aug 1, 2021"
-                android:textSize="16dp"
-                android:textColor="#ffffff"
-                />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ll_result_vaccine_valid"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/tv_result_vaccine_valid_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/dose_valid_label"
-                android:textSize="16dp"
-                android:textColor="#ffffff"
-                />
-
-            <TextView
-                android:id="@+id/tv_result_vaccine_valid"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Dec 12, 2021"
-                android:textSize="16dp"
-                android:textColor="#ffffff"
-                />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ll_result_vaccine_info"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/tv_result_vaccine_info_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/dose_product_label"
-                android:textSize="16dp"
-                android:textColor="#ffffff"
-                />
-
-            <TextView
-                android:id="@+id/tv_result_vaccine_info"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Spikevax (#PT123F), Moderna"
-                android:textSize="16dp"
-                android:textColor="#ffffff"
-                />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ll_result_vaccine_info2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/tv_result_vaccine_info2_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/dose_ma_holder_label"
-                android:textSize="16dp"
-                android:textColor="#ffffff"
-                />
-
-            <TextView
-                android:id="@+id/tv_result_vaccine_info2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Moderna Inc"
-                android:textSize="16dp"
-                android:textColor="#ffffff"
-                />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ll_result_centre"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/tv_result_centre_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/dose_location_label"
-                android:textSize="16dp"
-                android:textColor="#ffffff"
-                />
-
-            <TextView
-                android:id="@+id/tv_result_centre"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Vaccination Site, USA"
-                android:textSize="16dp"
-                android:textColor="#ffffff"
-                />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ll_result_hcid"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/tv_result_hcid_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/dose_hcpi_label"
-                android:textSize="16dp"
-                android:textColor="#ffffff"
-                />
-
-            <TextView
-                android:id="@+id/tv_result_hcid"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="2342342343"
-                android:textSize="16dp"
-                android:textColor="#ffffff"
-                />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ll_result_pha"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/tv_result_pha_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/dose_pha_label"
-                android:textSize="16dp"
-                android:textColor="#ffffff"
-                />
-
-            <TextView
-                android:id="@+id/tv_result_pha"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="2342342343"
-                android:textSize="16dp"
-                android:textColor="#ffffff"
-                />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ll_result_hw"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/tv_result_hw_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/dose_hw_label"
-                android:textSize="16dp"
-                android:textColor="#ffffff"
-                />
-
-            <TextView
-                android:id="@+id/tv_result_hw"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="2342342343"
-                android:textSize="16dp"
-                android:textColor="#ffffff"
-                />
-        </LinearLayout>
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dip"
-            android:background="#BBBBBB"
-            android:layout_marginBottom="3dp"
-            android:layout_marginTop="3dp"/>
-
-        <LinearLayout
-            android:id="@+id/ll_result_signed_by"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <info.androidhive.fontawesome.FontTextView
-                android:id="@+id/tv_result_signed_by_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/fa_check_circle_solid"
-                android:textSize="16dp"
-                android:textColor="#fff"
-                app:solid_icon="true" />
-
-            <TextView
-                android:id="@+id/tv_result_signed_by"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="5dp"
-                android:textSize="16dp"
-                android:text="Signed by CVS Health on Sep 26, 2021"
-                android:textColor="#ffffff"
-                />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ll_result_valid_until"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <info.androidhive.fontawesome.FontTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/fa_check_circle_solid"
-                android:textSize="16dp"
-                android:textColor="#fff"
-                app:solid_icon="true" />
-
-            <TextView
-                android:id="@+id/tv_result_valid_until"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="5dp"
-                android:text="Valid Until on Jun 13, 2023"
-                android:textSize="16dp"
-                android:textColor="#ffffff"
-                />
-        </LinearLayout>
-
-    </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
     <Button
         android:id="@+id/bt_result_close"

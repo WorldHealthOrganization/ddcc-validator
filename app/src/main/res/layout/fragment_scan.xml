@@ -29,7 +29,7 @@
                 android:layout_centerHorizontal="true"
                 android:text="@string/pointToQR"
                 android:textAlignment="center"
-                android:textColor="#FAFAFA"
+                android:textColor="@color/white"
                 android:textSize="24sp" />
 
             <ImageView

@@ -31,7 +31,7 @@
             <View
                 android:layout_width="fill_parent"
                 android:layout_height="6dip"
-                android:background="#ddd"
+                android:background="@color/shade10"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"/>
@@ -67,7 +67,7 @@
             <View
                 android:layout_width="fill_parent"
                 android:layout_height="6dip"
-                android:background="#ddd"
+                android:background="@color/shade10"
                 android:layout_marginBottom="10dp"
                 android:layout_marginRight="30dp"
                 android:layout_marginTop="3dp"/>
@@ -75,14 +75,14 @@
             <View
                 android:layout_width="fill_parent"
                 android:layout_height="6dip"
-                android:background="#ddd"
+                android:background="@color/shade10"
                 android:layout_marginBottom="10dp"
                 />
 
             <View
                 android:layout_width="fill_parent"
                 android:layout_height="6dip"
-                android:background="#ddd"
+                android:background="@color/shade10"
                 android:layout_marginBottom="3dp"
                 />
         </LinearLayout>
@@ -95,7 +95,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center"
-        android:textColor="#bbb"
+        android:textColor="@color/shade10"
         android:textStyle="bold"
         android:text="@string/emptyCardDesc"
         android:layout_marginTop="10dp"

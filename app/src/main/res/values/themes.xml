@@ -2,15 +2,18 @@
     <!-- Base application theme. -->
     <style name="Theme.DDCCVerifier" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/primary_light</item>
-        <item name="colorPrimaryVariant">@color/primary_light</item>
-        <item name="colorOnPrimary">@color/background_light</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="colorPrimary">@color/primary100</item>
+        <item name="colorPrimaryVariant">@color/background_light</item>
+        <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/primary_light</item>
-        <item name="colorSecondaryVariant">@color/primary_light</item>
+        <item name="colorSecondary">@color/primary100</item>
+        <item name="colorSecondaryVariant">@color/primary150</item>
         <item name="colorOnSecondary">@color/background_light</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor" tools:targetApi="l">@color/background_light</item>
+
         <!-- Customize your theme here. -->
     </style>
 
@@ -19,7 +22,9 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="Theme.DDCCVerifier.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="Theme.DDCCVerifier.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="android:textColorPrimary">@color/text_light</item>
+        <item name="colorPrimary">@color/background_light</item>
+    </style>
 
-    <style name="Theme.DDCCVerifier.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

@@ -1,14 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="background_light">#F8F8FF</color>
-    <color name="primary_light">#4051db</color>
-    <color name="text_light">#374257</color>
-    <color name="cardText_light">#FFFFFF</color>
-    <color name="error_light">#D32F2F</color>
+    <color name="background_light">#ffffff</color>
+    <color name="text_light">#1c2537</color>
+    <color name="card_text_light">#1c2537</color>
+    <color name="card_achor_light">#374357</color>
+    <color name="error_light">#ff5656</color>
 
-    <color name="background_night">#121212</color>
-    <color name="primary_night">#4051db</color>
+    <color name="background_night">#252f42</color>
     <color name="text_night">#FFFFFF</color>
     <color name="cardText_night">#FFFFFF</color>
-    <color name="error_night">#EF9A9A</color>
+    <color name="card_achor_night">#edeef3</color>
+    <color name="error_night">#ff5656</color>
+
+    <color name="primary100">#4051db</color>
+    <color name="primary110">#4754c5</color>
+    <color name="primary125">#2434b6</color>
+    <color name="primary150">#192591</color>
+
+    <color name="secondary10">#f8f8ff</color>
+    <color name="secondary50">#e5e7fa</color>
+    <color name="secondary75">#d3d7f8</color>
+    <color name="secondary100">#a5affb</color>
+    
+    <color name="white">#ffffff</color>
+    <color name="shade5">#edeef3</color>
+    <color name="shade10">#e9eaf0</color>
+    <color name="shade25">#d8d8de</color>
+    <color name="shade30">#d6d6da</color>
+    <color name="shade50">#c5c5c9</color>
+    <color name="shade75">#9ba0aa</color>
+    <color name="shade100">#3c475b</color>
+    <color name="shade110">#374357</color>
+    <color name="shade125">#252f42</color>
+    <color name="shade140">#1c2537</color>
+    <color name="black">#000000</color>
+
+    <color name="danger10">#fff0f0</color>
+    <color name="danger25">#ffe0e0</color>
+    <color name="danger75">#ff7d7d</color>
+    <color name="danger100">#ff5656</color>
+    <color name="danger150">#c23838</color>
+    <color name="success10">#f2fcf4</color>
+    <color name="success25">#deffe4</color>
+    <color name="success50">#5bd9a2</color>
+    <color name="success100">#24a36c</color>
+    <color name="warning25">#f9edcc</color>
+    <color name="warning50">#ffdc6f</color>
+    <color name="warning100">#cf8321</color>
 </resources>

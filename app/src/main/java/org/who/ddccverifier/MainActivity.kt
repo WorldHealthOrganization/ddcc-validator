@@ -8,10 +8,8 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
-import net.openid.appauth.AuthorizationException
 import org.who.ddccverifier.databinding.ActivityMainBinding
 import org.who.ddccverifier.services.trust.TrustRegistry
-import java.lang.Exception
 
 /**
  * Screen / Class flow:

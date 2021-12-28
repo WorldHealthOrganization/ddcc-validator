@@ -44,7 +44,7 @@ abstract class AuthActivity : AppCompatActivity() {
 
         init()
 
-        if (savedInstanceState != null) {
+        if (savedInstanceState != null && savedInstanceState.getString(KEY_USER_INFO) != null) {
             mUserInfo.set(jacksonObjectMapper().readValue(savedInstanceState.getString(KEY_USER_INFO), User::class.java))
         }
     }
