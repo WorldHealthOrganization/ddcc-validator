@@ -1,7 +1,6 @@
 package org.who.ddccverifier.services.trust
 
 import android.util.Base64
-import android.view.PixelCopy
 import io.ipfs.multibase.Base58
 import org.bouncycastle.jcajce.util.BCJcaJceHelper
 import java.io.ByteArrayInputStream
@@ -83,13 +82,18 @@ object KeyUtils {
             return certificatePublicKeyFromPEM(pem)
 
         //TODO: Figure out a way to get the OID from the PEM bytes to set the right params
-        return loadPemOrNull(pem, this::ecPublicKeyFromPEM)
-            ?: loadPemOrNull(pem, this::rsaPublicKeyFromPEM)
-            ?: loadPemOrNull(pem, this::edPublicKeyFromPEM)
-            ?: throw InvalidKeyException()
+        val pk= loadPemOrNull(pem, this::ecPublicKeyFromPEM)
+             ?: loadPemOrNull(pem, this::rsaPublicKeyFromPEM)
+             ?: loadPemOrNull(pem, this::edPublicKeyFromPEM)
+
+        if (pk != null) {
+            return pk
+        }
+
+        throw InvalidKeyException()
     }
 
-    fun loadPemOrNull(pem: String, loader: (String) -> PublicKey): PublicKey? {
+    private fun loadPemOrNull(pem: String, loader: (String) -> PublicKey): PublicKey? {
         return try {
             loader(pem)
         } catch (e: InvalidKeyException) {

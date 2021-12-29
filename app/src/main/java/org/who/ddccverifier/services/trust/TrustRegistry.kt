@@ -1,12 +1,10 @@
 package org.who.ddccverifier.services.trust
 
-import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import android.util.Base64
 import java.net.URL
 import java.security.PublicKey
 import java.text.DateFormat
 import java.text.SimpleDateFormat
-import java.util.*
 import com.fasterxml.jackson.annotation.JsonValue
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationContext
@@ -15,13 +13,10 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton
 import org.bouncycastle.jce.provider.BouncyCastleProvider
-import org.bouncycastle.util.io.pem.PemObject
-import org.bouncycastle.util.io.pem.PemObjectGenerator
-import org.who.ddccverifier.BuildConfig
 import java.security.Security
-import org.bouncycastle.util.io.pem.PemWriter
-import java.io.StringWriter
-
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.util.*
 
 /**
  * Resolve Keys for Verifiers
@@ -41,7 +36,10 @@ object TrustRegistry {
         DCC("EUDCC"),
         ICAO("ICAO"),
         SHC("SmartHealthCards"),
-        DIVOC("DIVOC")
+        DIVOC("DIVOC");
+        companion object {
+            fun from(type: String?): Framework = values().find { it.framework == type } ?: DIVOC
+        }
     }
 
     object DidDocumentDeserializer : JsonDeserializer<PublicKey>() {
@@ -73,20 +71,56 @@ object TrustRegistry {
         val credentialType: List<String>,
     )
 
+    private const val COL_FRAMEWORK = 0
+    private const val COL_KID = 1
+    private const val COL_TYPE = 2
+    private const val COL_STATUS = 3
+    private const val COL_DISPLAY_NAME = 4
+    private const val COL_DISPLAY_LOGO = 5
+    private const val COL_VALID_FROM = 6
+    private const val COL_VALID_UNTIL = 7
+    private const val COL_PUBLIC_KEY = 8
+
     private val registry: MutableMap<Framework, MutableMap<String, TrustedEntity>> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME)
         Security.addProvider(BouncyCastleProviderSingleton.getInstance())
 
-        val resultStream = URL(BuildConfig.TRUST_REGISTRY_URL)
-        //TODO: Downloading this JSON takes 500ms
+        val reg = mutableMapOf<Framework, MutableMap<String, TrustedEntity>>(
+            Framework.CRED to mutableMapOf(),
+            Framework.ICAO to mutableMapOf(),
+            Framework.DCC to mutableMapOf(),
+            Framework.SHC to mutableMapOf(),
+            Framework.DIVOC to mutableMapOf()
+        )
 
-        val mapper = jacksonObjectMapper()
-        val typeRef: TypeReference<MutableMap<Framework, MutableMap<String, TrustedEntity>>> =
-            object : TypeReference<MutableMap<Framework, MutableMap<String, TrustedEntity>>>() {}
+        val resultCSVStream = URL("https://raw.githubusercontent.com/Path-Check/trust-registry/main/registry_normalized.csv")
 
-        //TODO: Parsing this JSON takes 5s
-        val reg = mapper.readValue(resultStream, typeRef)
+        // Parsing the CSV
+        val reader = BufferedReader(InputStreamReader(resultCSVStream.openStream()))
+        reader.forEachLine {
+            val row = it.split(",")
+            val framework = Framework.from(row[COL_FRAMEWORK])
+            try {
+                reg[framework]?.put(row[COL_KID],
+                    TrustedEntity(
+                        mapOf("en" to Base64.decode(row[COL_DISPLAY_NAME], Base64.DEFAULT).toString(Charsets.UTF_8)),
+                        Base64.decode(row[COL_DISPLAY_LOGO], Base64.DEFAULT).toString(Charsets.UTF_8),
+                        Type.valueOf(row[COL_TYPE].uppercase()),
+                        Status.valueOf(row[COL_STATUS].uppercase()),
+                        "",
+                        if (row[COL_VALID_FROM].isNotEmpty()) df.parse(row[COL_VALID_FROM]) else null,
+                        if (row[COL_VALID_UNTIL].isNotEmpty()) df.parse(row[COL_VALID_UNTIL]) else null,
+                        KeyUtils.publicKeyFromPEM("-----BEGIN PUBLIC KEY-----\n"+row[COL_PUBLIC_KEY]+"\n-----END PUBLIC KEY-----"),
+                        listOf("")
+                    )
+                )
+            } catch(t: Throwable) {
+                println(row[1])
+                t.printStackTrace()
+            }
+        }
         addTestKeys(reg)
+
         return@lazy reg
     }
 
