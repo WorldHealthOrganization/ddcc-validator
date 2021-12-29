@@ -15,8 +15,13 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton
 import org.bouncycastle.jce.provider.BouncyCastleProvider
+import org.bouncycastle.util.io.pem.PemObject
+import org.bouncycastle.util.io.pem.PemObjectGenerator
 import org.who.ddccverifier.BuildConfig
 import java.security.Security
+import org.bouncycastle.util.io.pem.PemWriter
+import java.io.StringWriter
+
 
 /**
  * Resolve Keys for Verifiers
@@ -109,7 +114,7 @@ object TrustRegistry {
 
         registry[Framework.SHC]?.put(
             "https://spec.smarthealth.cards/examples/issuer#3Kfdg-XwP-7gXyywtUfUADwBumDOPKMQx-iELL11W9s", TrustedEntity(
-                mapOf("en" to "Test Keys for the SmartHealth Cards"),
+                mapOf("en" to "Test Keys for SHCs"),
                 null,
                 Type.ISSUER,
                 Status.CURRENT,
@@ -119,20 +124,6 @@ object TrustRegistry {
                 KeyUtils.ecPublicKeyFromCoordinate(
                     "11XvRWy1I2S0EyJlyf_bWfw_TQ5CJJNLw78bHXNxcgw",
                     "eZXwxvO1hvCY0KucrPfKo7yAyMT6Ajc3N7OkAB6VYy8"),
-                listOf("VS")
-            )
-        )
-
-        registry[Framework.DIVOC]?.put(
-            "did:jamaica", TrustedEntity(
-                mapOf("en" to "Test Keys for the Jamaican DIVOC"),
-                null,
-                Type.ISSUER,
-                Status.CURRENT,
-                "DIVOC Test Keys",
-                df.parse("2021-01-01T08:00:00.000Z"),
-                df.parse("2021-12-01T08:00:00.000Z"),
-                KeyUtils.eddsaFromBase58("6h4FDHzPDQsp4jsWekSrdBkswtpbSwwHbuyjkLtew2Fx"),
                 listOf("VS")
             )
         )

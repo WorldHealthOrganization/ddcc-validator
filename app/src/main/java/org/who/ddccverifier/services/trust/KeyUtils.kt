@@ -1,6 +1,7 @@
 package org.who.ddccverifier.services.trust
 
 import android.util.Base64
+import android.view.PixelCopy
 import io.ipfs.multibase.Base58
 import org.bouncycastle.jcajce.util.BCJcaJceHelper
 import java.io.ByteArrayInputStream
@@ -15,7 +16,6 @@ import org.bouncycastle.asn1.edec.EdECObjectIdentifiers
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo
 import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey
-
 
 /**
  * Converts Key formats into Key objects
@@ -52,20 +52,30 @@ object KeyUtils {
         return ecPublicKeyFromCoordinate(Base64.decode(x, Base64.URL_SAFE),Base64.decode(y, Base64.URL_SAFE))
     }
 
-    fun ecPublicKeyFromPEM(pem: String): PublicKey {
-        val reader = PemReader(StringReader(pem))
-        val keySpec = X509EncodedKeySpec(reader.readPemObject().content)
-        return BCJcaJceHelper().createKeyFactory("EC").generatePublic(keySpec)
+    fun loadKeySpecFromPEM(pem: String): X509EncodedKeySpec {
+        return X509EncodedKeySpec(PemReader(StringReader(pem)).readPemObject().content)
     }
 
-    fun certificatePublicKeyFromPEM(pem: String): PublicKey {
-        return certificateFromPEM(pem).publicKey
+    fun ecPublicKeyFromPEM(pem: String): PublicKey {
+        return BCJcaJceHelper().createKeyFactory("EC").generatePublic(loadKeySpecFromPEM(pem))
+    }
+
+    fun edPublicKeyFromPEM(pem: String): PublicKey {
+        return BCJcaJceHelper().createKeyFactory("Ed25519").generatePublic(loadKeySpecFromPEM(pem))
+    }
+
+    fun rsaPublicKeyFromPEM(pem: String): PublicKey {
+        return BCJcaJceHelper().createKeyFactory("RSA").generatePublic(loadKeySpecFromPEM(pem))
     }
 
     fun certificateFromPEM(pem: String): Certificate {
         val reader = PemReader(StringReader(pem))
         val stream = ByteArrayInputStream(reader.readPemObject().content)
-        return BCJcaJceHelper().createCertificateFactory("X.509").generateCertificate(stream);
+        return BCJcaJceHelper().createCertificateFactory("X.509").generateCertificate(stream)
+    }
+
+    fun certificatePublicKeyFromPEM(pem: String): PublicKey {
+        return certificateFromPEM(pem).publicKey
     }
 
     fun publicKeyFromPEM(pem: String): PublicKey{
@@ -73,14 +83,19 @@ object KeyUtils {
             return certificatePublicKeyFromPEM(pem)
 
         //TODO: Figure out a way to get the OID from the PEM bytes to set the right params
+        return loadPemOrNull(pem, this::ecPublicKeyFromPEM)
+            ?: loadPemOrNull(pem, this::rsaPublicKeyFromPEM)
+            ?: loadPemOrNull(pem, this::edPublicKeyFromPEM)
+            ?: throw InvalidKeyException()
+    }
+
+    fun loadPemOrNull(pem: String, loader: (String) -> PublicKey): PublicKey? {
         return try {
-            ecPublicKeyFromPEM(pem)
+            loader(pem)
         } catch (e: InvalidKeyException) {
-            //e.printStackTrace()
-            rsaPublicKeyFromPEM(pem)
+            null
         } catch (e: InvalidKeySpecException) {
-            //e.printStackTrace()
-            rsaPublicKeyFromPEM(pem)
+            null
         }
     }
 
@@ -94,12 +109,6 @@ object KeyUtils {
 
     fun rsaPublicKeyFromModulusExponent(n: String, e: String): PublicKey {
         return rsaPublicKeyFromModulusExponent(Base64.decode(n, Base64.URL_SAFE),Base64.decode(e, Base64.URL_SAFE))
-    }
-
-    fun rsaPublicKeyFromPEM(pem: String): PublicKey {
-        val reader = PemReader(StringReader(pem))
-        val keySpec = X509EncodedKeySpec(reader.readPemObject().content)
-        return BCJcaJceHelper().createKeyFactory("RSA").generatePublic(keySpec)
     }
 
     fun eddsaFromBase58(base58: String): PublicKey {
