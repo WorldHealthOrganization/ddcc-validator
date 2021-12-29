@@ -3,7 +3,6 @@ package org.who.ddccverifier.services.qrs.icao
 import org.hl7.fhir.instance.model.api.IBaseDatatype
 import org.hl7.fhir.r4.model.*
 import java.text.SimpleDateFormat
-import java.util.*
 
 /**
  * Translates the JSONLD content into FHIR
@@ -12,22 +11,9 @@ class IJsonTranslator {
 
     val isoFormatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 
-    private fun parseAge(issuanceDate: String?, age: String?): DateType? {
-        if (age == null) return null
-        val dob = Calendar.getInstance()
-            dob.time = isoFormatter.parse(issuanceDate)
-            dob.add(Calendar.YEAR, -Integer.parseInt(age))
-        return DateType(dob.get(Calendar.YEAR).toString())
-    }
-
     private fun parseDoB(date: String?): DateType? {
         if (date == null) return null
         return DateType(date)
-    }
-
-    private fun parseDateType(date: String?): DateTimeType? {
-        if (date == null) return null
-        return DateTimeType(date)
     }
 
     private fun parseDateTimeType(date: String?): DateTimeType? {
@@ -49,17 +35,6 @@ class IJsonTranslator {
         return Coding().apply {
             code = cd
             system = st
-        }
-    }
-
-    private fun parsePerformer(verifier: String?) : Immunization.ImmunizationPerformerComponent? {
-        if (verifier == null || verifier.isEmpty()) return null
-        return Immunization.ImmunizationPerformerComponent().apply {
-            actor = Reference(Practitioner().apply {
-                name = listOf(HumanName().apply {
-                    text = verifier
-                })
-            })
         }
     }
 
@@ -95,12 +70,12 @@ class IJsonTranslator {
         }
     }
 
-    fun parseIdentifier(value: String?): Identifier? {
+    private fun parseIdentifier(value: String?): Identifier? {
         if (value == null || value.isBlank()) return null
         return Identifier().apply { this.value = value}
     }
 
-    val DOC_TYPES = mapOf(
+    private val DOC_TYPES = mapOf(
         "P" to "PPN",  // P – Passport (Doc 9303-4)
         "A" to "DL",   // A – ID Card (Doc 9303-5)
         "C" to "DL",   // C – ID Card (Doc 9303-5)
@@ -110,11 +85,11 @@ class IJsonTranslator {
         "D" to "DL",   // D – Driving License (ISO18013-1)
     )
 
-    fun parseIdentifier(value: String?, type: String?): Identifier? {
+    private fun parseIdentifier(value: String?, type: String?): Identifier? {
         if (value == null || value.isBlank()) return null
         return Identifier().apply {
-            this.value = DOC_TYPES[value]
-            this.system = "http://hl7.org/fhir/ValueSet/identifier-type"
+            this.value = value
+            this.system = DOC_TYPES[type]
         }
     }
 

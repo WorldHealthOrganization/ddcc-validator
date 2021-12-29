@@ -1,15 +1,10 @@
 package org.who.ddccverifier.services
 
-import android.annotation.SuppressLint
 import android.net.Uri
-import android.util.Log
 import net.openid.appauth.Preconditions
 import net.openid.appauth.connectivity.ConnectionBuilder
-import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
-import java.security.KeyManagementException
-import java.security.NoSuchAlgorithmException
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
 import java.util.concurrent.TimeUnit
@@ -38,7 +33,6 @@ import javax.net.ssl.*
  * only.
  */
 object ConnectionBuilderForTesting: ConnectionBuilder {
-    private const val TAG = "ConnBuilder"
     private val CONNECTION_TIMEOUT_MS = TimeUnit.SECONDS.toMillis(15).toInt()
     private val READ_TIMEOUT_MS = TimeUnit.SECONDS.toMillis(10).toInt()
     private const val HTTP = "http"
@@ -52,7 +46,7 @@ object ConnectionBuilderForTesting: ConnectionBuilder {
         }
     )
 
-    private val ANY_HOSTNAME_VERIFIER = HostnameVerifier { hostname, session -> true }
+    private val ANY_HOSTNAME_VERIFIER = HostnameVerifier { _, _ -> true }
     private var TRUSTING_CONTEXT: SSLContext? = null
 
     init {
@@ -70,9 +64,8 @@ object ConnectionBuilderForTesting: ConnectionBuilder {
         conn.readTimeout = READ_TIMEOUT_MS
         conn.instanceFollowRedirects = false
         if (conn is HttpsURLConnection && TRUSTING_CONTEXT != null) {
-            val httpsConn = conn
-            httpsConn.sslSocketFactory = TRUSTING_CONTEXT!!.socketFactory
-            httpsConn.hostnameVerifier = ANY_HOSTNAME_VERIFIER
+            conn.sslSocketFactory = TRUSTING_CONTEXT!!.socketFactory
+            conn.hostnameVerifier = ANY_HOSTNAME_VERIFIER
         }
         return conn
     }

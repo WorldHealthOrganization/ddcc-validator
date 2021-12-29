@@ -43,7 +43,7 @@ class SHCVerifier {
     )
 
     data class VC(
-        val type: Array<String>?,
+        val type: List<String>?,
         val credentialSubject: CredentialSubject?,
     )
 
