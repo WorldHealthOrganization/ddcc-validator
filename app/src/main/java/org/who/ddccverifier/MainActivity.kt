@@ -78,8 +78,8 @@ class MainActivity : AuthActivity() {
         mMenu.findItem(R.id.action_logout).isVisible = isAuthorized
     }
 
-    override fun onNewUserInfo(user: User) {
-        Toast.makeText(this, "Welcome " + user.name, Toast.LENGTH_SHORT).show()
+    override fun onNewUserInfo(userInfo: User) {
+        Toast.makeText(this, "Welcome " + userInfo.name, Toast.LENGTH_SHORT).show()
     }
 
     override fun backgroundInit() {

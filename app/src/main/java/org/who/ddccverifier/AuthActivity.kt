@@ -6,15 +6,11 @@ import kotlinx.coroutines.*
 import org.who.ddccverifier.services.AuthStateManager
 import android.content.Intent
 import android.net.Uri
-import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
-import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import net.openid.appauth.*
 
 import org.who.ddccverifier.services.ConnectionBuilderForTesting
-import org.who.ddccverifier.services.trust.TrustRegistry
 
 import java.net.URL
 import java.util.concurrent.atomic.AtomicReference
@@ -44,7 +40,8 @@ abstract class AuthActivity : AppCompatActivity() {
 
         init()
 
-        if (savedInstanceState != null && savedInstanceState.getString(KEY_USER_INFO) != null) {
+        val userInfo = savedInstanceState?.getString(KEY_USER_INFO)
+        if (userInfo != null) {
             mUserInfo.set(jacksonObjectMapper().readValue(savedInstanceState.getString(KEY_USER_INFO), User::class.java))
         }
     }
@@ -98,9 +95,7 @@ abstract class AuthActivity : AppCompatActivity() {
             mAuthStateManager.replace(AuthState(it))
             updateAccountState()
         }
-        ex?.let {
-            it.printStackTrace();
-        }
+        ex?.printStackTrace()
     }
 
     fun requestAuthorization() {
@@ -129,7 +124,7 @@ abstract class AuthActivity : AppCompatActivity() {
     fun requestToken(request: TokenRequest) {
         mAuthService.performTokenRequest(request) { resp, ex ->
             mAuthStateManager.updateAfterTokenResponse(resp, ex)
-            mAuthService.performTokenRequest(mAuthStateManager.current.createTokenRefreshRequest()) { resp, ex ->
+            mAuthService.performTokenRequest(mAuthStateManager.current.createTokenRefreshRequest()) { _, _ ->
                 fetchUserInfo()
             }
             updateAccountState()
@@ -188,7 +183,7 @@ abstract class AuthActivity : AppCompatActivity() {
 
     fun fetchUserInfoCallback(accessToken: String?, idToken: String?, ex: AuthorizationException?) {
         if (ex != null) {
-            ex.printStackTrace();
+            ex.printStackTrace()
             return
         }
 
@@ -197,14 +192,11 @@ abstract class AuthActivity : AppCompatActivity() {
             withContext(Dispatchers.IO) {
                 val uri = mAuthStateManager.current.authorizationServiceConfiguration?.discoveryDoc?.userinfoEndpoint
 
-                val conn1 = URL(uri.toString()).openConnection()
-                conn1.setRequestProperty("Authorization", "Bearer " + accessToken)
-
                 val conn = URL(uri.toString()).openConnection()
-                conn.setRequestProperty("Authorization", "Bearer " + accessToken)
+                conn.setRequestProperty("Authorization", "Bearer $accessToken")
 
                 val mapper = jacksonObjectMapper()
-                mapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
+                mapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
                 mUserInfo.set(mapper.readValue(conn.getInputStream(), User::class.java))
                 updateNewUserInfo()
             }

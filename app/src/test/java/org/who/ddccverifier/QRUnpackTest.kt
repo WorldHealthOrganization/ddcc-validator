@@ -35,18 +35,18 @@ class QRUnpackTest: BaseTest() {
     @Test
     fun unpackEUQR1() {
         val qr1 = open("EUQR1Contents.txt")
-        val CWT = HCertVerifier().unpack(qr1)
-        assertNotNull(CWT)
+        val cwt = HCertVerifier().unpack(qr1)
+        assertNotNull(cwt)
 
-        val DCC = CWT!![-260][1]
-        jsonEquals(open("EUQR1Unpacked.txt"), DCC.toString())
+        val dcc = cwt!![-260][1]
+        jsonEquals(open("EUQR1Unpacked.txt"), dcc.toString())
     }
 
     @Test
     fun unpackSHCQR1() {
         val qr1 = open("SHCQR1Contents.txt")
-        val JWT = SHCVerifier().unpack(qr1)
-        assertEquals(open("SHCQR1Unpacked.txt"), JWT)
+        val jwt = SHCVerifier().unpack(qr1)
+        assertEquals(open("SHCQR1Unpacked.txt"), jwt)
     }
 
     @Test
@@ -67,6 +67,6 @@ class QRUnpackTest: BaseTest() {
     fun unpackICAOQR1() {
         val qr1 = open("ICAOQR1Contents.txt")
         val json = IcaoVerifier().unpack(qr1)
-        jsonEquals(open("ICAOQR1Unpacked.json"), json!!)
+        jsonEquals(open("ICAOQR1Unpacked.json"), json)
     }
 }

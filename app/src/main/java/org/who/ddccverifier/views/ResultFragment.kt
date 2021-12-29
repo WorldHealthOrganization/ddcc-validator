@@ -37,8 +37,7 @@ class ResultFragment : Fragment() {
     }
 
     private fun setTextView(view: TextView, text: String?, line: View) {
-        if (line == null) return;
-        if (text != null && !text.isEmpty()) {
+        if (text != null && text.isNotEmpty()) {
             view.text = text
             line.visibility = TextView.VISIBLE
         } else
@@ -85,7 +84,7 @@ class ResultFragment : Fragment() {
         }
     }
 
-    fun updateScreen(DDCC: QRDecoder.VerificationResult) {
+    private fun updateScreen(DDCC: QRDecoder.VerificationResult) {
         binding.tvResultHeader.visibility = TextView.VISIBLE
 
         when (DDCC.status) {
@@ -103,18 +102,18 @@ class ResultFragment : Fragment() {
         }
 
         if (binding.tvResultTitle.text == resources.getString(R.string.verification_status_verified)) {
-            binding.tvResultHeader.setBackground(resources.getDrawable(R.drawable.rounded_pill))
-            binding.tvResultTitleIcon.text = resources.getString(R.string.fa_check_circle_solid);
+            binding.tvResultHeader.background = resources.getDrawable(R.drawable.rounded_pill)
+            binding.tvResultTitleIcon.text = resources.getString(R.string.fa_check_circle_solid)
         } else {
-            binding.tvResultHeader.setBackground(resources.getDrawable(R.drawable.rounded_pill_invalid))
-            binding.tvResultTitleIcon.text = resources.getString(R.string.fa_times_circle_solid);
+            binding.tvResultHeader.background = resources.getDrawable(R.drawable.rounded_pill_invalid)
+            binding.tvResultTitleIcon.text = resources.getString(R.string.fa_times_circle_solid)
         }
 
         if (DDCC.issuer != null) {
             binding.tvResultSignedBy.text = "Signed by " + DDCC.issuer!!.displayName["en"]
-            binding.tvResultSignedByIcon.text = resources.getString(R.string.fa_check_circle_solid);
+            binding.tvResultSignedByIcon.text = resources.getString(R.string.fa_check_circle_solid)
         } else {
-            binding.tvResultSignedByIcon.text = resources.getString(R.string.fa_times_circle_solid);
+            binding.tvResultSignedByIcon.text = resources.getString(R.string.fa_times_circle_solid)
             binding.tvResultSignedBy.text = resources.getString(R.string.verification_status_invalid_signature)
         }
 
@@ -153,13 +152,12 @@ class ResultFragment : Fragment() {
     }
 
     fun showStatus(DDCC: Composition) = runBlocking {
-        var viewModelJob = Job()
+        val viewModelJob = Job()
         val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
         uiScope.launch {
             withContext(Dispatchers.IO) {
-                val status = resolveStatus(DDCC)
-                val statusStr = when (status) {
+                val statusStr = when (resolveStatus(DDCC)) {
                     true -> "COVID Safe"
                     false -> "COVID Vulnerable"
                     null -> "Unable to evaluate"
@@ -173,8 +171,8 @@ class ResultFragment : Fragment() {
         }
     }
 
-    fun resolveAndShowQR(qr: String) = runBlocking {
-        var viewModelJob = Job()
+    private fun resolveAndShowQR(qr: String) = runBlocking {
+        val viewModelJob = Job()
         val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
         uiScope.launch {
@@ -192,15 +190,14 @@ class ResultFragment : Fragment() {
     }
 
     private fun open(file: String): InputStream {
-        return resources.assets.open(file);
+        return resources.assets.open(file)
     }
 
-    suspend fun resolveQR(qr: String): QRDecoder.VerificationResult {
-        // Triggers Networking
+    private fun resolveQR(qr: String): QRDecoder.VerificationResult {
         return QRDecoder(::open).decode(qr)
     }
 
-    suspend fun resolveStatus(DDCC: Composition): Boolean? {
+    fun resolveStatus(DDCC: Composition): Boolean? {
         // Might be slow
         return try {
              CQLEvaluator(FHIRLibraryLoader(::open)).resolve(
