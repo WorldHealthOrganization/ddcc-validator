@@ -15,20 +15,20 @@ android {
         versionName "0.0.10"
 
         buildConfigField "String", "OPENID_CLIENT_ID", "\"verifier-app\""
-        buildConfigField "String", "OPENID_REDIRECT_URI", "\"org.who.ddccverifier:/redirect\""
+        buildConfigField "String", "OPENID_REDIRECT_URI", "\"${applicationId}:/redirect\""
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        manifestPlaceholders = [ 'appAuthRedirectScheme': 'org.who.ddccverifier' ]
+        manifestPlaceholders = [ 'appAuthRedirectScheme': "${applicationId}" ]
     }
 
     buildTypes {
         debug {
             buildConfigField "String", "OPENID_SERVER_URL", "\"http://${getDevHost()}:8080/auth/realms/master/\""
-            buildConfigField "String", "TRUST_REGISTRY_URL", "\"\"https://raw.githubusercontent.com/Path-Check/trust-registry/main/registry_normalized.csv\"\""
+            buildConfigField "String", "TRUST_REGISTRY_URL", "\"https://raw.githubusercontent.com/Path-Check/trust-registry/main/registry_normalized.csv\""
         }
         release {
             buildConfigField "String", "OPENID_SERVER_URL", "null"
-            buildConfigField "String", "TRUST_REGISTRY_URL", "\"\"https://raw.githubusercontent.com/Path-Check/trust-registry/main/registry_normalized.csv\"\""
+            buildConfigField "String", "TRUST_REGISTRY_URL", "\"https://raw.githubusercontent.com/Path-Check/trust-registry/main/registry_normalized.csv\""
 
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
