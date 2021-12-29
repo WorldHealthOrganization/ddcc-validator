@@ -27,8 +27,6 @@ abstract class AuthActivity : AppCompatActivity() {
     private val KEY_USER_INFO = "userInfo"
 
     private val CLIENT_ID = BuildConfig.OPENID_CLIENT_ID
-    private val mRedirectURI = Uri.parse(BuildConfig.OPENID_REDIRECT_URI)
-    private val mDiscoveryURI = Uri.parse(BuildConfig.OPENID_SERVER_URL)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,8 +82,13 @@ abstract class AuthActivity : AppCompatActivity() {
     }
 
     fun fetchAuthConfig() {
+        if (BuildConfig.OPENID_SERVER_URL == null) {
+            updateAccountState()
+            return
+        }
+
         AuthorizationServiceConfiguration.fetchFromIssuer(
-            mDiscoveryURI,
+            Uri.parse(BuildConfig.OPENID_SERVER_URL),
             this::fetchAuthConfigCallback,
             ConnectionBuilderForTesting)
     }
@@ -103,7 +106,7 @@ abstract class AuthActivity : AppCompatActivity() {
             mAuthStateManager.current.authorizationServiceConfiguration!!,
             CLIENT_ID,
             ResponseTypeValues.CODE,
-            mRedirectURI).build()
+            Uri.parse(BuildConfig.OPENID_REDIRECT_URI)).build()
 
         val intentBuilder = mAuthService.createCustomTabsIntentBuilder(authRequest.toUri())
         val authIntent = mAuthService.getAuthorizationRequestIntent(authRequest, intentBuilder.build())
@@ -114,7 +117,7 @@ abstract class AuthActivity : AppCompatActivity() {
         val endSessionRequest = EndSessionRequest.Builder(
             mAuthStateManager.current.authorizationServiceConfiguration!!)
             .setIdTokenHint(mAuthStateManager.current.idToken)
-            .setPostLogoutRedirectUri(mRedirectURI)
+            .setPostLogoutRedirectUri(Uri.parse(BuildConfig.OPENID_REDIRECT_URI))
             .build()
 
         val endSessionItent = mAuthService.getEndSessionRequestIntent(endSessionRequest)
