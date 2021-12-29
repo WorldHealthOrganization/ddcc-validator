@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton
 import org.bouncycastle.jce.provider.BouncyCastleProvider
+import org.who.ddccverifier.BuildConfig
 import java.security.Security
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -93,7 +94,7 @@ object TrustRegistry {
             Framework.DIVOC to mutableMapOf()
         )
 
-        val resultCSVStream = URL("https://raw.githubusercontent.com/Path-Check/trust-registry/main/registry_normalized.csv")
+        val resultCSVStream = URL(BuildConfig.TRUST_REGISTRY_URL)
 
         // Parsing the CSV
         val reader = BufferedReader(InputStreamReader(resultCSVStream.openStream()))

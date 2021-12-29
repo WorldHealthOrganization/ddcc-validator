@@ -24,11 +24,11 @@ android {
     buildTypes {
         debug {
             buildConfigField "String", "OPENID_SERVER_URL", "\"http://${getDevHost()}:8080/auth/realms/master/\""
-            buildConfigField "String", "TRUST_REGISTRY_URL", "\"https://raw.githubusercontent.com/Path-Check/trust-registry/main/registry.json\""
+            buildConfigField "String", "TRUST_REGISTRY_URL", "\"\"https://raw.githubusercontent.com/Path-Check/trust-registry/main/registry_normalized.csv\"\""
         }
         release {
-            buildConfigField "String", "OPENID_SERVER_URL", "\"https://yourkeycloak.com/auth/realms/your_realm/\""
-            buildConfigField "String", "TRUST_REGISTRY_URL", "\"https://raw.githubusercontent.com/Path-Check/trust-registry/main/registry.json\""
+            buildConfigField "String", "OPENID_SERVER_URL", "null"
+            buildConfigField "String", "TRUST_REGISTRY_URL", "\"\"https://raw.githubusercontent.com/Path-Check/trust-registry/main/registry_normalized.csv\"\""
 
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
