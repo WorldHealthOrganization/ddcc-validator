@@ -14,7 +14,6 @@ import java.io.ByteArrayInputStream
 import java.io.InputStream
 import java.util.zip.ZipInputStream
 
-
 class DivocVerifier(private val open: (String)-> InputStream?) {
     private val URI_SCHEMA = "B64:"
 
@@ -27,7 +26,7 @@ class DivocVerifier(private val open: (String)-> InputStream?) {
         val nonTransferable: Boolean?,
         val credentialSubject: CredentialSubject,
         val evidence: List<Evidence>,
-        val proof: Proof?
+        val proof: Proof?,
     )
 
     data class CredentialSubject(
@@ -41,7 +40,7 @@ class DivocVerifier(private val open: (String)-> InputStream?) {
         val age: String?, //V1 // Do not convert to Date to avoid creating precision/timezone problems
         val dob: String?, //V2 // Do not convert to Date to avoid creating precision/timezone problems
         val nationality: String?,
-        val address: Address?
+        val address: Address?,
     )
 
     data class Proof(
@@ -49,7 +48,7 @@ class DivocVerifier(private val open: (String)-> InputStream?) {
         val created: String?,
         val verificationMethod: String?,
         val proofPurpose: String?,
-        val jws: String?
+        val jws: String?,
     )
 
     data class Address(
@@ -59,7 +58,7 @@ class DivocVerifier(private val open: (String)-> InputStream?) {
         val city: String?,
         val addressRegion: String?,
         val addressCountry: String?,
-        val postalCode: String?
+        val postalCode: String?,
     )
 
     data class Evidence(
@@ -79,7 +78,7 @@ class DivocVerifier(private val open: (String)-> InputStream?) {
         val verifier: Verifier?,
         val facility: Facility?,
         val icd11Code: String?,  //V2
-        val prophylaxis: String?  //V2
+        val prophylaxis: String?,  //V2
     )
 
     data class Verifier(
@@ -88,7 +87,7 @@ class DivocVerifier(private val open: (String)-> InputStream?) {
 
     data class Facility(
         val name: String?,
-        val address: Address?
+        val address: Address?,
     )
 
     private fun map(jsonStr: String): W3CVC? {
@@ -117,7 +116,7 @@ class DivocVerifier(private val open: (String)-> InputStream?) {
         if (uri.uppercase().startsWith(URI_SCHEMA)) {
             return Base64.decode(uri.substring(URI_SCHEMA.length), Base64.DEFAULT)
         } else if (uri.uppercase().startsWith("PK")) {
-            println("B64:" + Base64.encodeToString(uri.toCharArray().map { it.code.toByte() }.toByteArray(), Base64.DEFAULT))
+            println("B64:" + Base64.encodeToString(uri.toCharArray().map { it.code.toByte() }.toByteArray(), Base64.DEFAULT).replace("\n", ""))
             return uri.toCharArray().map { it.code.toByte() }.toByteArray()
         }
         return null
