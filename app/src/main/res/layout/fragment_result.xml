@@ -150,15 +150,15 @@
                     android:id="@+id/tv_result_dose_date_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:text="@string/dose_date_label"
                     android:textSize="16dp"
                         />
 
                 <TextView
                     android:id="@+id/tv_result_dose_date"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textAlignment="viewEnd"
                     android:text="Jul 12, 2021"
                     android:textSize="16dp"
                         />
@@ -175,15 +175,15 @@
                     android:id="@+id/tv_result_next_dose_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:text="@string/dose_next_dose_label"
                     android:textSize="16dp"
                         />
 
                 <TextView
                     android:id="@+id/tv_result_next_dose"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textAlignment="viewEnd"
                     android:text="Aug 1, 2021"
                     android:textSize="16dp"
                         />
@@ -199,15 +199,15 @@
                     android:id="@+id/tv_result_vaccine_valid_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:text="@string/dose_valid_label"
                     android:textSize="16dp"
                         />
 
                 <TextView
                     android:id="@+id/tv_result_vaccine_valid"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textAlignment="viewEnd"
                     android:text="Dec 12, 2021"
                     android:textSize="16dp"
                         />
@@ -223,15 +223,15 @@
                     android:id="@+id/tv_result_vaccine_info_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:text="@string/dose_product_label"
                     android:textSize="16dp"
                         />
 
                 <TextView
                     android:id="@+id/tv_result_vaccine_info"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textAlignment="viewEnd"
                     android:text="Spikevax (#PT123F), Moderna"
                     android:textSize="16dp"
                         />
@@ -247,15 +247,15 @@
                     android:id="@+id/tv_result_vaccine_info2_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:text="@string/dose_ma_holder_label"
                     android:textSize="16dp"
                         />
 
                 <TextView
                     android:id="@+id/tv_result_vaccine_info2"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textAlignment="viewEnd"
                     android:text="Moderna Inc"
                     android:textSize="16dp"
                         />
@@ -271,15 +271,15 @@
                     android:id="@+id/tv_result_centre_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:text="@string/dose_location_label"
                     android:textSize="16dp"
                         />
 
                 <TextView
                     android:id="@+id/tv_result_centre"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textAlignment="viewEnd"
                     android:text="Vaccination Site, USA"
                     android:textSize="16dp"
                         />
@@ -295,15 +295,15 @@
                     android:id="@+id/tv_result_hcid_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:text="@string/dose_hcpi_label"
                     android:textSize="16dp"
                         />
 
                 <TextView
                     android:id="@+id/tv_result_hcid"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textAlignment="viewEnd"
                     android:text="2342342343"
                     android:textSize="16dp"
                         />
@@ -319,15 +319,15 @@
                     android:id="@+id/tv_result_pha_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:text="@string/dose_pha_label"
                     android:textSize="16dp"
                         />
 
                 <TextView
                     android:id="@+id/tv_result_pha"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textAlignment="viewEnd"
                     android:text="2342342343"
                     android:textSize="16dp"
                         />
@@ -343,15 +343,15 @@
                     android:id="@+id/tv_result_hw_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:text="@string/dose_hw_label"
                     android:textSize="16dp"
                         />
 
                 <TextView
                     android:id="@+id/tv_result_hw"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textAlignment="viewEnd"
                     android:text="2342342343"
                     android:textSize="16dp"
                         />
