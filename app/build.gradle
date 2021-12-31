@@ -98,14 +98,22 @@ dependencies {
     // LD-signatures requires Jakarta JSON and HTTP Client
     implementation (group: 'javax.json', name: 'javax.json-api', version: '1.1')
     implementation (group: 'org.glassfish', name: 'jakarta.json', version: '2.0.0')
-    implementation group: 'com.apicatalog', name: 'titanium-json-ld', version: '1.2.0' //https://github.com/decentralized-identity/jsonld-common-java/pull/6
-    implementation 'io.setl:rdf-urdna:1.1' //https://github.com/decentralized-identity/jsonld-common-java/pull/6
+
+    // using from Libs: Titanium jsonld requires valid DIDs. Since DIVOC uses invalid dids,
+    // we are using a modified version that removes the skipping of invalid URIs on JsonLdToRdf
+    //implementation (group: 'com.apicatalog', name: 'titanium-json-ld', version: '1.2.0') //https://github.com/decentralized-identity/jsonld-common-java/pull/6
+
+    implementation ('io.setl:rdf-urdna:1.1') { //https://github.com/decentralized-identity/jsonld-common-java/pull/6
+        exclude group: 'com.apicatalog', module: 'titanium-json-ld'
+    }
+
     implementation ('info.weboftrust:ld-signatures-java:0.7.0') {
         exclude group: 'net.jcip', module: 'jcip-annotations'
         exclude group: 'org.bouncycastle', module: 'bcprov-jdk15on'
 
         // using from Libs remove when this PR gets approved: https://github.com/decentralized-identity/jsonld-common-java/pull/6
         exclude group: 'decentralized-identity', module: 'jsonld-common-java'
+        exclude group: 'com.apicatalog', module: 'titanium-json-ld'
     }
 
     // Required for ICAO QR Codes
