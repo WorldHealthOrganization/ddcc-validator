@@ -127,7 +127,7 @@ class WHO2FHIR {
 
     fun run(DDCC: CBORObject): Composition {
         val myPatient = Patient().apply{
-            name = listOf(parseHumanName(DDCC["name"]))
+            name = listOfNotNull(parseHumanName(DDCC["name"]))
             identifier = listOfNotNull(parseIdentifier(DDCC["identifier"]))
             birthDateElement = parseDateType(DDCC["birthDate"])
             gender = parseGender(DDCC["sex"])
