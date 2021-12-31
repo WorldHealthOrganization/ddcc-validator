@@ -37,9 +37,10 @@ class JsonLDTranslator {
         return DateTimeType(date)
     }
 
-    private fun parseGender(gender: String?): Enumerations.AdministrativeGender? {
-        if (gender == null) return null
-        return Enumerations.AdministrativeGender.fromCode(gender.lowercase())
+    private fun parseGender(gender: String?, sex: String?): Enumerations.AdministrativeGender? {
+        if (gender != null) return Enumerations.AdministrativeGender.fromCode(gender?.lowercase())
+        if (sex != null) return Enumerations.AdministrativeGender.fromCode(sex?.lowercase())
+        return null
     }
 
     private fun parseCoding(cd: String?, st: String): Coding? {
@@ -104,7 +105,7 @@ class JsonLDTranslator {
                 this.value = vc.credentialSubject.id
             })
             birthDateElement = parseDoB(vc.credentialSubject.dob) ?: parseAge(vc.issuanceDate, vc.credentialSubject.age)
-            gender = parseGender(vc.credentialSubject.gender)
+            gender = parseGender(vc.credentialSubject.gender, vc.credentialSubject.sex)
             addAddress().apply {
                 addLine(vc.credentialSubject.address?.streetAddress)
                 addLine(vc.credentialSubject.address?.streetAddress2)

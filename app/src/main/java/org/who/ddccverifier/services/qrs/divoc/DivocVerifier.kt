@@ -33,9 +33,11 @@ class DivocVerifier(private val open: (String)-> InputStream?) {
     data class CredentialSubject(
         val type: String?,
         val id: String?,
+        val uhid: String?,
         val refId: String?,
         val name: String?,
         val gender: String?,
+        val sex: String?,
         val age: String?, //V1 // Do not convert to Date to avoid creating precision/timezone problems
         val dob: String?, //V2 // Do not convert to Date to avoid creating precision/timezone problems
         val nationality: String?,
