@@ -116,7 +116,6 @@ class DivocVerifier(private val open: (String)-> InputStream?) {
         if (uri.uppercase().startsWith(URI_SCHEMA)) {
             return Base64.decode(uri.substring(URI_SCHEMA.length), Base64.DEFAULT)
         } else if (uri.uppercase().startsWith("PK")) {
-            println("B64:" + Base64.encodeToString(uri.toCharArray().map { it.code.toByte() }.toByteArray(), Base64.DEFAULT).replace("\n", ""))
             return uri.toCharArray().map { it.code.toByte() }.toByteArray()
         }
         return null
