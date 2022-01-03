@@ -53,6 +53,7 @@ class AndroidURDNA2015Canonicalizer : Canonicalizer(listOf("urdna2015")) {
     fun toDataset(jsonld: JsonLDObject): RdfDataset? {
         val options = JsonLdOptions(jsonld.documentLoader)
         options.isOrdered = true
+        options.isUriValidation = false
         val jsonDocument: JsonDocument = JsonDocument.of(MediaType.JSON_LD, jsonld.toJsonObject())
         return try {
             ToRdfProcessor.toRdf(jsonDocument, options)
