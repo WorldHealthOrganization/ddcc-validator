@@ -13,17 +13,17 @@ import java.io.InputStream
  */
 class QRDecoder(private val open: (String)-> InputStream?) {
     enum class Status {
-        NOT_SUPPORTED,
-        INVALID_BASE45,
-        INVALID_ZIP,
-        INVALID_COSE,
-        KID_NOT_INCLUDED,
-        ISSUER_NOT_TRUSTED,
-        TERMINATED_KEYS,
-        EXPIRED_KEYS,
-        REVOKED_KEYS,
-        INVALID_SIGNATURE,
-        VERIFIED,
+        NOT_SUPPORTED, // QR Standard not supported by this algorithm
+        INVALID_ENCODING, // could not decode Base45 for DCC, Base10 for SHC,
+        INVALID_COMPRESSION, // could not decompress the byte array
+        INVALID_SIGNING_FORMAT, // invalid COSE, JOSE, W3C VC Payload
+        KID_NOT_INCLUDED, // unable to resolve the issuer ID
+        ISSUER_NOT_TRUSTED, // issuer is not found in the registry
+        TERMINATED_KEYS, // issuer was terminated by the registry
+        EXPIRED_KEYS, // keys expired
+        REVOKED_KEYS, // keys were revoked by the issuer
+        INVALID_SIGNATURE, // signature doesn't match
+        VERIFIED,  // Verified content.
     }
 
     data class VerificationResult (

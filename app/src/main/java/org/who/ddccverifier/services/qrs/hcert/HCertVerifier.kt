@@ -83,11 +83,9 @@ class HCertVerifier {
 
     fun unpackAndVerify(qr: String): QRDecoder.VerificationResult {
         val hc1Decoded = prefixDecode(qr)
-        val decodedBytes = base45Decode(hc1Decoded) ?: return QRDecoder.VerificationResult(
-            QRDecoder.Status.INVALID_BASE45, null, null, qr)
-        val deflatedBytes = deflate(decodedBytes) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_ZIP, null, null, qr)
-        val signedMessage = decodeSignedMessage(deflatedBytes) ?: return QRDecoder.VerificationResult(
-            QRDecoder.Status.INVALID_COSE, null, null, qr)
+        val decodedBytes = base45Decode(hc1Decoded) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_ENCODING, null, null, qr)
+        val deflatedBytes = deflate(decodedBytes) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_COMPRESSION, null, null, qr)
+        val signedMessage = decodeSignedMessage(deflatedBytes) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_SIGNING_FORMAT, null, null, qr)
 
         val contents = CBORTranslator().toFhir(getContent(signedMessage))
 

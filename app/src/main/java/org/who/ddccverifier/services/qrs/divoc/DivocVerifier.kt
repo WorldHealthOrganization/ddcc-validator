@@ -165,11 +165,11 @@ class DivocVerifier(private val open: (String)-> InputStream?) {
     }
 
     fun unpackAndVerify(uri: String): QRDecoder.VerificationResult {
-        val array = prefixDecode(uri) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_BASE45, null, null, uri)
-        val json = unzipFiles(array)?.get("certificate.json")?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_ZIP, null, null, uri)
-        val signedMessage = buildJSonLDDocument(String(json)) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_COSE, null, null, uri)
+        val array = prefixDecode(uri) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_ENCODING, null, null, uri)
+        val json = unzipFiles(array)?.get("certificate.json")?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_COMPRESSION, null, null, uri)
+        val signedMessage = buildJSonLDDocument(String(json)) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_SIGNING_FORMAT, null, null, uri)
 
-        val mapped = map(String(json)) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_COSE, null, null, uri)
+        val mapped = map(String(json)) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_SIGNING_FORMAT, null, null, uri)
 
         val contents = JsonLDTranslator().toFhir(mapped)
 

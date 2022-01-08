@@ -239,8 +239,8 @@ class IcaoVerifier {
     }
 
     fun unpackAndVerify(qr: String): QRDecoder.VerificationResult {
-        val iJSON = parsePayload(qr) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_BASE45, null, null, qr)
-        val certificate = getCertificate(iJSON.sig.cer) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_COSE, null, null, qr)
+        val iJSON = parsePayload(qr) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_ENCODING, null, null, qr)
+        val certificate = getCertificate(iJSON.sig.cer) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_SIGNING_FORMAT, null, null, qr)
 
         val contents = IJsonTranslator().toFhir(iJSON)
 

@@ -182,11 +182,10 @@ class SHCVerifier {
 
     fun unpackAndVerify(uri: String): QRDecoder.VerificationResult {
         val hc1Decoded = prefixDecode(uri)
-        val decodedBytes = fromBase10(hc1Decoded) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_BASE45, null, null, uri)
-        val jwtRaw = parseJWT(decodedBytes) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_BASE45, null, null, uri)
-        val jwt = parsePayload(jwtRaw) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_ZIP, null, null, uri)
-        val signedMessage = decodeSignedMessage(decodedBytes) ?: return QRDecoder.VerificationResult(
-            QRDecoder.Status.INVALID_COSE, null, null, uri)
+        val decodedBytes = fromBase10(hc1Decoded) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_ENCODING, null, null, uri)
+        val jwtRaw = parseJWT(decodedBytes) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_ENCODING, null, null, uri)
+        val jwt = parsePayload(jwtRaw) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_COMPRESSION, null, null, uri)
+        val signedMessage = decodeSignedMessage(decodedBytes) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_SIGNING_FORMAT, null, null, uri)
 
         val contents = JWTTranslator().toFhir(jwt.payload)
 

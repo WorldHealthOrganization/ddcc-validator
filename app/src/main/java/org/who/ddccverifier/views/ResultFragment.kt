@@ -89,9 +89,9 @@ class ResultFragment : Fragment() {
 
         when (DDCC.status) {
             QRDecoder.Status.NOT_SUPPORTED -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_base45)
-            QRDecoder.Status.INVALID_BASE45 -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_base45)
-            QRDecoder.Status.INVALID_ZIP -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_zip)
-            QRDecoder.Status.INVALID_COSE -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_cose)
+            QRDecoder.Status.INVALID_ENCODING -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_base45)
+            QRDecoder.Status.INVALID_COMPRESSION -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_zip)
+            QRDecoder.Status.INVALID_SIGNING_FORMAT -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_cose)
             QRDecoder.Status.KID_NOT_INCLUDED -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_kid_not_included)
             QRDecoder.Status.ISSUER_NOT_TRUSTED -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_issuer_not_trusted)
             QRDecoder.Status.TERMINATED_KEYS -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_terminated_keys)
