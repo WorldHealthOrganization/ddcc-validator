@@ -69,20 +69,20 @@ android {
 
 dependencies {
     implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.appcompat:appcompat:1.4.0'
-    implementation 'com.google.android.material:material:1.4.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.2'
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.3.5'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.3.5'
+    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation 'com.google.android.material:material:1.5.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.4.1'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.4.1'
     implementation "androidx.cardview:cardview:1.0.0"
 
     // Necessary to open a camera.
-    implementation 'androidx.camera:camera-camera2:1.0.2'
-    implementation 'androidx.camera:camera-lifecycle:1.0.2'
-    implementation 'androidx.camera:camera-view:1.0.0-alpha32'
+    implementation 'androidx.camera:camera-camera2:1.1.0-beta02'
+    implementation 'androidx.camera:camera-lifecycle:1.1.0-beta02'
+    implementation 'androidx.camera:camera-view:1.1.0-beta02'
 
     // Necessary to find a QR Code in camera preview frame
-    implementation 'com.google.mlkit:barcode-scanning:17.0.1'
+    implementation 'com.google.mlkit:barcode-scanning:17.0.2'
 
     // Necessary to show the "Verified" Checkmark on the UI
     implementation 'info.androidhive:fontawesome:0.0.5'
@@ -91,13 +91,13 @@ dependencies {
     implementation 'io.github.ehn-digital-green-development:base45:0.0.3'
     implementation 'com.augustcellars.cose:cose-java:1.1.0'
 
-    // Necessary to unpack SHC QR Codes
-    implementation "com.nimbusds:nimbus-jose-jwt:9.15.2"
+    // Necessary to unpack SHC QR Codesjsonld-common-java
+    implementation 'com.nimbusds:nimbus-jose-jwt:9.20'
 
     // Necessary to unpack DIVOC QR Codes
     // LD-signatures requires Jakarta JSON and HTTP Client
-    implementation (group: 'javax.json', name: 'javax.json-api', version: '1.1')
-    implementation (group: 'org.glassfish', name: 'jakarta.json', version: '2.0.0')
+    implementation (group: 'javax.json', name: 'javax.json-api', version: '1.1.4')
+    implementation (group: 'org.glassfish', name: 'jakarta.json', version: '2.0.1')
 
     // using from Libs: Titanium jsonld requires valid DIDs. Since DIVOC uses invalid dids,
     // we are using a modified version that removes the skipping of invalid URIs on JsonLdToRdf
@@ -107,12 +107,11 @@ dependencies {
         exclude group: 'com.apicatalog', module: 'titanium-json-ld'
     }
 
-    implementation ('info.weboftrust:ld-signatures-java:0.7.0') {
+    implementation ('info.weboftrust:ld-signatures-java:1.0.0') {
         exclude group: 'net.jcip', module: 'jcip-annotations'
         exclude group: 'org.bouncycastle', module: 'bcprov-jdk15on'
 
         // using from Libs remove when this PR gets approved: https://github.com/decentralized-identity/jsonld-common-java/pull/6
-        exclude group: 'decentralized-identity', module: 'jsonld-common-java'
         exclude group: 'com.apicatalog', module: 'titanium-json-ld'
     }
 
@@ -123,7 +122,7 @@ dependencies {
     implementation 'net.openid:appauth:0.11.1'
 
     // Necessary to Convert the QR into the DDCC FHIR Composite
-    implementation 'com.google.android.fhir:engine:0.1.0-alpha05'
+    implementation 'com.google.android.fhir:engine:0.1.0-alpha06'
 
     // Use BouncyCastle to not rely on each Android's version hability to unpack and load public keys
     // Android 10+ issues due to the move to Conscrypt on a older verion of BC
@@ -131,14 +130,14 @@ dependencies {
     //implementation group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.70'
 
     // Necessary to Load Jackson-based FHIR Libraries (FHIR Helper, Model Info, and CQL Rules)
-    implementation group: 'xerces', name: 'xercesImpl', version: '2.12.1'
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.13.0'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
-    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.13.0'
-    implementation 'com.fasterxml.jackson.module:jackson-module-jaxb-annotations:2.13.0'
+    implementation group: 'xerces', name: 'xercesImpl', version: '2.12.2'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.13.1'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.1'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.13.1'
+    implementation 'com.fasterxml.jackson.module:jackson-module-jaxb-annotations:2.13.1'
 
     // Necessary to call JSON APIs (Download the Trust Registry)
-    implementation "com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0"
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.13.1'
 
     // Necessary to Load CQL Engine's evaluation classes generated with JAXB (Versions must match)
     implementation 'org.jvnet.jaxb2_commons:jaxb2-basics:0.12.0'
@@ -147,15 +146,30 @@ dependencies {
     // Replace the lib directory by the following versions when they release
     // The lib folder contains those projects without any JAXB dependency. 
     implementation fileTree(dir: 'libs', include: '**.jar')
-    //implementation 'org.opencds.cqf.cql:engine:1.5.3'
-    //implementation 'org.opencds.cqf.cql:engine.fhir:1.5.3'
-    //implementation 'org.opencds.cqf.cql:evaluator.engine:1.3.1'
-    //implementation 'org.opencds.cqf.cql:evaluator.engine.fhir:1.3.1'
+    implementation 'org.opencds.cqf.cql:engine:1.5.4'
+    implementation 'org.opencds.cqf.cql:engine.fhir:1.5.4'
+    implementation ('org.opencds.cqf.cql:evaluator.engine:1.4.2') {
+        exclude group: 'org.opencds.cqf.cql', module: 'evaluator.cql2elm' // Do not import the conversion
+        exclude group: 'org.opencds.cqf.cql', module: 'evaluator.fhir' // Do not import the conversion
+        exclude group: 'info.cqframework', module: 'cql-to-elm'           // Do not import the conversion
+        exclude group: 'ca.uhn.hapi.fhir', module: 'hapi-fhir-client'     // Do not import FHIR
+    }
+    implementation ('org.opencds.cqf.cql:evaluator.fhir:1.4.2') {
+        exclude group: 'ca.uhn.hapi.fhir', module: 'hapi-fhir-client'                       // Do not import FHIR
+        exclude group: 'ca.uhn.hapi.fhir', module: 'hapi-fhir-structures-dstu3'             // Do not import FHIR
+        exclude group: 'ca.uhn.hapi.fhir', module: 'hapi-fhir-validation-resources-dstu3'   // Do not import FHIR
+        exclude group: 'ca.uhn.hapi.fhir', module: 'hapi-fhir-structures-r4'                // Do not import FHIR
+        exclude group: 'ca.uhn.hapi.fhir', module: 'hapi-fhir-validation-resources-r4'      // Do not import FHIR
+        exclude group: 'ca.uhn.hapi.fhir', module: 'hapi-fhir-structures-r5'                // Do not import FHIR
+        exclude group: 'ca.uhn.hapi.fhir', module: 'hapi-fhir-validation-resources-r5'      // Do not import FHIR
+        exclude group: 'javax.inject', module: 'javax.inject'                               // Do not import FHIR
+        exclude group: 'org.fhir', module: 'ucum'
+    }
 
     // Tests outside Android can process CQL.
     // Good to test new rules without having to convert to JSON
     testImplementation 'junit:junit:4.13.2'
-    testImplementation group: 'info.cqframework', name: 'cql-to-elm', version: '1.5.5'
+    testImplementation group: 'info.cqframework', name: 'cql-to-elm', version: '1.5.6'
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
