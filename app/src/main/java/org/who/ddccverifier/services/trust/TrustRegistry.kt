@@ -5,10 +5,6 @@ import java.net.URL
 import java.security.PublicKey
 import java.text.DateFormat
 import java.text.SimpleDateFormat
-import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.databind.DeserializationContext
-import com.fasterxml.jackson.databind.JsonDeserializer
-import com.fasterxml.jackson.databind.JsonNode
 import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.who.ddccverifier.BuildConfig
@@ -29,22 +25,6 @@ object TrustRegistry {
     }
     enum class Framework {
         CRED, DCC, ICAO, SHC, DIVOC
-    }
-
-    object DidDocumentDeserializer : JsonDeserializer<PublicKey>() {
-        override fun deserialize(p: JsonParser, ctxt: DeserializationContext): PublicKey {
-            val node = p.readValueAsTree<JsonNode>()
-
-            return if (node.isTextual) {
-                // PEM File
-                KeyUtils.publicKeyFromPEM(node.asText())
-            } else {
-                if (node.has("x"))
-                    KeyUtils.ecPublicKeyFromCoordinate(node.get("x").asText(), node.get("y").asText())
-                else
-                    KeyUtils.rsaPublicKeyFromModulusExponent(node.get("n").asText(), node.get("e").asText())
-            }
-        }
     }
 
     data class TrustedEntity(
