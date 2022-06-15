@@ -15,6 +15,7 @@ class ContextLoader(val open: (String)-> InputStream?) : DocumentLoader {
         uri("https://cowin.gov.in/credentials/vaccination/v2") to load("DIVOCVaccinationContextV2.json"),
         uri("https://divoc.prod/vaccine/credentials/vaccination/v1") to load("DIVOCVaccinationContextV2.json"),
         uri("https://divoc.lgcc.gov.lk/credentials/vaccination/v1") to load("DIVOCVaccinationContextV2.json"),
+        uri("https://www.pedulilindungi.id/credentials/vaccination/v2") to load("DIVOCVaccinationContextV2.json"),
         uri("https://w3id.org/security/v1") to load("security-v1.jsonld"),
         uri("https://w3id.org/security/v2") to load("security-v2.jsonld"),
         uri("https://w3id.org/security/v3") to load("security-v3-unstable.jsonld"),
