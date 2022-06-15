@@ -1,7 +1,6 @@
 package org.who.ddccverifier.services.trust
 
 import android.util.Base64
-import android.util.Log
 import java.net.URL
 import java.security.PublicKey
 import java.text.DateFormat
@@ -155,7 +154,6 @@ object TrustRegistry {
     }
 
     fun resolve(framework: Framework, kid: String): TrustedEntity? {
-        Log.i("TrustRegistry", "Resolving " + kid)
         return registry[framework]?.get(kid)
     }
 }
