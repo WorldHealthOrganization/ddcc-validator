@@ -103,8 +103,9 @@ class DCC2FHIR {
         if (obj == null || obj.isUndefined) return null
         return HumanName().apply {
             use = HumanName.NameUse.OFFICIAL
-            family = obj["fn"].AsString()
-            addGiven(obj["gn"].AsString())
+            family = obj["fn"]?.AsString()
+            if (obj["gn"] != null)
+                addGiven(obj["gn"].AsString())
         }
     }
 
@@ -113,8 +114,9 @@ class DCC2FHIR {
         if (obj == null || obj.isUndefined) return null
         return HumanName().apply {
             use = HumanName.NameUse.OFFICIAL
-            family = obj["fnt"].AsString()
-            addGiven(obj["gnt"].AsString())
+            family = obj["fnt"]?.AsString()
+            if (obj["gnt"] != null)
+                addGiven(obj["gnt"].AsString())
         }
     }
 
