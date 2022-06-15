@@ -104,6 +104,37 @@ object TrustRegistry {
             )
         )
 
+        registry[Framework.DCC]?.put(
+            "Rjene8QvRwA=", TrustedEntity(
+                mapOf("en" to "Test Keys for the DCC"),
+                null,
+                Status.CURRENT,
+                df.parse("2021-01-01T08:00:00.000Z"),
+                df.parse("2022-12-01T08:00:00.000Z"),
+                KeyUtils.ecPublicKeyFromCoordinate(
+                    "6425eab23bce5dc91f94ad0e44cbc11d80bc9ff4db6c0abc0e4408fa4faf3f7a".chunked(2)
+                        .map { it.toInt(16).toByte() }
+                        .toByteArray(),
+                    "52f5f5aa084900dbcda358263743efb5dd1ed77e9c5193415a41f3cc0f4f081b".chunked(2)
+                        .map { it.toInt(16).toByte() }
+                        .toByteArray()
+                )
+            )
+        )
+
+        registry[Framework.SHC]?.put(
+            "https://ekeys-qa.ny.gov/epass/doh/dvc/2021#jwuzRIxqyNdBSgy0_MPhNcA4tqqw2SFZfbnsucnhTEs", TrustedEntity(
+                mapOf("en" to "NY State Test Keys"),
+                null,
+                Status.CURRENT,
+                df.parse("2021-01-01T08:00:00.000Z"),
+                df.parse("2022-12-01T08:00:00.000Z"),
+                KeyUtils.ecPublicKeyFromCoordinate(
+                    "HNBXsXwkatIRRXefv24KyyDKgFReim79i5Vyy1v0mbE",
+                    "vEDKNjmwYTQp3w3qwQXPki97XxDQRH5cdMtS0Ri-Eg0")
+            )
+        )
+
         registry[Framework.SHC]?.put(
             "https://spec.smarthealth.cards/examples/issuer#3Kfdg-XwP-7gXyywtUfUADwBumDOPKMQx-iELL11W9s", TrustedEntity(
                 mapOf("en" to "Test Keys for SHCs"),
