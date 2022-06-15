@@ -44,7 +44,6 @@ object KeyUtils {
         val ecPoint = ECPoint(BigInteger(1, x), BigInteger(1, y))
         val ecKeySpec = ECPublicKeySpec(ecPoint, ecParameterSpec)
         return KeyFactory.getInstance("EC").generatePublic(ecKeySpec)
-        //return BCJcaJceHelper().createKeyFactory("EC").generatePublic(ecKeySpec)
     }
 
     fun ecPublicKeyFromCoordinate(x: String, y: String): PublicKey {

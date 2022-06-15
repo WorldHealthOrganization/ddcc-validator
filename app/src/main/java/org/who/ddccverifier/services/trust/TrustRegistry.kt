@@ -1,6 +1,7 @@
 package org.who.ddccverifier.services.trust
 
 import android.util.Base64
+import android.util.Log
 import java.net.URL
 import java.security.PublicKey
 import java.text.DateFormat
@@ -76,7 +77,7 @@ object TrustRegistry {
                     )
                 )
             } catch(t: Throwable) {
-                println(row[1])
+                println("Exception while loading kid: " + row[1]);
                 t.printStackTrace()
             }
         }
@@ -92,7 +93,7 @@ object TrustRegistry {
                 null,
                 Status.CURRENT,
                 df.parse("2021-01-01T08:00:00.000Z"),
-                df.parse("2021-12-01T08:00:00.000Z"),
+                df.parse("2022-12-01T08:00:00.000Z"),
                 KeyUtils.ecPublicKeyFromCoordinate(
                     "143329cce7868e416927599cf65a34f3ce2ffda55a7eca69ed8919a394d42f0f".chunked(2)
                         .map { it.toInt(16).toByte() }
@@ -141,7 +142,7 @@ object TrustRegistry {
                 null,
                 Status.CURRENT,
                 df.parse("2021-01-01T08:00:00.000Z"),
-                df.parse("2021-12-01T08:00:00.000Z"),
+                df.parse("2022-12-01T08:00:00.000Z"),
                 KeyUtils.ecPublicKeyFromCoordinate(
                     "11XvRWy1I2S0EyJlyf_bWfw_TQ5CJJNLw78bHXNxcgw",
                     "eZXwxvO1hvCY0KucrPfKo7yAyMT6Ajc3N7OkAB6VYy8")
@@ -154,6 +155,7 @@ object TrustRegistry {
     }
 
     fun resolve(framework: Framework, kid: String): TrustedEntity? {
+        Log.i("TrustRegistry", "Resolving " + kid)
         return registry[framework]?.get(kid)
     }
 }
