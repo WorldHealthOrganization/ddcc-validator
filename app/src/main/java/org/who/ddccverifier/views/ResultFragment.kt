@@ -147,7 +147,7 @@ class ResultFragment : Fragment() {
             setTextView(binding.tvResultNextDose, card.nextDose, binding.llResultNextDose)
 
             // Status
-            setTextView(binding.tvResultStatus, "... Processing ...", binding.tvResultStatus)
+            setTextView(binding.tvResultStatus, "", binding.tvResultStatus)
         }
     }
 
@@ -164,7 +164,7 @@ class ResultFragment : Fragment() {
                 }
                 withContext(Dispatchers.Main){
                     _binding?.let {
-                        setTextView(binding.tvResultStatus, statusStr, binding.tvResultStatus)
+                        //setTextView(binding.tvResultStatus, statusStr, binding.tvResultStatus)
                     }
                 }
             }
