@@ -136,7 +136,7 @@ class CQLEvaluatorAndroidTest {
 
     @Test
     fun evaluateDDCCPassOnICAOQR1FromQRTest() {
-        val qr1 = open("ICAOQR1Contents.txt")
+        val qr1 = open("ICAOAUQR1Contents.txt")
         val verified = IcaoVerifier().unpackAndVerify(qr1)
 
         Assert.assertEquals(QRDecoder.Status.VERIFIED, verified.status)
