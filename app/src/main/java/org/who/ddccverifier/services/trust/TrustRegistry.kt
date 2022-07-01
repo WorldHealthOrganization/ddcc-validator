@@ -154,6 +154,7 @@ object TrustRegistry {
     }
 
     fun resolve(framework: Framework, kid: String): TrustedEntity? {
+        println("DDCCVerifer: Resolving " + kid);
         return registry[framework]?.get(kid)
     }
 }

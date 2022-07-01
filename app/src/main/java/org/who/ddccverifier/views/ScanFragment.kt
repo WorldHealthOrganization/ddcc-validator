@@ -64,6 +64,7 @@ class ScanFragment : Fragment() {
     }
 
     private fun onQRCodeFound(qrs: Set<String>) {
+        println("DDCCVerifer: QR " + qrs.first())
         val action = ScanFragmentDirections.actionScanFragmentToResultFragment(qrs.first())
         findNavController().navigate(action)
     }
