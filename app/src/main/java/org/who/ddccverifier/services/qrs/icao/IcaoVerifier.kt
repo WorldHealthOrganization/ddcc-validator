@@ -17,6 +17,11 @@ import java.security.PublicKey
 import java.security.cert.CertificateFactory
 import java.security.cert.X509Certificate
 import org.bouncycastle.asn1.ASN1OctetString
+import org.bouncycastle.asn1.x500.X500Name
+import org.bouncycastle.asn1.x500.style.BCStyle
+import org.bouncycastle.asn1.x509.X509Name
+import org.bouncycastle.its.asn1.IssuerIdentifier
+import org.bouncycastle.jce.PrincipalUtil
 import java.lang.Exception
 
 
@@ -145,21 +150,21 @@ class IcaoVerifier {
     }
 
     /**
-     * Produces a chain of certificates where 0 is the certificate found int the QR.
+     * Produces a chain of certificate ID where index 0 is the certificate found int the QR.
      */
-    private fun getChainHashFromPEM(cer: String): List<String> {
-        val cert = getCertificate(cer)
-
+    private fun getKIDs(payload: IJson): List<String>? {
+        val cert = getCertificate(payload.sig.cer) ?: return null;
         val cf: CertificateFactory = CertificateFactory.getInstance("X.509")
         val chain = cf.generateCertPath(listOf(cert))
-        val sha256 = MessageDigest.getInstance("SHA-256", BouncyCastleProviderSingleton.getInstance())
 
-        val hashes = mutableListOf<String>()
-        // Adds all certificate IDs in the chain
-        hashes.addAll(chain.certificates.map { Base64.encodeToString(sha256.digest(it.encoded), Base64.NO_WRAP) })
+        val kids = mutableListOf<String>()
         // Adds all Authority Key IDs if present.
-        hashes.addAll(chain.certificates.map { Base64.encodeToString(getAuthorityKeyId(it as X509Certificate), Base64.NO_WRAP) }.filterNotNull())
-        return hashes
+        kids.addAll(chain.certificates.map {
+            PrincipalUtil.getIssuerX509Principal(it as X509Certificate).getValues(BCStyle.C)[0].toString() + "#" +
+            Base64.encodeToString(getAuthorityKeyId(it), Base64.NO_WRAP)
+        })
+
+        return kids
     }
 
     private fun getCertificate(cer: String): X509Certificate? {
@@ -181,16 +186,6 @@ class IcaoVerifier {
             e.printStackTrace()
             null
         }
-    }
-
-    /**
-     * Walks the chain of certificates to create resolvable Kids with PathCheck's Trust Registry
-     */
-    private fun getKIDs(payload: IJson): List<String>? {
-        val certHash = getChainHashFromPEM(payload.sig.cer)
-        if (certHash.isEmpty()) return null
-
-        return certHash.map { "${payload.data.hdr.iss}#${it}" }
     }
 
     /**
