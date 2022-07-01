@@ -99,8 +99,8 @@ class QRVerifyTest: BaseTest() {
     }
 
     @Test
-    fun verifyICAOQR1() {
-        val qr1 = open("ICAOQR1Contents.txt")
+    fun verifyICAOAustraliaQR1() {
+        val qr1 = open("ICAOAUQR1Contents.txt")
         val verified = IcaoVerifier().unpackAndVerify(qr1)
 
         assertNotNull(verified)
@@ -108,7 +108,7 @@ class QRVerifyTest: BaseTest() {
 
         val json = jsonParser.encodeResourceToString(verified.contents!!)
 
-        jsonEquals(open("ICAOQR1FHIRComposition.json"), json)
+        jsonEquals(open("ICAOAUQR1FHIRComposition.json"), json)
     }
 
     @Test

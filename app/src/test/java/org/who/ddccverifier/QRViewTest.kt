@@ -280,7 +280,7 @@ class QRViewTest: BaseTest() {
 
     @Test
     fun viewICAOQR1() {
-        val qr1 = open("ICAOQR1Contents.txt")
+        val qr1 = open("ICAOAUQR1Contents.txt")
         val verified = qrUnpacker.decode(qr1)
 
         assertEquals(QRDecoder.Status.VERIFIED, verified.status)
