@@ -110,4 +110,17 @@ class QRVerifyTest: BaseTest() {
 
         jsonEquals(open("ICAOQR1FHIRComposition.json"), json)
     }
+
+    @Test
+    fun verifyICAOJapanQR1() {
+        val qr1 = open("ICAOJPQR1Contents.txt")
+        val verified = IcaoVerifier().unpackAndVerify(qr1)
+
+        assertNotNull(verified)
+        assertEquals(QRDecoder.Status.VERIFIED, verified.status)
+
+        val json = jsonParser.encodeResourceToString(verified.contents!!)
+
+        jsonEquals(open("ICAOJPQR1FHIRComposition.json"), json)
+    }
 }

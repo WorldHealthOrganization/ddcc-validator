@@ -1,0 +1,293 @@
+{
+  "resourceType": "Composition",
+  "id": "FKQLW4W1",
+  "contained": [
+    {
+      "resourceType": "Patient",
+      "id": "1",
+      "identifier": [
+        {
+          "value": "TR0000000"
+        },
+        {
+          "value": "JPN00000120220607000001"
+        }
+      ],
+      "name": [
+        {
+          "text": "NIHON HANAKO"
+        }
+      ],
+      "birthDate": "1991-12-01"
+    },
+    {
+      "resourceType": "Immunization",
+      "id": "2",
+      "extension": [
+        {
+          "url": "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineBrand",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "display": "COMIRNATY"
+              }
+            ]
+          }
+        },
+        {
+          "url": "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCCountryOfVaccination",
+          "valueCoding": {
+            "system": "urn:iso:std:iso:3166",
+            "code": "JPN"
+          }
+        }
+      ],
+      "vaccineCode": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-11",
+            "code": "XM0GQ8"
+          }
+        ]
+      },
+      "patient": {
+        "reference": "#1"
+      },
+      "occurrenceDateTime": "2021-06-01",
+      "manufacturer": {
+        "reference": "#5"
+      },
+      "lotNumber": "FJ5929",
+      "protocolApplied": [
+        {
+          "authority": {
+            "reference": "#6"
+          },
+          "targetDisease": [
+            {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/sid/icd-11",
+                  "code": "RA01.0"
+                }
+              ]
+            }
+          ],
+          "doseNumberPositiveInt": 1
+        }
+      ]
+    },
+    {
+      "resourceType": "Immunization",
+      "id": "3",
+      "extension": [
+        {
+          "url": "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineBrand",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "display": "Spikevax"
+              }
+            ]
+          }
+        },
+        {
+          "url": "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCCountryOfVaccination",
+          "valueCoding": {
+            "system": "urn:iso:std:iso:3166",
+            "code": "JPN"
+          }
+        }
+      ],
+      "vaccineCode": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-11",
+            "code": "XM0GQ8"
+          }
+        ]
+      },
+      "patient": {
+        "reference": "#1"
+      },
+      "occurrenceDateTime": "2021-06-22",
+      "manufacturer": {
+        "reference": "#7"
+      },
+      "lotNumber": "000221A",
+      "protocolApplied": [
+        {
+          "authority": {
+            "reference": "#8"
+          },
+          "targetDisease": [
+            {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/sid/icd-11",
+                  "code": "RA01.0"
+                }
+              ]
+            }
+          ],
+          "doseNumberPositiveInt": 2
+        }
+      ]
+    },
+    {
+      "resourceType": "Immunization",
+      "id": "4",
+      "extension": [
+        {
+          "url": "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineBrand",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "display": "Vaxzevria"
+              }
+            ]
+          }
+        },
+        {
+          "url": "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCCountryOfVaccination",
+          "valueCoding": {
+            "system": "urn:iso:std:iso:3166",
+            "code": "JPN"
+          }
+        }
+      ],
+      "vaccineCode": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-11",
+            "code": "XM9QW8"
+          }
+        ]
+      },
+      "patient": {
+        "reference": "#1"
+      },
+      "occurrenceDateTime": "2021-12-24",
+      "manufacturer": {
+        "reference": "#9"
+      },
+      "lotNumber": "N040A",
+      "protocolApplied": [
+        {
+          "authority": {
+            "reference": "#10"
+          },
+          "targetDisease": [
+            {
+              "coding": [
+                {
+                  "system": "http://hl7.org/fhir/sid/icd-11",
+                  "code": "RA01.0"
+                }
+              ]
+            }
+          ],
+          "doseNumberPositiveInt": 3
+        }
+      ]
+    },
+    {
+      "resourceType": "Organization",
+      "id": "5",
+      "name": "MHLW_Gov_of_JAPAN"
+    },
+    {
+      "resourceType": "Organization",
+      "id": "6",
+      "name": "MHLW_Gov_of_JAPAN"
+    },
+    {
+      "resourceType": "Organization",
+      "id": "7",
+      "name": "MHLW_Gov_of_JAPAN"
+    },
+    {
+      "resourceType": "Organization",
+      "id": "8",
+      "name": "MHLW_Gov_of_JAPAN"
+    },
+    {
+      "resourceType": "Organization",
+      "id": "9",
+      "name": "MHLW_Gov_of_JAPAN"
+    },
+    {
+      "resourceType": "Organization",
+      "id": "10",
+      "name": "MHLW_Gov_of_JAPAN"
+    }
+  ],
+  "type": {
+    "coding": [
+      {
+        "system": "http://loinc.org",
+        "code": "82593-5",
+        "display": "Immunization summary report"
+      }
+    ]
+  },
+  "category": [
+    {
+      "coding": [
+        {
+          "code": "ddcc-vs"
+        }
+      ]
+    }
+  ],
+  "subject": {
+    "reference": "#1"
+  },
+  "author": [
+    {
+      "reference": "#6"
+    },
+    {
+      "reference": "#8"
+    },
+    {
+      "reference": "#10"
+    }
+  ],
+  "title": "International Certificate of Vaccination or Prophylaxis",
+  "section": [
+    {
+      "code": {
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "11369-6",
+            "display": "History of Immunization Narrative"
+          }
+        ]
+      },
+      "author": [
+        {
+          "reference": "#6"
+        },
+        {
+          "reference": "#8"
+        },
+        {
+          "reference": "#10"
+        }
+      ],
+      "entry": [
+        {
+          "reference": "#2"
+        },
+        {
+          "reference": "#3"
+        },
+        {
+          "reference": "#4"
+        }
+      ]
+    }
+  ]
+}
