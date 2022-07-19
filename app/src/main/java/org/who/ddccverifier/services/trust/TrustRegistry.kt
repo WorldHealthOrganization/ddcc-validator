@@ -13,6 +13,10 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.util.*
 
+operator fun <T> List<T>.component6() = this[5]
+operator fun <T> List<T>.component7() = this[6]
+operator fun <T> List<T>.component8() = this[7]
+
 /**
  * Resolve Keys for Verifiers
  */
@@ -36,47 +40,45 @@ object TrustRegistry {
         val didDocument: PublicKey
     )
 
-    private const val COL_FRAMEWORK = 0
-    private const val COL_KID = 1
-    private const val COL_STATUS = 2
-    private const val COL_DISPLAY_NAME = 3
-    private const val COL_DISPLAY_LOGO = 4
-    private const val COL_VALID_FROM = 5
-    private const val COL_VALID_UNTIL = 6
-    private const val COL_PUBLIC_KEY = 7
+    private fun decode(b64: String): String {
+        return Base64.decode(b64, Base64.DEFAULT).toString(Charsets.UTF_8)
+    }
 
-    private val registry: MutableMap<Framework, MutableMap<String, TrustedEntity>> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    private fun parseDate(date: String): Date? {
+        return if (date.isNotEmpty()) df.parse(date) else null
+    }
+
+    private fun wrapPem(pemB64: String): String {
+        return "-----BEGIN PUBLIC KEY-----\n$pemB64\n-----END PUBLIC KEY-----"
+    }
+
+    private val registry: Map<Framework, Map<String, TrustedEntity>> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME)
         Security.addProvider(BouncyCastleProviderSingleton.getInstance())
 
-        val reg = mutableMapOf<Framework, MutableMap<String, TrustedEntity>>(
-            Framework.CRED to mutableMapOf(),
-            Framework.ICAO to mutableMapOf(),
-            Framework.DCC to mutableMapOf(),
-            Framework.SHC to mutableMapOf(),
-            Framework.DIVOC to mutableMapOf()
-        )
+        val reg = EnumMap(Framework.values().associateWith { mutableMapOf<String, TrustedEntity>() })
 
         val resultCSVStream = URL(BuildConfig.TRUST_REGISTRY_URL)
 
         // Parsing the CSV
-        val reader = BufferedReader(InputStreamReader(resultCSVStream.openStream()))
+        val reader = resultCSVStream.openStream().bufferedReader()
         reader.forEachLine {
-            val row = it.split(",")
-            val framework = Framework.valueOf(row[COL_FRAMEWORK].uppercase())
+            val (specName, kid, status, displayNameB64, displayLogoB64,
+                 validFromISOStr, validUntilISOStr, publicKey) = it.split(",")
+
             try {
-                reg[framework]?.put(row[COL_KID],
-                    TrustedEntity(
-                        mapOf("en" to Base64.decode(row[COL_DISPLAY_NAME], Base64.DEFAULT).toString(Charsets.UTF_8)),
-                        Base64.decode(row[COL_DISPLAY_LOGO], Base64.DEFAULT).toString(Charsets.UTF_8),
-                        Status.valueOf(row[COL_STATUS].uppercase()),
-                        if (row[COL_VALID_FROM].isNotEmpty()) df.parse(row[COL_VALID_FROM]) else null,
-                        if (row[COL_VALID_UNTIL].isNotEmpty()) df.parse(row[COL_VALID_UNTIL]) else null,
-                        KeyUtils.publicKeyFromPEM("-----BEGIN PUBLIC KEY-----\n"+row[COL_PUBLIC_KEY]+"\n-----END PUBLIC KEY-----")
+                reg[Framework.valueOf(specName.uppercase())]
+                    ?.put(kid, TrustedEntity(
+                        mapOf("en" to decode(displayNameB64)),
+                        decode(displayLogoB64),
+                        Status.valueOf(status.uppercase()),
+                        parseDate(validFromISOStr),
+                        parseDate(validUntilISOStr),
+                        KeyUtils.publicKeyFromPEM(wrapPem(publicKey))
                     )
                 )
             } catch(t: Throwable) {
-                println("Exception while loading kid: " + row[1]);
+                println("Exception while loading kid: $specName $kid");
                 t.printStackTrace()
             }
         }
@@ -154,7 +156,7 @@ object TrustRegistry {
     }
 
     fun resolve(framework: Framework, kid: String): TrustedEntity? {
-        println("DDCCVerifer: Resolving " + kid);
+        println("DDCCVerifer: Resolving $kid");
         return registry[framework]?.get(kid)
     }
 }
