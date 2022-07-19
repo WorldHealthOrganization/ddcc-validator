@@ -35,7 +35,7 @@ class QRViewTest: BaseTest() {
 
         // Credential
         assertEquals("COVID-19 Vaccination", card2.cardTitle!!.split(" - ")[1])
-        assertEquals("Valid from Jul 8, 2021 to Jul 8, 2022", card2.validUntil)
+        assertEquals("Use from Jul 8, 2021 to Jul 8, 2022", card2.validUntil)
 
         // Patient
         assertEquals("Eddie Murphy", card2.personName)
@@ -120,7 +120,7 @@ class QRViewTest: BaseTest() {
 
         // Credential
         assertEquals("COVID-19 Vaccination", card2.cardTitle!!.split(" - ")[1])
-        assertEquals("Valid from Jun 30, 2021 to Jun 30, 2022", card2.validUntil)
+        assertEquals("Use from Jun 30, 2021 to Jun 30, 2022", card2.validUntil)
 
         // Patient
         assertEquals("Monika Fellhauer, MONIKA FELLHAUER", card2.personName)
@@ -162,7 +162,7 @@ class QRViewTest: BaseTest() {
 
         // Credential
         assertEquals("Vaccination", card2.cardTitle!!.split(" - ")[1])
-        assertEquals("Valid from Jun 1, 2021", card2.validUntil)
+        assertEquals("Use from Jun 1, 2021", card2.validUntil)
 
         // Patient
         assertEquals("John B. Anyperson", card2.personName)
@@ -208,7 +208,7 @@ class QRViewTest: BaseTest() {
 
         // Credential
         assertEquals("COVID-19 Vaccination", card2.cardTitle!!.split(" - ")[1])
-        assertEquals("Valid from Mar 3, 2021", card2.validUntil)
+        assertEquals("Use from Mar 3, 2021", card2.validUntil)
 
         // Patient
         assertEquals("Third March User One", card2.personName)
@@ -252,7 +252,7 @@ class QRViewTest: BaseTest() {
 
         // Credential
         assertEquals("COVID-19 Vaccination", card2.cardTitle!!.split(" - ")[1])
-        assertEquals("Valid from Dec 17, 2021", card2.validUntil)
+        assertEquals("Use from Dec 17, 2021", card2.validUntil)
 
         // Patient
         assertEquals("test user", card2.personName)
