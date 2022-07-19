@@ -140,7 +140,7 @@ class DCC2FHIR {
         val immunizations = mutableListOf<Reference>()
         val authors = mutableListOf<Reference>()
 
-        if (!cert["v"].isUndefined) {
+        if (cert["v"] != null && !cert["v"].isUndefined) {
             for (i in 0 until cert["v"].size()) {
                 val vax = cert["v"][i]
                 val myAuthority = parseOrganization(vax["is"])
