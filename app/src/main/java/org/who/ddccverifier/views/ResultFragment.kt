@@ -103,18 +103,22 @@ class ResultFragment : Fragment() {
 
         if (binding.tvResultTitle.text == resources.getString(R.string.verification_status_verified)) {
             binding.tvResultHeader.background = resources.getDrawable(R.drawable.rounded_pill)
+            binding.tvResultSignedByIcon.setTextColor(resources.getColor(R.color.success100))
             binding.tvResultTitleIcon.text = resources.getString(R.string.fa_check_circle_solid)
         } else {
             binding.tvResultHeader.background = resources.getDrawable(R.drawable.rounded_pill_invalid)
+            binding.tvResultSignedByIcon.setTextColor(resources.getColor(R.color.danger100))
             binding.tvResultTitleIcon.text = resources.getString(R.string.fa_times_circle_solid)
         }
 
         if (DDCC.issuer != null) {
             binding.tvResultSignedBy.text = "Signed by " + DDCC.issuer!!.displayName["en"]
+            binding.tvResultSignedByIcon.setTextColor(resources.getColor(R.color.success100))
             binding.tvResultSignedByIcon.text = resources.getString(R.string.fa_check_circle_solid)
         } else {
-            binding.tvResultSignedByIcon.text = resources.getString(R.string.fa_times_circle_solid)
             binding.tvResultSignedBy.text = resources.getString(R.string.verification_status_invalid_signature)
+            binding.tvResultSignedByIcon.setTextColor(resources.getColor(R.color.danger100))
+            binding.tvResultSignedByIcon.text = resources.getString(R.string.fa_times_circle_solid)
         }
 
         if (DDCC.contents != null) {

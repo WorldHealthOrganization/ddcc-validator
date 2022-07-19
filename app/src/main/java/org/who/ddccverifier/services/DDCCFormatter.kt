@@ -179,9 +179,9 @@ class DDCCFormatter {
 
     private fun formatValidPeriod(from: Date?, until: Date?): String? {
         return when {
-            from != null && until != null -> "Valid from " + fmt.format(from) + " to " + fmt.format(until)
-            from != null && until == null -> "Valid from " + fmt.format(from)
-            from == null && until != null -> "Valid until " + fmt.format(until)
+            from != null && until != null -> "Use from " + fmt.format(from) + " to " + fmt.format(until)
+            from != null && until == null -> "Use from " + fmt.format(from)
+            from == null && until != null -> "Use until " + fmt.format(until)
             else -> null
         }
     }
