@@ -77,7 +77,7 @@ class ICAOMasterListTest {
     }
 
     @Test
-    fun testICAOHealthList() {
+    fun parseICAOHealthList() {
         Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME)
         Security.addProvider(BouncyCastleProviderSingleton.getInstance())
 
@@ -92,7 +92,7 @@ class ICAOMasterListTest {
     }
 
     @Test
-    fun testICAOMasterList() {
+    fun parseICAOMasterList() {
         Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME)
         Security.addProvider(BouncyCastleProviderSingleton.getInstance())
 
