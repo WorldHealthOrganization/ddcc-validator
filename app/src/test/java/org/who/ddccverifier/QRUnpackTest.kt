@@ -64,6 +64,13 @@ class QRUnpackTest: BaseTest() {
     }
 
     @Test
+    fun unpackDIVOCIndonesia() {
+        val qr1 = open("DIVOCIndonesiaContents.txt")
+        val jsonld = DivocVerifier(::inputStream).unpack(qr1)
+        jsonEquals(open("DIVOCIndonesiaUnpacked.json"), jsonld!!.toJson(true))
+    }
+
+    @Test
     fun unpackICAOQR1() {
         val qr1 = open("ICAOQR1Contents.txt")
         val json = IcaoVerifier().unpack(qr1)

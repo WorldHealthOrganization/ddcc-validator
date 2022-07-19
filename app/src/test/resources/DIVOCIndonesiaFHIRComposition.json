@@ -1,0 +1,195 @@
+{
+  "resourceType": "Composition",
+  "id": "60c7ed1bdea6b4c394e87837",
+  "contained": [
+    {
+      "resourceType": "Patient",
+      "id": "60c7ed1bdea6b4c394e87837",
+      "identifier": [
+        {
+          "value": "did:indonesia:3174081505880004"
+        }
+      ],
+      "name": [
+        {
+          "text": "PAULUS WISNU ADITYA BASWORO"
+        }
+      ],
+      "birthDate": "1988-05-15",
+      "address": [
+        {
+          "line": [
+            "DUREN TIGA RT 9, RW 1, KEL. DUREN TIGA, KEC. PANCORAN, JAKARTA SELATAN"
+          ],
+          "district": "-",
+          "state": "-",
+          "postalCode": "-",
+          "country": "-"
+        }
+      ]
+    },
+    {
+      "resourceType": "Immunization",
+      "id": "1",
+      "extension": [
+        {
+          "url": "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineBrand",
+          "valueCodeableConcept": {
+            "coding": [
+              {
+                "display": "COVID-19 Vaccine Pfizer"
+              }
+            ]
+          }
+        },
+        {
+          "url": "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCCountryOfVaccination",
+          "valueCoding": {
+            "system": "urn:iso:std:iso:3166",
+            "code": "IDN"
+          }
+        },
+        {
+          "url": "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineValidFrom",
+          "valueDateTime": "2022-03-05"
+        }
+      ],
+      "identifier": [
+        {
+          "value": "531487494"
+        }
+      ],
+      "vaccineCode": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/sid/icd-11"
+          }
+        ]
+      },
+      "patient": {
+        "reference": "#60c7ed1bdea6b4c394e87837"
+      },
+      "occurrenceDateTime": "2022-03-05T00:00:00.000Z",
+      "location": {
+        "reference": "#2"
+      },
+      "manufacturer": {
+        "reference": "#3"
+      },
+      "lotNumber": "350208D",
+      "performer": [
+        {
+          "actor": {
+            "reference": "#4"
+          }
+        }
+      ],
+      "protocolApplied": [
+        {
+          "authority": {
+            "reference": "#5"
+          },
+          "targetDisease": [
+            {
+              "coding": [
+                {
+                  "system": "http://snomed.info/sct",
+                  "code": "840539006"
+                }
+              ]
+            }
+          ],
+          "doseNumberPositiveInt": 3,
+          "seriesDosesPositiveInt": 3
+        }
+      ]
+    },
+    {
+      "resourceType": "Location",
+      "id": "2",
+      "name": "Puskesmas Menteng",
+      "address": {
+        "district": "-",
+        "state": "-",
+        "postalCode": "-",
+        "country": "IDN"
+      }
+    },
+    {
+      "resourceType": "Organization",
+      "id": "3",
+      "name": "-"
+    },
+    {
+      "resourceType": "Practitioner",
+      "id": "4",
+      "name": [
+        {
+          "text": "-"
+        }
+      ]
+    },
+    {
+      "resourceType": "Organization",
+      "id": "5",
+      "name": "Puskesmas Menteng"
+    }
+  ],
+  "type": {
+    "coding": [
+      {
+        "system": "http://loinc.org",
+        "code": "82593-5",
+        "display": "Immunization summary report"
+      }
+    ]
+  },
+  "category": [
+    {
+      "coding": [
+        {
+          "code": "ddcc-vs"
+        }
+      ]
+    }
+  ],
+  "subject": {
+    "reference": "#60c7ed1bdea6b4c394e87837"
+  },
+  "author": [
+    {
+      "reference": "#5"
+    }
+  ],
+  "title": "International Certificate of Vaccination or Prophylaxis",
+  "event": [
+    {
+      "period": {
+        "start": "2022-07-14T10:45:55.935Z"
+      }
+    }
+  ],
+  "section": [
+    {
+      "code": {
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "11369-6",
+            "display": "History of Immunization Narrative"
+          }
+        ]
+      },
+      "author": [
+        {
+          "reference": "#5"
+        }
+      ],
+      "entry": [
+        {
+          "reference": "#1"
+        }
+      ]
+    }
+  ]
+}

@@ -99,6 +99,19 @@ class QRVerifyTest: BaseTest() {
     }
 
     @Test
+    fun verifyDIVOCIndonesia() {
+        val qr1 = open("DIVOCIndonesiaContents.txt")
+        val verified = DivocVerifier(::inputStream).unpackAndVerify(qr1)
+
+        assertNotNull(verified)
+        assertEquals(QRDecoder.Status.VERIFIED, verified.status)
+
+        val json = jsonParser.encodeResourceToString(verified.contents!!)
+
+        jsonEquals(open("DIVOCIndonesiaFHIRComposition.json"), json)
+    }
+
+    @Test
     fun verifyICAOAustraliaQR1() {
         val qr1 = open("ICAOAUQR1Contents.txt")
         val verified = IcaoVerifier().unpackAndVerify(qr1)

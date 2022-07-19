@@ -1,0 +1,73 @@
+{
+  "@context": [
+    "https://www.w3.org/2018/credentials/v1",
+    "https://www.pedulilindungi.id/credentials/vaccination/v2"
+  ],
+  "type": [
+    "VerifiableCredential",
+    "ProofOfVaccinationCredential"
+  ],
+  "credentialSubject": {
+    "type": "Person",
+    "id": "did:indonesia:3174081505880004",
+    "refId": "60c7ed1bdea6b4c394e87837",
+    "name": "PAULUS WISNU ADITYA BASWORO",
+    "gender": "-",
+    "age": "34",
+    "nationality": "Indonesia",
+    "address": {
+      "streetAddress": "DUREN TIGA RT 9, RW 1, KEL. DUREN TIGA, KEC. PANCORAN, JAKARTA SELATAN",
+      "streetAddress2": "",
+      "district": "-",
+      "city": "",
+      "addressRegion": "-",
+      "addressCountry": "-",
+      "postalCode": "-"
+    },
+    "dob": "1988-05-15"
+  },
+  "issuer": "https://www.pedulilindungi.id/",
+  "issuanceDate": "2022-07-14T10:45:55.935Z",
+  "evidence": [
+    {
+      "certificateId": "531487494",
+      "type": [
+        "Vaccination"
+      ],
+      "batch": "350208D",
+      "vaccine": "COVID-19 Vaccine Pfizer",
+      "manufacturer": "-",
+      "date": "2022-03-05T00:00:00.000Z",
+      "effectiveStart": "2022-03-05",
+      "effectiveUntil": "2022-03-05",
+      "dose": 3,
+      "totalDoses": 3,
+      "verifier": {
+        "name": "-"
+      },
+      "facility": {
+        "name": "Puskesmas Menteng",
+        "address": {
+          "streetAddress": "",
+          "streetAddress2": "",
+          "district": "-",
+          "city": "",
+          "addressRegion": "-",
+          "addressCountry": "IDN",
+          "postalCode": "-"
+        }
+      },
+      "feedbackUrl": "https://www.pedulilindungi.id/?531487494",
+      "icd11Code": "",
+      "prophylaxis": ""
+    }
+  ],
+  "nonTransferable": "true",
+  "proof": {
+    "type": "Ed25519Signature2018",
+    "created": "2022-07-14T10:45:55Z",
+    "verificationMethod": "did:indonesia",
+    "proofPurpose": "assertionMethod",
+    "jws": "eyJhbGciOiJFZERTQSIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..aObpAAhlgF8_LTGcxXzSqJqlM8CbUGaBG3W9Olz8T0vl4A3y9UKT1CUUUZIJlBkXxpGH45HLn5zgMrd4hB_tBA"
+  }
+}

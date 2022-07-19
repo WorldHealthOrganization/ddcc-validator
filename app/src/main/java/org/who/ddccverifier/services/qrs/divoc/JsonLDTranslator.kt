@@ -1,6 +1,7 @@
 package org.who.ddccverifier.services.qrs.divoc
 
 import ca.uhn.fhir.model.api.TemporalPrecisionEnum
+import org.hl7.fhir.exceptions.FHIRException
 import org.hl7.fhir.instance.model.api.IBaseDatatype
 import org.hl7.fhir.r4.model.*
 import java.text.SimpleDateFormat
@@ -38,8 +39,12 @@ class JsonLDTranslator {
     }
 
     private fun parseGender(gender: String?, sex: String?): Enumerations.AdministrativeGender? {
-        if (gender != null) return Enumerations.AdministrativeGender.fromCode(gender?.lowercase())
-        if (sex != null) return Enumerations.AdministrativeGender.fromCode(sex?.lowercase())
+        try {
+            if (gender != null) return Enumerations.AdministrativeGender.fromCode(gender.lowercase())
+            if (sex != null) return Enumerations.AdministrativeGender.fromCode(sex.lowercase())
+        } catch (e: FHIRException) {
+            e.printStackTrace();
+        }
         return null
     }
 
