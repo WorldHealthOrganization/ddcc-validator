@@ -33,7 +33,7 @@ class DCC2FHIR {
     }
 
     private fun parseDateTimeType(date: CBORObject?): DateTimeType? {
-        if (date == null || date.isUndefined) return null
+        if (date == null || date.isUndefined || !date.isFinite) return null
         return if (date.isNumber) {
             DateTimeType(Date(date.AsInt64()*1000), TemporalPrecisionEnum.DAY)
         } else {
