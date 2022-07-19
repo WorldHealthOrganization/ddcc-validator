@@ -43,6 +43,16 @@ class QRUnpackTest: BaseTest() {
     }
 
     @Test
+    fun unpackEUIndonesia() {
+        val qr1 = open("EUIndonesiaContents.txt")
+        val cwt = HCertVerifier().unpack(qr1)
+        assertNotNull(cwt)
+
+        val dcc = cwt!![-260][1]
+        jsonEquals(open("EUIndonesiaUnpacked.txt"), dcc.toString())
+    }
+
+    @Test
     fun unpackSHCQR1() {
         val qr1 = open("SHCQR1Contents.txt")
         val jwt = SHCVerifier().unpack(qr1)

@@ -60,6 +60,19 @@ class QRVerifyTest: BaseTest() {
     }
 
     @Test
+    fun verifyDCCIndonesia() {
+        val qr1 = open("EUIndonesiaContents.txt")
+        val verified = HCertVerifier().unpackAndVerify(qr1)
+
+        assertNotNull(verified)
+        assertEquals(QRDecoder.Status.VERIFIED, verified.status)
+
+        val json = jsonParser.encodeResourceToString(verified.contents!!)
+
+        jsonEquals(open("EUIndonesiaFHIRComposition.json"), json)
+    }
+
+    @Test
     fun verifySHCQR1() {
         val qr1 = open("SHCQR1Contents.txt")
         val verified = SHCVerifier().unpackAndVerify(qr1)
