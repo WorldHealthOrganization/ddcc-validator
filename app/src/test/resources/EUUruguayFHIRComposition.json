@@ -1,0 +1,157 @@
+{
+  "resourceType": "Composition",
+  "contained": [
+    {
+      "resourceType": "Patient",
+      "id": "1",
+      "name": [
+        {
+          "use": "official",
+          "family": "2",
+          "given": [
+            "1"
+          ]
+        },
+        {
+          "use": "official",
+          "family": "DDFFDF",
+          "given": [
+            "DFDFDFD"
+          ]
+        }
+      ],
+      "birthDate": "1990"
+    },
+    {
+      "resourceType": "Immunization",
+      "id": "2",
+      "extension": [
+        {
+          "url": "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineBrand",
+          "valueCoding": {
+            "system": "https://www.ema.europa.eu/en/medicines/human/EPAR/comirnaty",
+            "code": "EU/1/20/1525"
+          }
+        },
+        {
+          "url": "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineMarketAuthorization",
+          "valueCoding": {
+            "code": "ORG-100010771"
+          }
+        },
+        {
+          "url": "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCCountryOfVaccination",
+          "valueCoding": {
+            "system": "urn:iso:std:iso:3166",
+            "code": "DE"
+          }
+        }
+      ],
+      "identifier": [
+        {
+          "value": "URN:UVCI:V1:UY:4EWIJF1LLSD91KX78OUVO02TD:57"
+        }
+      ],
+      "vaccineCode": {
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "1119349007"
+          }
+        ]
+      },
+      "patient": {
+        "reference": "#1"
+      },
+      "occurrenceDateTime": "2021-10-29",
+      "manufacturer": {
+        "id": "ORG-100010771"
+      },
+      "protocolApplied": [
+        {
+          "authority": {
+            "reference": "#3"
+          },
+          "targetDisease": [
+            {
+              "coding": [
+                {
+                  "system": "http://snomed.info/sct",
+                  "code": "840539006"
+                }
+              ]
+            }
+          ],
+          "doseNumberPositiveInt": 1,
+          "seriesDosesPositiveInt": 1
+        }
+      ]
+    },
+    {
+      "resourceType": "Organization",
+      "id": "3",
+      "identifier": [
+        {
+          "value": "Selmade"
+        }
+      ]
+    }
+  ],
+  "type": {
+    "coding": [
+      {
+        "system": "http://loinc.org",
+        "code": "82593-5",
+        "display": "Immunization summary report"
+      }
+    ]
+  },
+  "category": [
+    {
+      "coding": [
+        {
+          "code": "ddcc-vs"
+        }
+      ]
+    }
+  ],
+  "subject": {
+    "reference": "#1"
+  },
+  "author": [
+    {
+      "reference": "#3"
+    }
+  ],
+  "title": "International Certificate of Vaccination or Prophylaxis",
+  "event": [
+    {
+      "period": {
+        "start": "2021-10-29"
+      }
+    }
+  ],
+  "section": [
+    {
+      "code": {
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "11369-6",
+            "display": "History of Immunization Narrative"
+          }
+        ]
+      },
+      "author": [
+        {
+          "reference": "#3"
+        }
+      ],
+      "entry": [
+        {
+          "reference": "#2"
+        }
+      ]
+    }
+  ]
+}
