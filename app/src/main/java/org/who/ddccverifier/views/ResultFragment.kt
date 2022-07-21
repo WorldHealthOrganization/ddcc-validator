@@ -53,6 +53,16 @@ class ResultFragment : Fragment() {
         val personDetails: String?,
         val identifier: String?,
 
+        val location: String?,
+        val pha: String?,
+        val hw: String?,
+
+        // testresults
+        val testType: String?,
+        val testTypeDetail: String?,
+        val testDate: String?,
+        val testResult: String?,
+
         // immunization
         val dose: String?,
         val doseDate: String?,
@@ -61,9 +71,6 @@ class ResultFragment : Fragment() {
         val vaccineType: String?,
         val vaccineInfo: String?,
         val vaccineInfo2: String?,
-        val location: String?,
-        val pha: String?,
-        val hw: String?,
 
         // recommendations
         val nextDose: String?
@@ -135,6 +142,16 @@ class ResultFragment : Fragment() {
             setTextView(binding.tvResultPersonDetails, card.personDetails, binding.tvResultPersonDetails)
             setTextView(binding.tvResultIdentifier, card.identifier, binding.tvResultIdentifier)
 
+            // Location, Practice, Practitioner
+            setTextView(binding.tvResultHcid, card.hcid, binding.llResultHcid)
+            setTextView(binding.tvResultPha, card.pha, binding.llResultPha)
+            setTextView(binding.tvResultHw, card.hw, binding.llResultHw)
+
+            // Test Result
+            setTextView(binding.tvResultTestType, card.testType, binding.tvResultTestType)
+            setTextView(binding.tvResultTestDate, card.testDate, binding.llResultTestDate)
+            setTextView(binding.tvResultTestTitle, card.testResult, binding.tvResultTestTitle)
+
             // Immunization
             setTextView(binding.tvResultVaccineType, card.vaccineType, binding.tvResultVaccineType)
             setTextView(binding.tvResultDoseTitle, card.dose, binding.tvResultDoseTitle)
@@ -143,9 +160,6 @@ class ResultFragment : Fragment() {
             setTextView(binding.tvResultVaccineInfo, card.vaccineInfo, binding.llResultVaccineInfo)
             setTextView(binding.tvResultVaccineInfo2, card.vaccineInfo2, binding.llResultVaccineInfo2)
             setTextView(binding.tvResultCentre, card.location, binding.llResultCentre)
-            setTextView(binding.tvResultHcid, card.hcid, binding.llResultHcid)
-            setTextView(binding.tvResultPha, card.pha, binding.llResultPha)
-            setTextView(binding.tvResultHw, card.hw, binding.llResultHw)
 
             // Recommendation
             setTextView(binding.tvResultNextDose, card.nextDose, binding.llResultNextDose)

@@ -18,6 +18,9 @@
     <string name="hello_qrscan_fragment">Hello QR Scan. Arg: %1$s</string>
     <string name="hello_qrresult_fragment">Hello QR Result. Arg: %1$s</string>
 
+    <string name="test_date_label">Date of Test</string>
+    <string name="test_type_detail_label">Type of Test</string>
+
     <string name="dose_date_label">Date of Vaccination</string>
     <string name="dose_next_dose_label">Next Dose</string>
     <string name="dose_valid_label">Protected Until</string>

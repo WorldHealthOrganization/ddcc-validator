@@ -1,0 +1,38 @@
+{
+  "sex": {
+    "code": "male",
+    "system": "http://hl7.org/fhir/administrative-gender"
+  },
+  "meta": {
+    "notarisedOn": "2022-03-15T02:26:02.672Z",
+    "reference": "ABC-CDE-CDEF",
+    "url": "https://verify.gov.sg",
+    "passportNumber": "ES12345"
+  },
+  "identifier": "URN:UVCI:01:SG:ABC-CDE-CDE",
+  "name": "TAN CHEN CHEN",
+  "birthDate": "1990-01-15",
+  "test": {
+    "pathogen": {
+      "code": "XN109",
+      "system": "http://id.who.int/icd11/mms",
+      "display": "SARS-CoV-2"
+    },
+    "centre": "Ministry of Health (MOH), Singapore [21M0386]",
+    "result": {
+      "code": "260415000",
+      "system": "http://snomed.info/sct",
+      "display": "Not detected"
+    },
+    "country": {
+      "code": "SGP",
+      "system": "urn:iso:std:iso:3166-1"
+    },
+    "type": {
+      "code": "LP6464-4",
+      "system": "http://loinc.org",
+      "display": "Nucleic acid amplification with probe detection"
+    },
+    "date": "2022-07-27T06:15:00Z"
+  }
+}

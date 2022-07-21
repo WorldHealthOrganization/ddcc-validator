@@ -75,7 +75,7 @@ class QRViewTest: BaseTest() {
             verified.contents!!) as Boolean
 
         // Credential
-        assertEquals("COVID-19 Vaccination", card2.cardTitle!!.split(" - ")[1])
+        assertEquals("COVID 19 Vaccination", card2.cardTitle!!.split(" - ")[1])
         assertEquals(null, card2.validUntil)
 
         // Patient
@@ -88,7 +88,7 @@ class QRViewTest: BaseTest() {
         assertEquals("Dose: 1", card2.dose)
         assertEquals(null, card2.doseDate)
         assertEquals(null, card2.vaccineValid)
-        assertEquals("COVID-19", card2.vaccineAgainst)
+        assertEquals("COVID 19", card2.vaccineAgainst)
         assertEquals("Organization/973 (#PT123F.9)", card2.vaccineInfo)
         assertEquals(null, card2.vaccineInfo2)
         assertEquals("Location/971", card2.location)
@@ -100,6 +100,53 @@ class QRViewTest: BaseTest() {
         assertEquals(null, card2.nextDose)
 
         assertEquals(true, status)
+    }
+
+    @Test
+    fun viewSingaporePCR() {
+        val qr2 = open("WHOSingaporePCRContents.txt")
+        val verified = qrUnpacker.decode(qr2)
+
+        assertEquals(QRDecoder.Status.VERIFIED, verified.status)
+
+        val card2 = DDCCFormatter().run(verified.contents!!)
+
+        val status = cqlEvaluator.resolve(
+            "CompletedImmunization", ddccPass,
+            verified.contents!!) as Boolean
+
+        // Credential
+        assertEquals("SARS-CoV-2 Test Result", card2.cardTitle!!.split(" - ")[1])
+        assertEquals(null, card2.validUntil)
+
+        // Patient
+        assertEquals("TAN CHEN CHEN", card2.personName)
+        assertEquals("Jan 15, 1990 - Male", card2.personDetails)
+        assertEquals("ID: URN:UVCI:01:SG:ABC-CDE-CDE", card2.identifier)
+
+        // Test Result
+        assertEquals("Jul 27, 2022", card2.testDate)
+        assertEquals("SARS-CoV-2 Test Result", card2.testType)
+        assertEquals("Nucleic acid amplification with probe detection", card2.testTypeDetail)
+        assertEquals("Not detected", card2.testResult)
+
+        // Immunization
+        assertEquals(null, card2.vaccineType)
+        assertEquals(null, card2.dose)
+        assertEquals(null, card2.doseDate)
+        assertEquals(null, card2.vaccineValid)
+        assertEquals(null, card2.vaccineAgainst)
+        assertEquals(null, card2.vaccineInfo)
+        assertEquals(null, card2.vaccineInfo2)
+        assertEquals("SGP", card2.location)
+        assertEquals(null, card2.hcid)
+        assertEquals("Ministry of Health (MOH), Singapore [21M0386]", card2.pha)
+        assertEquals(null, card2.hw)
+
+        // Recommendation
+        assertEquals(null, card2.nextDose)
+
+        assertEquals(false, status)
     }
 
     @Test

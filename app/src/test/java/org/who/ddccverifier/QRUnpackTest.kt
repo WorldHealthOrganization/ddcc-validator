@@ -33,6 +33,14 @@ class QRUnpackTest: BaseTest() {
     }
 
     @Test
+    fun unpackSingaporePCR() {
+        val qr2 = open("WHOSingaporePCRContents.txt")
+        val verified = HCertVerifier().unpack(qr2)
+        assertNotNull(verified)
+        jsonEquals(open("WHOSingaporePCRUnpacked.json"), verified.toString().replace(": undefined", ": null"))
+    }
+
+    @Test
     fun unpackEUQR1() {
         val qr1 = open("EUQR1Contents.txt")
         val cwt = HCertVerifier().unpack(qr1)

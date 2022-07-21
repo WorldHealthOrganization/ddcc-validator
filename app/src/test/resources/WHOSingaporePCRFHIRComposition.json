@@ -1,0 +1,147 @@
+{
+  "resourceType": "Composition",
+  "contained": [
+    {
+      "resourceType": "Patient",
+      "id": "1",
+      "identifier": [
+        {
+          "value": "URN:UVCI:01:SG:ABC-CDE-CDE"
+        }
+      ],
+      "name": [
+        {
+          "text": "TAN CHEN CHEN"
+        }
+      ],
+      "gender": "male",
+      "birthDate": "1990-01-15"
+    },
+    {
+      "resourceType": "Observation",
+      "id": "2",
+      "extension": [
+        {
+          "url": "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCCountryOfVaccination",
+          "valueCoding": {
+            "system": "urn:iso:std:iso:3166-1",
+            "code": "SGP"
+          }
+        }
+      ],
+      "status": "final",
+      "category": [
+        {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+              "code": "laboratory"
+            }
+          ]
+        }
+      ],
+      "code": {
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "LP6464-4",
+            "display": "Nucleic acid amplification with probe detection"
+          },
+          {
+            "system": "http://id.who.int/icd11/mms",
+            "code": "XN109",
+            "display": "SARS-CoV-2"
+          }
+        ]
+      },
+      "subject": {
+        "identifier": {
+          "value": "URN:UVCI:01:SG:ABC-CDE-CDE"
+        }
+      },
+      "encounter": {
+        "reference": "#3"
+      },
+      "effectiveDateTime": "2022-07-27T06:15:00Z",
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "260415000",
+            "display": "Not detected"
+          }
+        ]
+      }
+    },
+    {
+      "resourceType": "Encounter",
+      "id": "3",
+      "status": "finished",
+      "serviceProvider": {
+        "reference": "#4"
+      }
+    },
+    {
+      "resourceType": "Organization",
+      "id": "4",
+      "identifier": [
+        {
+          "value": "Ministry of Health (MOH), Singapore [21M0386]"
+        }
+      ]
+    }
+  ],
+  "type": {
+    "coding": [
+      {
+        "system": "http://loinc.org",
+        "code": "82593-5",
+        "display": "Immunization summary report"
+      }
+    ]
+  },
+  "category": [
+    {
+      "coding": [
+        {
+          "code": "ddcc-vs"
+        }
+      ]
+    }
+  ],
+  "subject": {
+    "reference": "#1"
+  },
+  "author": [
+    {
+      "reference": "#4"
+    }
+  ],
+  "title": "International Certificate of Vaccination or Prophylaxis",
+  "section": [
+    {
+      "code": {
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "30954-2",
+            "display": "Results (Diagnostic findings)"
+          }
+        ]
+      },
+      "author": [
+        {
+          "reference": "#4"
+        }
+      ],
+      "focus": {
+        "reference": "#2"
+      },
+      "entry": [
+        {
+          "reference": "#2"
+        }
+      ]
+    }
+  ]
+}
