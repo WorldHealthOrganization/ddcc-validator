@@ -149,6 +149,7 @@ class ResultFragment : Fragment() {
 
             // Test Result
             setTextView(binding.tvResultTestType, card.testType, binding.tvResultTestType)
+            setTextView(binding.tvResultTestTypeDetail, card.testType, binding.llResultTestTypeDetail)
             setTextView(binding.tvResultTestDate, card.testDate, binding.llResultTestDate)
             setTextView(binding.tvResultTestTitle, card.testResult, binding.tvResultTestTitle)
 
