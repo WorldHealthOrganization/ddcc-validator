@@ -84,7 +84,7 @@ class QRViewTest: BaseTest() {
         assertEquals("ID: 111000111", card2.identifier)
 
         // Immunization
-        assertEquals("SARS-CoV-2 mRNA Vaccine", card2.vaccineType)
+        assertEquals("SARSCoV2  mRNA vaccine", card2.vaccineType)
         assertEquals("Dose: 1", card2.dose)
         assertEquals(null, card2.doseDate)
         assertEquals(null, card2.vaccineValid)
