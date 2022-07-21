@@ -1,6 +1,6 @@
 {
   "resourceType": "Composition",
-  "id":"111000111",
+  "id": "111000111",
   "contained": [
     {
       "resourceType": "Patient",
@@ -25,7 +25,8 @@
         "coding": [
           {
             "system": "http://snomed.info/sct",
-            "code": "1119349007"
+            "code": "1119349007",
+            "display": "SARSCoV2  mRNA vaccine"
           }
         ]
       },
@@ -48,7 +49,8 @@
               "coding": [
                 {
                   "system": "http://snomed.info/sct",
-                  "code": "840539006"
+                  "code": "840539006",
+                  "display": "COVID 19"
                 }
               ]
             }

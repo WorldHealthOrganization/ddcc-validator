@@ -70,6 +70,7 @@ class WHO2FHIR {
         return Coding().apply {
             code = obj["code"]?.AsString()
             system = obj["system"]?.AsString()
+            display = obj["display"]?.AsString()
         }
     }
 
