@@ -21,6 +21,12 @@ class JWTTranslator {
             ?.map {it -> it.resource} as List<Immunization>
     }
 
+    fun getObservations(payload: SHCVerifier.JWTPayload): List<Observation> {
+        return payload.vc?.credentialSubject?.fhirBundle?.entry
+            ?.filter { it -> it.resource.fhirType() == "Observation" }
+            ?.map {it -> it.resource} as List<Observation>
+    }
+
     private fun parseDateType(date: Double?): DateTimeType? {
         if (date == null) return null
         return DateTimeType(Date((date*1000).toLong()), TemporalPrecisionEnum.DAY)
@@ -29,6 +35,7 @@ class JWTTranslator {
     fun toFhir(payload: SHCVerifier.JWTPayload): Composition {
         val myPatient = getPatient(payload)
         val myImmunizations = getImmunizations(payload)
+        val myObservations = getObservations(payload)
 
         val organization = Organization().apply {
             identifier = listOf(Identifier().apply {
@@ -39,6 +46,11 @@ class JWTTranslator {
         val immunizations = mutableListOf<Reference>()
         for (imm in myImmunizations) {
             immunizations.add(Reference(imm))
+        }
+
+        val observations = mutableListOf<Reference>()
+        for (obs in myObservations) {
+            observations.add(Reference(obs))
         }
 
         val myComposition = Composition().apply {
@@ -56,11 +68,20 @@ class JWTTranslator {
                 }
             })
             author = listOf(Reference(organization))
-            section = listOf(Composition.SectionComponent().apply {
-                code = CodeableConcept(Coding("http://loinc.org", "11369-6", "History of Immunization Narrative"))
-                author = listOf(Reference(organization))
-                entry = immunizations
-            })
+            section = listOfNotNull(
+                if (immunizations.isEmpty()) null else Composition.SectionComponent().apply {
+                    code = CodeableConcept(Coding("http://loinc.org", "11369-6", "History of Immunization Narrative"))
+                    author = listOf(Reference(organization))
+                    entry = immunizations
+                },
+                if (observations.isEmpty()) null else Composition.SectionComponent().apply {
+                    code = CodeableConcept(Coding("http://loinc.org", "30954-2", "Results (Diagnostic findings)"))
+                    author = listOf(Reference(organization))
+                    entry = observations
+                }
+            )
+
+
         }
 
         // Is this really necessary? Why aren't these objects part of contained to start with?
@@ -68,6 +89,10 @@ class JWTTranslator {
 
         for (imm in myImmunizations) {
             myComposition.addContained(imm)
+        }
+
+        for (obs in myObservations) {
+            myComposition.addContained(obs)
         }
 
         return myComposition

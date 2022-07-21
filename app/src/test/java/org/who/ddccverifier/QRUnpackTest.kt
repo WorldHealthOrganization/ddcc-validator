@@ -68,6 +68,13 @@ class QRUnpackTest: BaseTest() {
     }
 
     @Test
+    fun unpackSHCTestResults() {
+        val qr1 = open("SHCTestResultsContents.txt")
+        val jwt = SHCVerifier().unpack(qr1)
+        assertEquals(open("SHCTestResultsUnpacked.txt"), jwt)
+    }
+
+    @Test
     fun unpackDIVOCQR1() {
         val qr1 = open("DIVOCQR1Contents.txt")
         val jsonld = DivocVerifier(::inputStream).unpack(qr1)

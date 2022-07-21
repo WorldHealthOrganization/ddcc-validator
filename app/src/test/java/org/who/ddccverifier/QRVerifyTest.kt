@@ -111,6 +111,19 @@ class QRVerifyTest: BaseTest() {
     }
 
     @Test
+    fun verifySHCTestResults() {
+        val qr1 = open("SHCTestResultsContents.txt")
+        val verified = SHCVerifier().unpackAndVerify(qr1)
+
+        assertNotNull(verified)
+        assertEquals(QRDecoder.Status.VERIFIED, verified.status)
+
+        val json = jsonParser.encodeResourceToString(verified.contents!!)
+
+        jsonEquals(open("SHCTestResultsFHIRComposition.json"), json)
+    }
+
+    @Test
     fun verifyDIVOCQR() {
         val qr1 = open("DIVOCQR1Contents.txt")
         val verified = DivocVerifier(::inputStream).unpackAndVerify(qr1)

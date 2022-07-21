@@ -1,0 +1,116 @@
+{
+  "resourceType": "Composition",
+  "contained": [
+    {
+      "resourceType": "Patient",
+      "id": "resource:0",
+      "name": [
+        {
+          "family": "Mandel",
+          "given": [
+            "Joshua"
+          ]
+        }
+      ],
+      "birthDate": "1982-10-26"
+    },
+    {
+      "resourceType": "Observation",
+      "id": "resource:1",
+      "meta": {},
+      "status": "final",
+      "code": {
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "94534-5"
+          }
+        ]
+      },
+      "subject": {
+        "reference": "Patient/resource:0"
+      },
+      "effectiveDateTime": "2022-05-17T21:07:44.000Z",
+      "performer": [
+        {
+          "display": "Abbott"
+        }
+      ],
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "260415000",
+            "display": "Negative"
+          }
+        ]
+      }
+    },
+    {
+      "resourceType": "Organization",
+      "id": "1",
+      "identifier": [
+        {
+          "value": "https://healthcard.walgreens.com"
+        }
+      ]
+    }
+  ],
+  "type": {
+    "coding": [
+      {
+        "system": "http://loinc.org",
+        "code": "82593-5",
+        "display": "Immunization summary report"
+      }
+    ]
+  },
+  "category": [
+    {
+      "coding": [
+        {
+          "code": "ddcc-vs"
+        }
+      ]
+    }
+  ],
+  "subject": {
+    "reference": "#resource:0"
+  },
+  "author": [
+    {
+      "reference": "#1"
+    }
+  ],
+  "title": "International Certificate of Vaccination or Prophylaxis",
+  "event": [
+    {
+      "period": {
+        "start": "2022-05-17"
+      }
+    }
+  ],
+  "section": [
+    {
+      "code": {
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "30954-2",
+            "display": "Results (Diagnostic findings)"
+          }
+        ]
+      },
+      "author": [
+        {
+          "reference": "#1"
+        }
+      ],
+      "entry": [
+        {
+          "reference": "#resource:1"
+        }
+      ]
+    }
+  ]
+}

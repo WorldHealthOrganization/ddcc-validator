@@ -236,6 +236,47 @@ class QRViewTest: BaseTest() {
     }
 
     @Test
+    fun viewSHCTestResults() {
+        val qr1 = open("SHCTestResultsContents.txt")
+        val verified = qrUnpacker.decode(qr1)
+
+        assertEquals(QRDecoder.Status.VERIFIED, verified.status)
+
+        val card2 = DDCCFormatter().run(verified.contents!!)
+
+        // Credential
+        assertEquals("Test Result", card2.cardTitle!!.split(" - ")[1])
+        assertEquals("Use from May 17, 2022", card2.validUntil)
+
+        // Patient
+        assertEquals("Joshua Mandel", card2.personName)
+        assertEquals("Oct 26, 1982", card2.personDetails)
+        assertEquals(null, card2.identifier)
+
+        // Test Result
+        assertEquals("May 17, 2022", card2.testDate)
+        assertEquals("Test Result", card2.testType)
+        assertEquals("SARS-CoV-2 (COVID19) RdRp gene [Presence] in Respiratory specimen by NAA with probe detection", card2.testTypeDetail)
+        assertEquals("Negative", card2.testResult)
+
+        // Immunization
+        assertEquals(null, card2.vaccineType)
+        assertEquals(null, card2.dose)
+        assertEquals(null, card2.doseDate)
+        assertEquals(null, card2.vaccineValid)
+        assertEquals(null, card2.vaccineAgainst)
+        assertEquals(null, card2.vaccineInfo)
+        assertEquals(null, card2.vaccineInfo2)
+        assertEquals(null, card2.location)
+        assertEquals(null, card2.hcid)
+        assertEquals(null, card2.pha)
+        assertEquals(null, card2.hw)
+
+        // Recommendation
+        assertEquals(null, card2.nextDose)
+    }
+
+    @Test
     fun viewDIVOCQR1() {
         TimeZone.setDefault(TimeZone.getTimeZone( "UTC"))
 
