@@ -132,11 +132,21 @@ class PCFTrustRegistry : TrustRegistry {
         )
     }
 
-    override fun init() {
+    override fun init(customUrl: String) {
         Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME)
         Security.addProvider(BouncyCastleProvider())
 
-        load(PATHCHECK_URL);
+        TrustRegistry.Framework.values().forEach {
+            registry[it]?.clear()
+        }
+
+        println("Loading TrustRegistry from $customUrl");
+
+        load(customUrl)
+    }
+
+    override fun init() {
+        init(PATHCHECK_URL)
     }
 
     override fun resolve(framework: TrustRegistry.Framework, kid: String): TrustRegistry.TrustedEntity? {
