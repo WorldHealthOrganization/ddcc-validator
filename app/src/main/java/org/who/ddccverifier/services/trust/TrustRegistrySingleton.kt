@@ -1,5 +1,6 @@
 package org.who.ddccverifier.services.trust
 
+import org.who.ddccverifier.BuildConfig
 import org.who.ddccverifier.trust.TrustRegistry
 import org.who.ddccverifier.trust.pathcheck.PCFTrustRegistry
 /**
@@ -8,7 +9,7 @@ import org.who.ddccverifier.trust.pathcheck.PCFTrustRegistry
 object TrustRegistrySingleton {
     private val registry: TrustRegistry by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val reg = PCFTrustRegistry();
-        reg.init();
+        reg.init(BuildConfig.TRUST_REGISTRY_URL);
         reg.addTestKeys()
 
         return@lazy reg
