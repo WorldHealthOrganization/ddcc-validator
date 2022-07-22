@@ -18,9 +18,9 @@ interface TrustRegistry {
         val displayName: Map<String, String>,
         val displayLogo: String?,
         val status: Status,
-        val validFromDT: Date?,
-        val validUntilDT: Date?,
-        val didDocument: PublicKey
+        val validFrom: Date?,
+        val validUntil: Date?,
+        val publicKey: PublicKey
     )
 
     fun init()

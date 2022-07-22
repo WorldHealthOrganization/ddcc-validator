@@ -11,7 +11,6 @@ import org.who.ddccverifier.verify.QRDecoder
 import org.who.ddccverifier.verify.divoc.jsonldcrypto.RsaSignature2018withPS256Verifier
 import org.who.ddccverifier.verify.divoc.jsonldcrypto.Ed25519Signature2018Verifier
 import java.io.ByteArrayInputStream
-import java.io.InputStream
 import java.util.zip.ZipInputStream
 
 class DivocVerifier(private val registry: TrustRegistry) {
@@ -181,7 +180,7 @@ class DivocVerifier(private val registry: TrustRegistry) {
             TrustRegistry.Status.EXPIRED -> QRDecoder.VerificationResult(QRDecoder.Status.EXPIRED_KEYS, contents, issuer, uri)
             TrustRegistry.Status.REVOKED -> QRDecoder.VerificationResult(QRDecoder.Status.REVOKED_KEYS, contents, issuer, uri)
             TrustRegistry.Status.CURRENT ->
-                if (verify(signedMessage, issuer.didDocument))
+                if (verify(signedMessage, issuer.publicKey))
                     QRDecoder.VerificationResult(QRDecoder.Status.VERIFIED, contents, issuer, uri)
                 else
                     QRDecoder.VerificationResult(QRDecoder.Status.INVALID_SIGNATURE, contents, issuer, uri)

@@ -97,7 +97,7 @@ class HCertVerifier (private val registry: TrustRegistry) {
             TrustRegistry.Status.EXPIRED -> QRDecoder.VerificationResult(QRDecoder.Status.EXPIRED_KEYS, contents, issuer, qr)
             TrustRegistry.Status.REVOKED -> QRDecoder.VerificationResult(QRDecoder.Status.REVOKED_KEYS, contents, issuer, qr)
             TrustRegistry.Status.CURRENT ->
-                if (verify(signedMessage, issuer.didDocument))
+                if (verify(signedMessage, issuer.publicKey))
                     QRDecoder.VerificationResult(QRDecoder.Status.VERIFIED, contents, issuer, qr)
                 else
                     QRDecoder.VerificationResult(QRDecoder.Status.INVALID_SIGNATURE, contents, issuer, qr)

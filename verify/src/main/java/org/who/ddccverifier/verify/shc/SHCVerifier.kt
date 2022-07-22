@@ -196,7 +196,7 @@ class SHCVerifier (private val registry: TrustRegistry) {
             TrustRegistry.Status.EXPIRED -> QRDecoder.VerificationResult(QRDecoder.Status.EXPIRED_KEYS, contents, issuer, uri)
             TrustRegistry.Status.REVOKED -> QRDecoder.VerificationResult(QRDecoder.Status.REVOKED_KEYS, contents, issuer, uri)
             TrustRegistry.Status.CURRENT ->
-                if (verify(signedMessage, issuer.didDocument))
+                if (verify(signedMessage, issuer.publicKey))
                     QRDecoder.VerificationResult(QRDecoder.Status.VERIFIED, contents, issuer, uri)
                 else
                     QRDecoder.VerificationResult(QRDecoder.Status.INVALID_SIGNATURE, contents, issuer, uri)

@@ -218,8 +218,8 @@ class IcaoVerifier (private val registry: TrustRegistry) {
     }
 
     private fun isTrusted(certificate: X509Certificate, issuer: TrustRegistry.TrustedEntity): Boolean {
-        return isSame(certificate.publicKey, issuer.didDocument)
-            || isSignedBy(certificate, issuer.didDocument)
+        return isSame(certificate.publicKey, issuer.publicKey)
+            || isSignedBy(certificate, issuer.publicKey)
     }
 
     private fun verify(payload: IJson, pubKey: PublicKey): Boolean {
