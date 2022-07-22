@@ -45,14 +45,10 @@ android {
         viewBinding true
     }
     packagingOptions {
-        pickFirst("META-INF/ASL-2.0.txt")
-        pickFirst("META-INF/LGPL-3.0.txt")
-        pickFirst("license.html")
-        pickFirst("readme.html")
-        pickFirst("META-INF/sun-jaxb.episode")
-        exclude 'META-INF/DEPENDENCIES'
-        exclude 'META-INF/LICENSE.md'
-        exclude 'META-INF/NOTICE.md'
+        resources {
+            excludes += ['META-INF/DEPENDENCIES', 'META-INF/LICENSE.md', 'META-INF/NOTICE.md']
+            pickFirsts += ['META-INF/ASL-2.0.txt', 'META-INF/LGPL-3.0.txt', 'license.html', 'readme.html', 'META-INF/sun-jaxb.episode']
+        }
     }
     sourceSets {
         // Shares Resources directory from test to Instrumented tests
