@@ -10,3 +10,7 @@ dependencyResolutionManagement {
 }
 rootProject.name = "DDCC Verifier"
 include ':app'
+include ':verify'
+include ':trust'
+include ':trust-pathcheck'
+include ':testcases'

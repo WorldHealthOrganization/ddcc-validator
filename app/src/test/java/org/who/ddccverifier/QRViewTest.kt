@@ -7,7 +7,7 @@ import org.junit.Assert.*
 import org.who.ddccverifier.services.*
 import org.who.ddccverifier.services.cql.CQLEvaluator
 import org.who.ddccverifier.services.cql.FHIRLibraryLoader
-import org.who.ddccverifier.services.QRDecoder
+import org.who.ddccverifier.verify.QRDecoder
 import java.util.*
 
 class QRViewTest: BaseTest() {
@@ -15,7 +15,7 @@ class QRViewTest: BaseTest() {
     private val ddccPass = VersionedIdentifier().withId("DDCCPass").withVersion("0.0.1")
 
     private val cqlEvaluator = CQLEvaluator(FHIRLibraryLoader(::inputStream))
-    private val qrUnpacker = QRDecoder(::inputStream)
+    private val qrUnpacker = QRDecoder(registry)
 
     @Test
     fun viewWHOQR1() {

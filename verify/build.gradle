@@ -1,0 +1,83 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    compileSdk 31
+
+    defaultConfig {
+        minSdk 25
+        targetSdk 30
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+    implementation project(":trust")
+
+    implementation fileTree(dir: 'libs', include: '**.jar')
+
+    // Necessary to unpack the EU's DDC HCERT QR Codes.
+    implementation 'io.github.ehn-digital-green-development:base45:0.0.3'
+    implementation 'com.augustcellars.cose:cose-java:1.1.0'
+
+    // Necessary to unpack SHC QR Codesjsonld-common-java
+    implementation 'com.nimbusds:nimbus-jose-jwt:9.20'
+
+
+
+    // using from Libs: Titanium jsonld requires valid DIDs. Since DIVOC uses invalid dids,
+    // we are using a modified version that removes the skipping of invalid URIs on JsonLdToRdf
+    //implementation (group: 'com.apicatalog', name: 'titanium-json-ld', version: '1.3.0-SNAPSHOT') //https://github.com/decentralized-identity/jsonld-common-java/pull/6
+    implementation ('io.setl:rdf-urdna:1.1') { //https://github.com/decentralized-identity/jsonld-common-java/pull/6
+        exclude group: 'com.apicatalog', module: 'titanium-json-ld'
+    }
+
+    implementation ('info.weboftrust:ld-signatures-java:1.0.0') {
+        exclude group: 'net.jcip', module: 'jcip-annotations'
+        exclude group: 'org.bouncycastle', module: 'bcprov-jdk15on'
+
+        // using from Libs remove when this PR gets approved: https://github.com/decentralized-identity/jsonld-common-java/pull/6
+        exclude group: 'com.apicatalog', module: 'titanium-json-ld'
+    }
+
+    // Required for ICAO QR Codes
+    implementation 'io.github.erdtman:java-json-canonicalization:1.1'
+
+    // Necessary to Convert the QR into the DDCC FHIR Composite
+    implementation 'ca.uhn.hapi.fhir:hapi-fhir-structures-r4:5.4.0'
+
+    // Use BouncyCastle to not rely on each Android's version ability to unpack and load public keys
+    // Android 10+ issues due to the move to Conscript on a older version of BC
+    // It's already imported by the LD-Signatures dependencies
+    //implementation group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.70'
+
+    // Necessary to call JSON APIs (Download the Trust Registry)
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.13.2'
+
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation project(':testcases')
+    testImplementation project(":trust-pathcheck")
+
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    androidTestImplementation project(':testcases')
+    androidTestImplementation project(":trust-pathcheck")
+}

@@ -1,7 +1,6 @@
 package org.who.ddccverifier
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton
 import org.bouncycastle.asn1.ASN1Integer
 import org.bouncycastle.asn1.ASN1Sequence
 import org.bouncycastle.asn1.ASN1Set
@@ -12,8 +11,10 @@ import org.bouncycastle.cms.SignerInformation
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.junit.Assert
+import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.who.ddccverifier.trust.pathcheck.PCFTrustRegistry
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
@@ -26,6 +27,13 @@ import java.security.cert.CertificateFactory
  */
 @RunWith(AndroidJUnit4::class)
 class ICAOMasterListTest {
+
+    companion object {
+        @BeforeClass @JvmStatic fun setup() {
+            Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME)
+            Security.addProvider(BouncyCastleProvider())
+        }
+    }
 
     private val cf = CertificateFactory.getInstance("X.509")!!;
 
@@ -78,9 +86,6 @@ class ICAOMasterListTest {
 
     @Test
     fun parseICAOHealthList() {
-        Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME)
-        Security.addProvider(BouncyCastleProviderSingleton.getInstance())
-
         val signingCerts = cf.generateCertificates(inputStream("ICAOHealthMLSigner1.pem.crt"))
 
         val healthList = CMSSignedData(inputStream("ICAOHealthML27May2022.ml"))
@@ -93,9 +98,6 @@ class ICAOMasterListTest {
 
     @Test
     fun parseICAOMasterList() {
-        Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME)
-        Security.addProvider(BouncyCastleProviderSingleton.getInstance())
-
         val masterList = CMSSignedData(inputStream("ICAOMLJune2022.ml"))
         val signerInfo = masterList.signerInfos.signers.first()
         val cscaCerts = loadMasterList(masterList)

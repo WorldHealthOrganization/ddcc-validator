@@ -16,7 +16,8 @@ import org.who.ddccverifier.databinding.FragmentResultBinding
 import org.who.ddccverifier.services.*
 import org.who.ddccverifier.services.cql.CQLEvaluator
 import org.who.ddccverifier.services.cql.FHIRLibraryLoader
-import org.who.ddccverifier.services.QRDecoder
+import org.who.ddccverifier.services.trust.TrustRegistrySingleton
+import org.who.ddccverifier.verify.QRDecoder
 import java.io.InputStream
 
 /**
@@ -109,22 +110,22 @@ class ResultFragment : Fragment() {
         }
 
         if (binding.tvResultTitle.text == resources.getString(R.string.verification_status_verified)) {
-            binding.tvResultHeader.background = resources.getDrawable(R.drawable.rounded_pill)
-            binding.tvResultSignedByIcon.setTextColor(resources.getColor(R.color.success100))
+            binding.tvResultHeader.background = resources.getDrawable(R.drawable.rounded_pill, null)
+            binding.tvResultSignedByIcon.setTextColor(resources.getColor(R.color.success100, null))
             binding.tvResultTitleIcon.text = resources.getString(R.string.fa_check_circle_solid)
         } else {
-            binding.tvResultHeader.background = resources.getDrawable(R.drawable.rounded_pill_invalid)
-            binding.tvResultSignedByIcon.setTextColor(resources.getColor(R.color.danger100))
+            binding.tvResultHeader.background = resources.getDrawable(R.drawable.rounded_pill_invalid, null)
+            binding.tvResultSignedByIcon.setTextColor(resources.getColor(R.color.danger100, null))
             binding.tvResultTitleIcon.text = resources.getString(R.string.fa_times_circle_solid)
         }
 
         if (DDCC.issuer != null) {
             binding.tvResultSignedBy.text = "Signed by " + DDCC.issuer!!.displayName["en"]
-            binding.tvResultSignedByIcon.setTextColor(resources.getColor(R.color.success100))
+            binding.tvResultSignedByIcon.setTextColor(resources.getColor(R.color.success100, null))
             binding.tvResultSignedByIcon.text = resources.getString(R.string.fa_check_circle_solid)
         } else {
             binding.tvResultSignedBy.text = resources.getString(R.string.verification_status_invalid_signature)
-            binding.tvResultSignedByIcon.setTextColor(resources.getColor(R.color.danger100))
+            binding.tvResultSignedByIcon.setTextColor(resources.getColor(R.color.danger100, null))
             binding.tvResultSignedByIcon.text = resources.getString(R.string.fa_times_circle_solid)
         }
 
@@ -177,13 +178,13 @@ class ResultFragment : Fragment() {
         uiScope.launch {
             withContext(Dispatchers.IO) {
                 val statusStr = when (resolveStatus(DDCC)) {
-                    true -> "COVID Safe"
-                    false -> "COVID Vulnerable"
+                    true -> null // "COVID Safe"
+                    false -> null // "COVID Vulnerable"
                     null -> "Unable to evaluate"
                 }
                 withContext(Dispatchers.Main){
                     _binding?.let {
-                        //setTextView(binding.tvResultStatus, statusStr, binding.tvResultStatus)
+                        setTextView(binding.tvResultStatus, statusStr, binding.tvResultStatus)
                     }
                 }
             }
@@ -208,12 +209,12 @@ class ResultFragment : Fragment() {
         }
     }
 
-    private fun open(file: String): InputStream {
-        return resources.assets.open(file)
+    private fun resolveQR(qr: String): QRDecoder.VerificationResult {
+        return QRDecoder(TrustRegistrySingleton.get()).decode(qr)
     }
 
-    private fun resolveQR(qr: String): QRDecoder.VerificationResult {
-        return QRDecoder(::open).decode(qr)
+    private fun open(file: String): InputStream {
+        return resources.assets.open(file)
     }
 
     fun resolveStatus(DDCC: Composition): Boolean? {

@@ -38,9 +38,9 @@
     <string name="verification_status_invalid_cose">Invalid QR</string>
     <string name="verification_status_kid_not_included">Issuer Not Found</string>
     <string name="verification_status_issuer_not_trusted">Issuer Not Trusted</string>
-    <string name="verification_status_terminated_keys">Terminated Credential</string>
-    <string name="verification_status_expired_keys">Expired Credential</string>
-    <string name="verification_status_revoked_keys">Revoked Credential</string>
+    <string name="verification_status_terminated_keys">Issuer Terminated</string>
+    <string name="verification_status_expired_keys">Issuer Expired</string>
+    <string name="verification_status_revoked_keys">Issuer Revoked</string>
     <string name="verification_status_invalid_signature">Invalid Signature</string>
     <string name="verification_status_verified">Signature Verified</string>
 </resources>

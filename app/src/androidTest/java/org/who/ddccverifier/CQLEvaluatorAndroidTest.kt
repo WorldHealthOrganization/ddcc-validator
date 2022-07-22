@@ -7,22 +7,33 @@ import org.cqframework.cql.elm.execution.VersionedIdentifier
 import org.hl7.fhir.r4.model.Bundle
 import org.hl7.fhir.r4.model.Composition
 import org.junit.Assert
+import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.opencds.cqf.cql.engine.execution.JsonCqlLibraryReader
-import org.who.ddccverifier.services.qrs.hcert.HCertVerifier
+import org.who.ddccverifier.verify.hcert.HCertVerifier
 import org.who.ddccverifier.services.cql.CQLEvaluator
 import org.who.ddccverifier.services.cql.FHIRLibraryLoader
-import org.who.ddccverifier.services.QRDecoder
-import org.who.ddccverifier.services.qrs.divoc.DivocVerifier
-import org.who.ddccverifier.services.qrs.icao.IcaoVerifier
-import org.who.ddccverifier.services.qrs.shc.SHCVerifier
+import org.who.ddccverifier.trust.pathcheck.PCFTrustRegistry
+import org.who.ddccverifier.verify.QRDecoder
+import org.who.ddccverifier.verify.divoc.DivocVerifier
+import org.who.ddccverifier.verify.icao.IcaoVerifier
+import org.who.ddccverifier.verify.shc.SHCVerifier
 import java.io.InputStream
 import java.io.StringReader
 import java.util.*
 
 @RunWith(AndroidJUnit4::class)
 class CQLEvaluatorAndroidTest {
+
+    companion object {
+        var registry = PCFTrustRegistry()
+        @BeforeClass
+        @JvmStatic fun setup() {
+            registry.init()
+            registry.addTestKeys()
+        }
+    }
 
     fun inputStream(assetName: String): InputStream? {
         return javaClass.classLoader?.getResourceAsStream(assetName)
@@ -67,7 +78,7 @@ class CQLEvaluatorAndroidTest {
     @Test
     fun evaluateDDCCPassOnWHOQR1FromQRTest() {
         val qr1 = open("WHOQR1Contents.txt")
-        val verified = HCertVerifier().unpackAndVerify(qr1)
+        val verified = HCertVerifier(registry).unpackAndVerify(qr1)
 
         Assert.assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
@@ -81,7 +92,7 @@ class CQLEvaluatorAndroidTest {
     @Test
     fun evaluateDDCCPassOnWHOQR2FromQRTest() {
         val qr1 = open("WHOQR2Contents.txt")
-        val verified = HCertVerifier().unpackAndVerify(qr1)
+        val verified = HCertVerifier(registry).unpackAndVerify(qr1)
 
         Assert.assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
@@ -95,7 +106,7 @@ class CQLEvaluatorAndroidTest {
     @Test
     fun evaluateDDCCPassOnEUQR1FromQRTest() {
         val qr1 = open("EUQR1Contents.txt")
-        val verified = HCertVerifier().unpackAndVerify(qr1)
+        val verified = HCertVerifier(registry).unpackAndVerify(qr1)
 
         Assert.assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
@@ -109,7 +120,7 @@ class CQLEvaluatorAndroidTest {
     @Test
     fun evaluateDDCCPassOnSHCQR1FromQRTest() {
         val qr1 = open("SHCQR1Contents.txt")
-        val verified = SHCVerifier().unpackAndVerify(qr1)
+        val verified = SHCVerifier(registry).unpackAndVerify(qr1)
 
         Assert.assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
@@ -123,7 +134,7 @@ class CQLEvaluatorAndroidTest {
     @Test
     fun evaluateDDCCPassOnDIVOCQR1FromQRTest() {
         val qr1 = open("DIVOCQR1Contents.txt")
-        val verified = DivocVerifier(::inputStream).unpackAndVerify(qr1)
+        val verified = DivocVerifier(registry).unpackAndVerify(qr1)
 
         Assert.assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
@@ -137,7 +148,7 @@ class CQLEvaluatorAndroidTest {
     @Test
     fun evaluateDDCCPassOnICAOQR1FromQRTest() {
         val qr1 = open("ICAOAUQR1Contents.txt")
-        val verified = IcaoVerifier().unpackAndVerify(qr1)
+        val verified = IcaoVerifier(registry).unpackAndVerify(qr1)
 
         Assert.assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 

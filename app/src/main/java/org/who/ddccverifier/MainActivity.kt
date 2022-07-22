@@ -9,7 +9,8 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import org.who.ddccverifier.databinding.ActivityMainBinding
-import org.who.ddccverifier.services.trust.TrustRegistry
+import org.who.ddccverifier.services.trust.TrustRegistrySingleton
+import org.who.ddccverifier.trust.TrustRegistry
 
 /**
  * Screen / Class flow:
@@ -85,7 +86,7 @@ class MainActivity : AuthActivity() {
     override fun backgroundInit() {
         super.backgroundInit()
         // Triggers Networking
-        TrustRegistry.init()
+        TrustRegistrySingleton.init()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
