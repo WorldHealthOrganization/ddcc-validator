@@ -24,6 +24,6 @@ interface TrustRegistry {
     )
 
     fun init()
-    fun init(customUrl: String)
+    fun init(vararg customUrls: String)
     fun resolve(framework: Framework, kid: String): TrustedEntity?
 }

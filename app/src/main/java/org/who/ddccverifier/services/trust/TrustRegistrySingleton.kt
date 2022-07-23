@@ -9,9 +9,7 @@ import org.who.ddccverifier.trust.pathcheck.PCFTrustRegistry
 object TrustRegistrySingleton {
     private val registry: TrustRegistry by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val reg = PCFTrustRegistry();
-        reg.init(BuildConfig.TRUST_REGISTRY_URL);
-        reg.addTestKeys()
-
+        reg.init(*BuildConfig.TRUST_REGISTRY_URL);
         return@lazy reg
     }
 
@@ -23,5 +21,4 @@ object TrustRegistrySingleton {
         // dummy key
         get().resolve(TrustRegistry.Framework.DCC, "MTE=")
     }
-
 }

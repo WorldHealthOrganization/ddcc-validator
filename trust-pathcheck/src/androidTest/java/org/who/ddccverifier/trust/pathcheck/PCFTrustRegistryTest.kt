@@ -9,7 +9,7 @@ class PCFTrustRegistryTest {
     companion object {
         var registry = PCFTrustRegistry()
         @BeforeClass @JvmStatic fun setup() {
-            registry.init()
+            registry.init(PCFTrustRegistry.PATHCHECK_URL, PCFTrustRegistry.PATHCHECK_TEST_URL)
         }
     }
 
