@@ -14,10 +14,6 @@
         <action
             android:id="@+id/action_HomeFragment_to_ScanFragment"
             app:destination="@id/QRScanFragment" />
-        <action
-            android:id="@+id/action_HomeFragment_to_ResultFragment"
-            app:destination="@id/QRResultFragment">
-        </action>
     </fragment>
 
     <fragment
@@ -48,6 +44,8 @@
 
         <action
             android:id="@+id/action_ResultFragment_to_HomeFragment"
-            app:destination="@id/HomeFragment" />
+            app:destination="@id/HomeFragment"
+            app:popUpTo="@id/HomeFragment"
+            app:popUpToInclusive="true"/>
     </fragment>
 </navigation>
