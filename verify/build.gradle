@@ -73,11 +73,11 @@ dependencies {
     implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.13.2'
 
     testImplementation 'junit:junit:4.13.2'
-    testImplementation project(':testcases')
+    testImplementation project(':test-resources')
     testImplementation project(":trust-pathcheck")
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
-    androidTestImplementation project(':testcases')
+    androidTestImplementation project(':test-resources')
     androidTestImplementation project(":trust-pathcheck")
 }
