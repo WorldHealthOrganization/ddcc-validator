@@ -17,6 +17,7 @@ import org.who.ddccverifier.services.*
 import org.who.ddccverifier.services.cql.CQLEvaluator
 import org.who.ddccverifier.services.cql.FHIRLibraryLoader
 import org.who.ddccverifier.services.trust.TrustRegistrySingleton
+import org.who.ddccverifier.trust.TrustRegistry
 import org.who.ddccverifier.verify.QRDecoder
 import java.io.InputStream
 
@@ -109,9 +110,14 @@ class ResultFragment : Fragment() {
             QRDecoder.Status.VERIFIED -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_verified)
         }
 
-        if (binding.tvResultTitle.text == resources.getString(R.string.verification_status_verified)) {
-            binding.tvResultHeader.background = resources.getDrawable(R.drawable.rounded_pill, null)
-            binding.tvResultSignedByIcon.setTextColor(resources.getColor(R.color.success100, null))
+        if (DDCC.status == QRDecoder.Status.VERIFIED) {
+            if (DDCC.issuer!!.scope == TrustRegistry.Scope.PRODUCTION) {
+                binding.tvResultHeader.background = resources.getDrawable(R.drawable.rounded_pill, null)
+                binding.tvResultTitle.text = resources.getString(R.string.verification_status_verified)
+            } else {
+                binding.tvResultHeader.background = resources.getDrawable(R.drawable.rounded_pill_test, null)
+                binding.tvResultTitle.text = resources.getString(R.string.verification_status_verified_test_scope)
+            }
             binding.tvResultTitleIcon.text = resources.getString(R.string.fa_check_circle_solid)
         } else {
             binding.tvResultHeader.background = resources.getDrawable(R.drawable.rounded_pill_invalid, null)
@@ -121,7 +127,10 @@ class ResultFragment : Fragment() {
 
         if (DDCC.issuer != null) {
             binding.tvResultSignedBy.text = "Signed by " + DDCC.issuer!!.displayName["en"]
-            binding.tvResultSignedByIcon.setTextColor(resources.getColor(R.color.success100, null))
+            if (DDCC.issuer!!.scope == TrustRegistry.Scope.PRODUCTION)
+                binding.tvResultSignedByIcon.setTextColor(resources.getColor(R.color.success100, null))
+            else
+                binding.tvResultSignedByIcon.setTextColor(resources.getColor(R.color.warning50, null))
             binding.tvResultSignedByIcon.text = resources.getString(R.string.fa_check_circle_solid)
         } else {
             binding.tvResultSignedBy.text = resources.getString(R.string.verification_status_invalid_signature)

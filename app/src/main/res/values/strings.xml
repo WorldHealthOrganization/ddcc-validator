@@ -43,4 +43,5 @@
     <string name="verification_status_revoked_keys">Issuer Revoked</string>
     <string name="verification_status_invalid_signature">Invalid Signature</string>
     <string name="verification_status_verified">Signature Verified</string>
+    <string name="verification_status_verified_test_scope">Signature Verified (Dev)</string>
 </resources>
