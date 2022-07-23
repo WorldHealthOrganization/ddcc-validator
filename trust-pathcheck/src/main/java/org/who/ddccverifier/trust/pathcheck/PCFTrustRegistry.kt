@@ -2,12 +2,9 @@ package org.who.ddccverifier.trust.pathcheck
 
 import android.util.Base64
 import org.bouncycastle.jce.provider.BouncyCastleProvider
-import org.bouncycastle.openssl.jcajce.JcaMiscPEMGenerator
-import org.bouncycastle.util.io.pem.PemWriter
 import org.who.ddccverifier.trust.TrustRegistry
-import java.io.StringWriter
+import java.net.URI
 import java.net.URL
-import java.security.PublicKey
 import java.security.Security
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -24,8 +21,8 @@ operator fun <T> List<T>.component8() = this[7]
 class PCFTrustRegistry : TrustRegistry {
     companion object {
         const val REPO = "https://raw.githubusercontent.com/Path-Check/trust-registry/main"
-        const val PATHCHECK_URL = "$REPO/registry_normalized.csv";
-        const val PATHCHECK_TEST_URL = "$REPO/test_registry_normalized.csv";
+        val PRODUCTION_REGISTRY = TrustRegistry.RegistryEntity(TrustRegistry.Scope.PRODUCTION, URI("$REPO/registry_normalized.csv"), null)
+        val ACCEPTANCE_REGISTRY =  TrustRegistry.RegistryEntity(TrustRegistry.Scope.ACCEPTANCE_TEST, URI("$REPO/test_registry_normalized.csv"), null)
     }
 
     // Using old java.time to keep compatibility down to Android SDK 22.
@@ -48,11 +45,9 @@ class PCFTrustRegistry : TrustRegistry {
         return "-----BEGIN PUBLIC KEY-----\n$pemB64\n-----END PUBLIC KEY-----"
     }
 
-    fun load(csvURL: String) {
-        val resultCSVStream = URL(csvURL)
-
+    fun load(registryURL: TrustRegistry.RegistryEntity) {
         // Parsing the CSV
-        val reader = resultCSVStream.openStream().bufferedReader()
+        val reader = registryURL.resolvableURI.toURL().openStream().bufferedReader()
         reader.forEachLine {
             val (
                 specName, kid, status, displayNameB64, displayLogoB64,
@@ -65,6 +60,7 @@ class PCFTrustRegistry : TrustRegistry {
                         mapOf("en" to decode(displayNameB64)),
                         decode(displayLogoB64),
                         TrustRegistry.Status.valueOf(status.uppercase()),
+                        registryURL.scope,
                         parseDate(validFromISOStr),
                         parseDate(validUntilISOStr),
                         KeyUtils.publicKeyFromPEM(wrapPem(publicKey))
@@ -77,7 +73,7 @@ class PCFTrustRegistry : TrustRegistry {
         }
     }
 
-    override fun init(vararg customUrls: String) {
+    override fun init(vararg customRegistries: TrustRegistry.RegistryEntity) {
         Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME)
         Security.addProvider(BouncyCastleProvider())
 
@@ -85,14 +81,14 @@ class PCFTrustRegistry : TrustRegistry {
             registry[it]?.clear()
         }
 
-        customUrls.forEach {
+        customRegistries.forEach {
             println("Loading TrustRegistry from $it");
             load(it)
         }
     }
 
     override fun init() {
-        init(PATHCHECK_URL)
+        init(PRODUCTION_REGISTRY)
     }
 
     override fun resolve(framework: TrustRegistry.Framework, kid: String): TrustRegistry.TrustedEntity? {

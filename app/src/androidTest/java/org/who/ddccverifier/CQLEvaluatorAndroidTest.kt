@@ -30,7 +30,7 @@ class CQLEvaluatorAndroidTest {
         var registry = PCFTrustRegistry()
         @BeforeClass
         @JvmStatic fun setup() {
-            registry.init(PCFTrustRegistry.PATHCHECK_URL, PCFTrustRegistry.PATHCHECK_TEST_URL)
+            registry.init(PCFTrustRegistry.PRODUCTION_REGISTRY, PCFTrustRegistry.ACCEPTANCE_REGISTRY)
         }
     }
 

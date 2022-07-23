@@ -24,16 +24,30 @@ android {
     buildTypes {
         debug {
             buildConfigField "String", "OPENID_SERVER_URL", "\"http://${getDevHost()}:8080/auth/realms/master/\""
-            buildConfigField "String[]", "TRUST_REGISTRY_URL",
+            buildConfigField "org.who.ddccverifier.trust.TrustRegistry.RegistryEntity[]", "TRUST_REGISTRY_URL",
                     "{ " +
-                            "\"https://raw.githubusercontent.com/Path-Check/trust-registry/main/registry_normalized.csv\", "+
-                            "\"https://raw.githubusercontent.com/Path-Check/trust-registry/main/test_registry_normalized.csv\""+
+                            "new org.who.ddccverifier.trust.TrustRegistry.RegistryEntity(" +
+                                    "org.who.ddccverifier.trust.TrustRegistry.Scope.PRODUCTION, " +
+                                    "java.net.URI.create(\"https://raw.githubusercontent.com/Path-Check/trust-registry/main/registry_normalized.csv\"), " +
+                                    "null" +
+                            "), "+
+                            "new org.who.ddccverifier.trust.TrustRegistry.RegistryEntity(" +
+                                    "org.who.ddccverifier.trust.TrustRegistry.Scope.ACCEPTANCE_TEST, " +
+                                    "java.net.URI.create(\"https://raw.githubusercontent.com/Path-Check/trust-registry/main/test_registry_normalized.csv\")" +
+                                    ", null" +
+                            ")"+
                     "}"
         }
         release {
             buildConfigField "String", "OPENID_SERVER_URL", "null"
-            buildConfigField "String[]", "TRUST_REGISTRY_URL",
-                    "{ \"https://raw.githubusercontent.com/Path-Check/trust-registry/main/registry_normalized.csv\" }"
+            buildConfigField "org.who.ddccverifier.trust.TrustRegistry.RegistryEntity[]", "TRUST_REGISTRY_URL",
+                    "{ " +
+                            "new org.who.ddccverifier.trust.TrustRegistry.RegistryEntity(" +
+                                    "org.who.ddccverifier.trust.TrustRegistry.Scope.PRODUCTION, " +
+                                    "java.net.URI.create(\"https://raw.githubusercontent.com/Path-Check/trust-registry/main/registry_normalized.csv\"), " +
+                                    "null" +
+                            ") "+
+                    "}"
 
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
