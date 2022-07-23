@@ -11,8 +11,8 @@ android {
         applicationId "org.who.ddccverifier"
         minSdk 25
         targetSdk 33
-        versionCode 19
-        versionName "0.0.19"
+        versionCode 20
+        versionName "0.0.20"
 
         buildConfigField "String", "OPENID_CLIENT_ID", "\"verifier-app\""
         buildConfigField "String", "OPENID_REDIRECT_URI", "\"${applicationId}:/redirect\""
@@ -46,7 +46,12 @@ android {
                                     "org.who.ddccverifier.trust.TrustRegistry.Scope.PRODUCTION, " +
                                     "java.net.URI.create(\"https://raw.githubusercontent.com/Path-Check/trust-registry/main/registry_normalized.csv\"), " +
                                     "null" +
-                            ") "+
+                            "), "+
+                            "new org.who.ddccverifier.trust.TrustRegistry.RegistryEntity(" +
+                                    "org.who.ddccverifier.trust.TrustRegistry.Scope.ACCEPTANCE_TEST, " +
+                                    "java.net.URI.create(\"https://raw.githubusercontent.com/Path-Check/trust-registry/main/test_registry_normalized.csv\")" +
+                                    ", null" +
+                            ")"+
                     "}"
 
             minifyEnabled false
