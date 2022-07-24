@@ -1,6 +1,5 @@
 package org.who.ddccverifier.trust.pathcheck
 
-import android.util.Base64
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.who.ddccverifier.trust.TrustRegistry
 import java.net.URI
@@ -34,7 +33,7 @@ class PCFTrustRegistry : TrustRegistry {
     });
 
     private fun decode(b64: String): String {
-        return Base64.decode(b64, Base64.DEFAULT).toString(Charsets.UTF_8)
+        return Base64.getDecoder().decode(b64).toString(Charsets.UTF_8)
     }
 
     private fun parseDate(date: String): Date? {

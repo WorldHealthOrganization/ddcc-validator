@@ -1,6 +1,5 @@
 package org.who.ddccverifier.verify.icao
 
-import android.util.Base64
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -22,6 +21,7 @@ import org.who.ddccverifier.verify.QRDecoder
 import java.io.ByteArrayInputStream
 import java.io.StringReader
 import java.lang.Exception
+import java.util.*
 
 
 class IcaoVerifier (private val registry: TrustRegistry) {
@@ -160,7 +160,7 @@ class IcaoVerifier (private val registry: TrustRegistry) {
         // Adds all Authority Key IDs if present.
         kids.addAll(chain.certificates.map {
             PrincipalUtil.getIssuerX509Principal(it as X509Certificate).getValues(BCStyle.C)[0].toString() + "#" +
-            Base64.encodeToString(getAuthorityKeyId(it), Base64.NO_WRAP)
+            Base64.getEncoder().encodeToString(getAuthorityKeyId(it))
         })
 
         return kids
@@ -203,8 +203,8 @@ class IcaoVerifier (private val registry: TrustRegistry) {
     }
 
     private fun isSame(certificate: PublicKey, issuer: PublicKey): Boolean {
-        return Base64.encodeToString(certificate.encoded, Base64.NO_WRAP)
-            .equals(Base64.encodeToString(issuer.encoded, Base64.NO_WRAP))
+        return Base64.getEncoder().encodeToString(certificate.encoded)
+            .equals(Base64.getEncoder().encodeToString(issuer.encoded))
     }
 
     private fun isSignedBy(certificate: X509Certificate, issuer: PublicKey): Boolean {
@@ -224,7 +224,7 @@ class IcaoVerifier (private val registry: TrustRegistry) {
 
     private fun verify(payload: IJson, pubKey: PublicKey): Boolean {
         return try {
-            val signature = Base64.decode(payload.sig.sigvl, Base64.URL_SAFE)
+            val signature = Base64.getUrlDecoder().decode(payload.sig.sigvl)
             val derSignature = ECDSA.transcodeSignatureToDER(signature)
             val sig = java.security.Signature.getInstance(ALGOS[payload.sig.alg], BouncyCastleProviderSingleton.getInstance())
             sig.initVerify(pubKey)

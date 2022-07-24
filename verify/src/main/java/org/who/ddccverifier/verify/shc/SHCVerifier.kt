@@ -1,6 +1,5 @@
 package org.who.ddccverifier.verify.shc
 
-import android.util.Base64
 import ca.uhn.fhir.context.FhirContext
 import ca.uhn.fhir.context.FhirVersionEnum
 import com.fasterxml.jackson.core.JsonParser
@@ -19,6 +18,7 @@ import java.security.interfaces.ECPublicKey
 import java.util.zip.Inflater
 
 import org.who.ddccverifier.verify.QRDecoder
+import java.util.*
 
 class SHCVerifier (private val registry: TrustRegistry) {
     private val URI_SCHEMA = "shc"
@@ -86,9 +86,9 @@ class SHCVerifier (private val registry: TrustRegistry) {
             val parts = token.split(".") // always returns 3 parts
 
             JWTRaw(
-                Base64.decode(parts[0], Base64.URL_SAFE),
-                Base64.decode(parts[1], Base64.URL_SAFE),
-                Base64.decode(parts[2], Base64.URL_SAFE)
+                Base64.getUrlDecoder().decode(parts[0]),
+                Base64.getUrlDecoder().decode(parts[1]),
+                Base64.getUrlDecoder().decode(parts[2])
             )
         } catch (e: Throwable) {
             return null

@@ -1,6 +1,5 @@
 package org.who.ddccverifier.trust.pathcheck
 
-import android.util.Base64
 import io.ipfs.multibase.Base58
 import org.bouncycastle.jcajce.util.BCJcaJceHelper
 import java.io.ByteArrayInputStream
@@ -15,6 +14,7 @@ import org.bouncycastle.asn1.edec.EdECObjectIdentifiers
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo
 import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey
+import java.util.*
 
 /**
  * Converts Key formats into Key objects
@@ -47,7 +47,7 @@ object KeyUtils {
     }
 
     fun ecPublicKeyFromCoordinate(x: String, y: String): PublicKey {
-        return ecPublicKeyFromCoordinate(Base64.decode(x, Base64.URL_SAFE),Base64.decode(y, Base64.URL_SAFE))
+        return ecPublicKeyFromCoordinate(Base64.getUrlDecoder().decode(x),Base64.getUrlDecoder().decode(y))
     }
 
     fun loadKeySpecFromPEM(pem: String): X509EncodedKeySpec {
@@ -111,7 +111,7 @@ object KeyUtils {
     }
 
     fun rsaPublicKeyFromModulusExponent(n: String, e: String): PublicKey {
-        return rsaPublicKeyFromModulusExponent(Base64.decode(n, Base64.URL_SAFE),Base64.decode(e, Base64.URL_SAFE))
+        return rsaPublicKeyFromModulusExponent(Base64.getUrlDecoder().decode(n),Base64.getUrlDecoder().decode(e))
     }
 
     fun eddsaFromBase58(base58: String): PublicKey {

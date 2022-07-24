@@ -6,11 +6,11 @@ import java.util.zip.InflaterInputStream
 import COSE.MessageTag
 import COSE.OneKey
 import COSE.Sign1Message
-import android.util.Base64
 import com.upokecenter.cbor.CBORObject
 import org.who.ddccverifier.verify.QRDecoder
 import org.who.ddccverifier.trust.TrustRegistry
 import java.security.PublicKey
+import java.util.*
 
 /**
  * Turns HC1 QR Codes into Fhir Objects
@@ -53,7 +53,7 @@ class HCertVerifier (private val registry: TrustRegistry) {
         val kid = input.protectedAttributes[COSE.HeaderKeys.KID.AsCBOR()]?.GetByteString()
                ?: input.unprotectedAttributes[COSE.HeaderKeys.KID.AsCBOR()]?.GetByteString()
                ?: return null
-        return Base64.encodeToString(kid, Base64.NO_WRAP)
+        return Base64.getEncoder().encodeToString(kid)
     }
 
     private fun resolveIssuer(kid: String): TrustRegistry.TrustedEntity? {

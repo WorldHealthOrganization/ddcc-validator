@@ -1,6 +1,5 @@
 package org.who.ddccverifier.verify.divoc
 
-import android.util.Base64
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import foundation.identity.jsonld.JsonLDObject
@@ -11,6 +10,7 @@ import org.who.ddccverifier.verify.QRDecoder
 import org.who.ddccverifier.verify.divoc.jsonldcrypto.RsaSignature2018withPS256Verifier
 import org.who.ddccverifier.verify.divoc.jsonldcrypto.Ed25519Signature2018Verifier
 import java.io.ByteArrayInputStream
+import java.util.*
 import java.util.zip.ZipInputStream
 
 class DivocVerifier(private val registry: TrustRegistry) {
@@ -113,7 +113,7 @@ class DivocVerifier(private val registry: TrustRegistry) {
 
     private fun prefixDecode(uri: String): ByteArray? {
         if (uri.uppercase().startsWith(URI_SCHEMA)) {
-            return Base64.decode(uri.substring(URI_SCHEMA.length), Base64.DEFAULT)
+            return Base64.getDecoder().decode(uri.substring(URI_SCHEMA.length))
         } else if (uri.uppercase().startsWith("PK")) {
             return uri.toCharArray().map { it.code.toByte() }.toByteArray()
         }
