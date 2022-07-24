@@ -9,7 +9,8 @@ class PCFTrustRegistryTest {
     companion object {
         var registry = PCFTrustRegistry()
         @BeforeClass @JvmStatic fun setup() {
-            registry.init(PCFTrustRegistry.PRODUCTION_REGISTRY, PCFTrustRegistry.ACCEPTANCE_REGISTRY)
+            registry.init(PCFTrustRegistry.PRODUCTION_REGISTRY,
+                PCFTrustRegistry.ACCEPTANCE_REGISTRY)
         }
     }
 
