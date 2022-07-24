@@ -1,20 +1,25 @@
 package org.who.ddccverifier.trust.pathcheck
 
 import io.ipfs.multibase.Base58
-import org.bouncycastle.jcajce.util.BCJcaJceHelper
-import java.io.ByteArrayInputStream
-import java.math.BigInteger
-import java.security.*
-import java.security.interfaces.ECPublicKey
-import java.security.spec.*
-import org.bouncycastle.util.io.pem.PemReader
-import java.io.StringReader
-import java.security.cert.Certificate
 import org.bouncycastle.asn1.edec.EdECObjectIdentifiers
+import org.bouncycastle.asn1.isismtt.ocsp.RequestedCertificate.certificate
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo
 import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey
+import org.bouncycastle.jcajce.util.BCJcaJceHelper
+import org.bouncycastle.openssl.jcajce.JcaMiscPEMGenerator
+import org.bouncycastle.util.io.pem.PemReader
+import org.bouncycastle.util.io.pem.PemWriter
+import java.io.ByteArrayInputStream
+import java.io.StringReader
+import java.io.StringWriter
+import java.math.BigInteger
+import java.security.*
+import java.security.cert.Certificate
+import java.security.interfaces.ECPublicKey
+import java.security.spec.*
 import java.util.*
+
 
 /**
  * Converts Key formats into Key objects
@@ -90,6 +95,18 @@ object KeyUtils {
         }
 
         throw InvalidKeyException()
+    }
+
+    fun pemFromPublicKey(pk: PublicKey): String {
+        val stringWriter = StringWriter()
+        val pemWriter = PemWriter(stringWriter)
+        try {
+            pemWriter.writeObject(JcaMiscPEMGenerator(pk))
+            pemWriter.flush()
+        } finally {
+            pemWriter.close()
+        }
+        return stringWriter.toString()
     }
 
     private fun loadPemOrNull(pem: String, loader: (String) -> PublicKey): PublicKey? {
