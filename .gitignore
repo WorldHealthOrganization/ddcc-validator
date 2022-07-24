@@ -21,9 +21,6 @@ out/
 .gradle/
 build/
 
-# Production QR Codes with sensitive private data.
-app/src/test/java/org/who/ddccverifier/QRVerifyPrivateTest.kt
-
 # Local configuration file (sdk path, etc)
 local.properties
 
