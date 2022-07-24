@@ -24,25 +24,7 @@ import java.io.StringReader
 import java.util.*
 
 @RunWith(AndroidJUnit4::class)
-class CQLEvaluatorAndroidTest {
-
-    companion object {
-        var registry = PCFTrustRegistry()
-        @BeforeClass
-        @JvmStatic fun setup() {
-            registry.init(PCFTrustRegistry.PRODUCTION_REGISTRY, PCFTrustRegistry.ACCEPTANCE_REGISTRY)
-        }
-    }
-
-    fun inputStream(assetName: String): InputStream? {
-        return javaClass.classLoader?.getResourceAsStream(assetName)
-    }
-
-    fun open(assetName: String): String {
-        return inputStream(assetName)?.bufferedReader()
-            .use { bufferReader -> bufferReader?.readText() } ?: ""
-    }
-
+class CQLEvaluatorAndroidTest: BaseTest() {
     private val fhirContext = FhirContext.forCached(FhirVersionEnum.R4)
     private val jSONParser = fhirContext.newJsonParser()
 
