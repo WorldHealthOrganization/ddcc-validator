@@ -6,6 +6,7 @@ dependencyResolutionManagement {
         jcenter() // Warning: this repository is going to shut down soon
         maven { url 'https://jitpack.io' } // for info.weboftrust:ld-signatures-java
         maven { url 'https://repo.danubetech.com/repository/maven-public/' } // for info.weboftrust:ld-signatures-java
+        maven { url = uri("https://repo.spring.io/milestone") }
     }
 }
 rootProject.name = "DDCC Verifier"
@@ -14,3 +15,4 @@ include ':verify'
 include ':trust'
 include ':trust-pathcheck'
 include ':test-resources'
+include ':web'
