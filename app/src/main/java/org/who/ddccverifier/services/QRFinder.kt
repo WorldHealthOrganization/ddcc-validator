@@ -74,7 +74,7 @@ class QRFinder(private val onQRCodeFound: (Set<String>)->Unit = { /* nop */ } ):
      */
     private fun bytesToStr(array: ByteArray?): String {
         if (array == null) return ""
-        return "B64:" + Base64.encodeToString(array, Base64.DEFAULT)
+        return "B64:" + Base64.encodeToString(array, Base64.NO_WRAP)
     }
 
     private fun barToStr(barcodes: List<Barcode>): Set<String> {
