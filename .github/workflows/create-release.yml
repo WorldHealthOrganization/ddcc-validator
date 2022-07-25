@@ -68,7 +68,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} 
           asset_path: app/build/outputs/apk/release/app-release-unsigned-signed.apk
-          asset_name: app-release-${{ github.ref }}.apk
+          asset_name: app-release-${{ github.ref_name }}.apk
           asset_content_type: application/zip
 
       - name: Upload AAB Asset
@@ -79,5 +79,5 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: app/build/outputs/bundle/release/app-release.aab
-          asset_name: app-release-${{ github.ref }}.aab
+          asset_name: app-release-${{ github.ref_name }}.aab
           asset_content_type: application/zip
