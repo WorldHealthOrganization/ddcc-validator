@@ -14,7 +14,7 @@ java {
 }
 
 tasks.create("stage") {
-    dependsOn("build", "clean")
+    dependsOn("build")
 }
 
 dependencies {
