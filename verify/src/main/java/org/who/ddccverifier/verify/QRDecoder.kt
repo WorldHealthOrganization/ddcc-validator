@@ -30,7 +30,8 @@ class QRDecoder(private val registry: TrustRegistry) {
         var status: Status,
         var contents: Composition?, // the DDCC Composition
         var issuer: TrustRegistry.TrustedEntity?,
-        var qr: String
+        var qr: String,
+        var unpacked: String?
     )
 
     fun decode(qrPayload : String): VerificationResult {
@@ -47,6 +48,6 @@ class QRDecoder(private val registry: TrustRegistry) {
             return IcaoVerifier(registry).unpackAndVerify(qrPayload)
         }
 
-        return VerificationResult(Status.NOT_SUPPORTED, null, null, qrPayload)
+        return VerificationResult(Status.NOT_SUPPORTED, null, null, qrPayload, null)
     }
 }

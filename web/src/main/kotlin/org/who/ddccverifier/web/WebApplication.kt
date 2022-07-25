@@ -63,6 +63,7 @@ class QRProcessor {
         var contents: String?, // the DDCC Composition
         var issuer: IssuerInfo?,
         var qr: String,
+        var unpacked: String?
     )
 
     @PostMapping("/verify")
@@ -73,7 +74,8 @@ class QRProcessor {
             result.status,
             fhirJsonParser.encodeResourceToString(result.contents!!),
             convert(result.issuer),
-            result.qr)
+            result.qr,
+            result.unpacked)
     }
 
     @PostMapping("/upload")
@@ -97,11 +99,13 @@ class QRProcessor {
         val result = QRDecoder(registry).decode(qrContents.text)
         val fhirBundle = fhirJsonParser.setPrettyPrint(true).encodeResourceToString(result.contents!!)
         val issuerData = jsonMapper.writeValueAsString(convert(result.issuer))
+        val unpackedPrettyPrint = jsonMapper.readTree(result.unpacked).toPrettyString();
 
         redirectAttributes.addFlashAttribute("status", result.status)
         redirectAttributes.addFlashAttribute("qr", result.qr)
         redirectAttributes.addFlashAttribute("contents", fhirBundle)
         redirectAttributes.addFlashAttribute("issuer", issuerData)
+        redirectAttributes.addFlashAttribute("unpacked", unpackedPrettyPrint)
 
         return RedirectView("showCredential")
     }

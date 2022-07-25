@@ -2,11 +2,11 @@ package org.who.ddccverifier.verify.shc
 
 import ca.uhn.fhir.context.FhirContext
 import ca.uhn.fhir.context.FhirVersionEnum
+import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.databind.DeserializationContext
-import com.fasterxml.jackson.databind.JsonDeserializer
-import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.*
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.nimbusds.jose.crypto.ECDSAVerifier
 import com.nimbusds.jwt.SignedJWT
@@ -46,6 +46,13 @@ class SHCVerifier (private val registry: TrustRegistry) {
         val credentialSubject: CredentialSubject?,
     )
 
+    data class CredentialSubject(
+        val fhirVersion: String?,
+        @JsonDeserialize(using = FHIRDeserializer::class)
+        @JsonSerialize(using = FHIRSeserializer::class)
+        val fhirBundle: Bundle?,
+    )
+
     object FHIRDeserializer : JsonDeserializer<Bundle>() {
         val fhirContext = FhirContext.forCached(FhirVersionEnum.R4)
 
@@ -55,11 +62,16 @@ class SHCVerifier (private val registry: TrustRegistry) {
         }
     }
 
-    data class CredentialSubject(
-        val fhirVersion: String?,
-        @JsonDeserialize(using = FHIRDeserializer::class)
-        val fhirBundle: Bundle?,
-    )
+    object FHIRSeserializer : JsonSerializer<Bundle>() {
+        val fhirContext = FhirContext.forCached(FhirVersionEnum.R4)
+
+        override fun serialize(value: Bundle?, gen: JsonGenerator?, serializers: SerializerProvider?) {
+            if (value != null) {
+                val str = fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(value)
+                gen?.writeRaw(":" + str)
+            }
+        }
+    }
 
     fun inflateRaw(byteArray: ByteArray): ByteArray {
         val decompresser = Inflater(true)
@@ -181,25 +193,28 @@ class SHCVerifier (private val registry: TrustRegistry) {
 
     fun unpackAndVerify(uri: String): QRDecoder.VerificationResult {
         val hc1Decoded = prefixDecode(uri)
-        val decodedBytes = fromBase10(hc1Decoded) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_ENCODING, null, null, uri)
-        val jwtRaw = parseJWT(decodedBytes) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_ENCODING, null, null, uri)
-        val jwt = parsePayload(jwtRaw) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_COMPRESSION, null, null, uri)
-        val signedMessage = decodeSignedMessage(decodedBytes) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_SIGNING_FORMAT, null, null, uri)
+        val decodedBytes = fromBase10(hc1Decoded) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_ENCODING, null, null, uri, null)
+        val jwtRaw = parseJWT(decodedBytes) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_ENCODING, null, null, uri, null)
+        val jwt = parsePayload(jwtRaw) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_COMPRESSION, null, null, uri, null)
+
+        val unpacked = jacksonObjectMapper().writeValueAsString(jwt)
+
+        val signedMessage = decodeSignedMessage(decodedBytes) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_SIGNING_FORMAT, null, null, uri, unpacked)
 
         val contents = JWTTranslator().toFhir(jwt.payload)
 
-        val kid = getKID(jwt) ?: return QRDecoder.VerificationResult(QRDecoder.Status.KID_NOT_INCLUDED, contents, null, uri)
-        val issuer = resolveIssuer(kid) ?: return QRDecoder.VerificationResult(QRDecoder.Status.ISSUER_NOT_TRUSTED, contents, null, uri)
+        val kid = getKID(jwt) ?: return QRDecoder.VerificationResult(QRDecoder.Status.KID_NOT_INCLUDED, contents, null, uri, unpacked)
+        val issuer = resolveIssuer(kid) ?: return QRDecoder.VerificationResult(QRDecoder.Status.ISSUER_NOT_TRUSTED, contents, null, uri, unpacked)
 
         return when (issuer.status) {
-            TrustRegistry.Status.TERMINATED -> QRDecoder.VerificationResult(QRDecoder.Status.TERMINATED_KEYS, contents, issuer, uri)
-            TrustRegistry.Status.EXPIRED -> QRDecoder.VerificationResult(QRDecoder.Status.EXPIRED_KEYS, contents, issuer, uri)
-            TrustRegistry.Status.REVOKED -> QRDecoder.VerificationResult(QRDecoder.Status.REVOKED_KEYS, contents, issuer, uri)
+            TrustRegistry.Status.TERMINATED -> QRDecoder.VerificationResult(QRDecoder.Status.TERMINATED_KEYS, contents, issuer, uri, unpacked)
+            TrustRegistry.Status.EXPIRED -> QRDecoder.VerificationResult(QRDecoder.Status.EXPIRED_KEYS, contents, issuer, uri, unpacked)
+            TrustRegistry.Status.REVOKED -> QRDecoder.VerificationResult(QRDecoder.Status.REVOKED_KEYS, contents, issuer, uri, unpacked)
             TrustRegistry.Status.CURRENT ->
                 if (verify(signedMessage, issuer.publicKey))
-                    QRDecoder.VerificationResult(QRDecoder.Status.VERIFIED, contents, issuer, uri)
+                    QRDecoder.VerificationResult(QRDecoder.Status.VERIFIED, contents, issuer, uri, unpacked)
                 else
-                    QRDecoder.VerificationResult(QRDecoder.Status.INVALID_SIGNATURE, contents, issuer, uri)
+                    QRDecoder.VerificationResult(QRDecoder.Status.INVALID_SIGNATURE, contents, issuer, uri, unpacked)
         }
     }
 }
