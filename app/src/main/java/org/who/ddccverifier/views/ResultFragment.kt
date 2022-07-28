@@ -97,6 +97,7 @@ class ResultFragment : Fragment() {
         binding.tvResultHeader.visibility = TextView.VISIBLE
 
         when (DDCC.status) {
+            QRDecoder.Status.NOT_FOUND -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_not_found)
             QRDecoder.Status.NOT_SUPPORTED -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_base45)
             QRDecoder.Status.INVALID_ENCODING -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_base45)
             QRDecoder.Status.INVALID_COMPRESSION -> binding.tvResultTitle.text = resources.getString(R.string.verification_status_invalid_zip)
