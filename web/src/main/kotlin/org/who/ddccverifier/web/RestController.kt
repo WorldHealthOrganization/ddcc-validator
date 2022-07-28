@@ -16,7 +16,7 @@ import java.io.ByteArrayInputStream
 import javax.imageio.ImageIO
 
 @RestController
-class RestProcessor {
+class RestController {
     companion object {
         var registry = PCFTrustRegistry().apply {
             init(PCFTrustRegistry.PRODUCTION_REGISTRY, PCFTrustRegistry.ACCEPTANCE_REGISTRY)

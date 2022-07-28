@@ -31,8 +31,10 @@ GET http://localhost:8080/
 
 
 
-curl -X PUT URL https://ddcc-validator.pathcheck.org/verify --header 'Content-Type: multipart/form-data; --data-binary @QRCode.png
-
 curl --form file='@QRCode.png' https://ddcc-validator.pathcheck.org/findAndVerify
 
 curl --form file='@QRCode.png' http://localhost:8080/findAndVerify
+
+curl -X POST --location "http://localhost:8080/verify" -H "Content-Type: application/json" -d "{ \"uri\": \"HC1:6BF6W1SX77XS%20KHH3QH0 8KQLRM86427%NFPT*N2ZNC1R6A-LGN84TEZPF5DQPL9V:JNJMQ82$ OJU3%2SUXT Y1I-0Z+GC:UW+12YE3L3PE7E8TK5MNBPGEVQR3J:DDJL:/SQ0V9L7U6IS2MQF9-Q16UG$QVW6C8AK9FHVUD%RNM3G9$EERHCVAY0QZJ8ZEA1UG4GFJ LIG4ABGKMKE1TO58NP8G50IAIF8D55RXOQNYH4ZD4YQZZIFF6+9B-DBUFGW/B S3K-OQ+11YMCE42998UII7CICK 8M398XQNWBT5DB5 C0P8 :NZ372DB3UGYVH7KSI-RKYLUNH43DL*2YR5+-DVNAFKGW+13%R+POHWBB42B:2M59YNR0B0%VODGQ+SGF1M* AUKKKSI6G43QBA/O+GH1 2Z%M200.D1%+QWZ14HC*MT6.KC8M%2LKDVV*NS*SM$8*NQ/MCYRC70CV$BWQL%V28NJEYUG*N7PGQGDS+F0:BH2GS0BEXBEA6+/GZYQPK2B2AQWNYNPZ*N8DSK/V%LFS8VIDSM*36EV JSO0T%5FCGW9US8BQV$VH QE2GZ%U75EEJH\" }"
+
+curl -X POST --location "http://localhost:8080/verify" -H "Content-Type: application/json" -d "{ \"uri\": \"test\" }"
