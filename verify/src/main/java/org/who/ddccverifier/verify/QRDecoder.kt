@@ -13,6 +13,7 @@ import java.io.InputStream
  */
 class QRDecoder(private val registry: TrustRegistry) {
     enum class Status {
+        NOT_FOUND, // QR not found in the Image
         NOT_SUPPORTED, // QR Standard not supported by this algorithm
         INVALID_ENCODING, // could not decode Base45 for DCC, Base10 for SHC,
         INVALID_COMPRESSION, // could not decompress the byte array
