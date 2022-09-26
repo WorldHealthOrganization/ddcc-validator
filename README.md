@@ -72,7 +72,7 @@ Make sure to have the following pre-requisites installed:
 
 Fork and clone this repository and import into Android Studio
 ```bash
-git clone git@github.com:Path-Check/who-verifier-app.git
+git clone https://github.com/WorldHealthOrganization/ddcc-validator.git
 ```
 
 Use one of the Android Studio builds to install and run the app in your device or a simulator.
@@ -170,13 +170,13 @@ keytool -genkey -v -keystore <my-release-key.keystore> -alias <alias_name> -keya
 3. Change the `versionCode` and `versionName` on `app/build.gradle`
 4. Commit and push. 
 5. Tag the commit with `v{x.x.x}`
-6. Let the [Create Release GitHub Action](https://github.com/Path-Check/who-verifier-app/actions/workflows/create-release.yml) build a new `aab` file. 
+6. Let the [Create Release GitHub Action](https://github.com/WorldHealthOrganization/ddcc-validator/actions/workflows/create-release.yml) build a new `aab` file. 
 7. Add your CHANGE LOG to the description of the new release
 8. Download the `aab` file and upload it to the` PlayStore. 
 
 # Contributing
 
-[Issues](https://github.com/Path-Check/who-verifier-app/issues) and [pull requests](https://github.com/Path-Check/who-verifier-app/pulls) are very welcome.
+[Issues](https://github.com/WorldHealthOrganization/ddcc-validator/issues) and [pull requests](https://github.com/WorldHealthOrganization/ddcc-validator/pulls) are very welcome.
 
 # License
 

@@ -34,7 +34,7 @@ Users can either pass the picture to find the QR Code or find the QR code themse
 
 The output includes stage-by-stage information of the verification process:
 
-- "status" -> Error codes defined [here](https://github.com/Path-Check/who-verifier-app/blob/main/verify/src/main/java/org/who/ddccverifier/verify/QRDecoder.kt)
+- "status" -> Error codes defined [here](https://github.com/WorldHealthOrganization/ddcc-validator/blob/main/verify/src/main/java/org/who/ddccverifier/verify/QRDecoder.kt)
 - "qr" -> the value in the QR. if the QR is binary (DIVOC), it outputs a Base64 of the binary content. 
 - "unpacked" -> the best representation of the contents as expected by each specification
 - "contents" -> the resulting FHIR Composition 
@@ -71,7 +71,7 @@ Make sure to have the following pre-requisites installed:
 
 Fork and clone this repository and import into Android Studio
 ```bash
-git clone git@github.com:Path-Check/who-verifier-app.git
+git clone https://github.com/WorldHealthOrganization/ddcc-validator.git
 ```
 
 Use one of the Android Studio builds to install and run the app in your device or a simulator.
