@@ -87,5 +87,4 @@ It will start spring boot server and run on port 8080
 ## Testing
 ```bash
 ./gradlew test
-./gradlew connectedAndroidTest
 ```
