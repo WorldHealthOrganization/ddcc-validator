@@ -85,6 +85,7 @@ android {
             resources.srcDirs += ['src/main/assets']
         }
     }
+    namespace 'org.who.ddccverifier'
 }
 
 dependencies {
@@ -152,7 +153,7 @@ dependencies {
         exclude group: 'ca.uhn.hapi.fhir', module: 'hapi-fhir-structures-r5'                // Do not import FHIR
         exclude group: 'ca.uhn.hapi.fhir', module: 'hapi-fhir-validation-resources-r5'      // Do not import FHIR
         exclude group: 'javax.inject', module: 'javax.inject'                               // Do not import FHIR
-        exclude group: 'org.fhir', module: 'ucum'
+        exclude group: 'xpp3', module: 'xpp3'
     }
 
     // Tests outside Android can process CQL.

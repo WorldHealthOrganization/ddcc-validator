@@ -186,7 +186,7 @@ class WHO2FHIR {
         }
     }
 
-    fun run(DDCC: CBORObject): Composition {
+    fun run(DDCC: CBORObject): Bundle {
         val myPatient = Patient().apply{
             name = listOfNotNull(parseHumanName(DDCC["name"]))
             identifier = listOfNotNull(parseIdentifier(DDCC["identifier"]))
@@ -248,15 +248,15 @@ class WHO2FHIR {
             )
         }
 
-        // Is this really necessary? Why aren't these objects part of contained to start with?
-        myComposition.addContained(myPatient)
-        myImmunization?.let { myComposition.addContained(myImmunization) }
-        myTestResult?.let {
-            myComposition.addContained(myTestResult)
-            myComposition.addContained(myTestResult.encounter.resource as Encounter)
-        }
-        myRecommendation?.let { myComposition.addContained(myRecommendation) }
+        val b = Bundle()
+        b.type = Bundle.BundleType.TRANSACTION
+        b.addEntry().resource = myComposition
+        b.addEntry().resource = myPatient
+        myImmunization?.let { b.addEntry().resource = it }
+        myTestResult?.let { b.addEntry().resource = it }
+        myTestResult?.let { b.addEntry().resource = it.encounter.resource as Encounter }
+        myRecommendation?.let { b.addEntry().resource = it }
 
-        return myComposition
+        return b
     }
 }

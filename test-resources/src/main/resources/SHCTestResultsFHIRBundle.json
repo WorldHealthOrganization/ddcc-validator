@@ -1,0 +1,98 @@
+{
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "entry": [ {
+    "resource": {
+      "resourceType": "Composition",
+      "type": {
+        "coding": [ {
+          "system": "http://loinc.org",
+          "code": "82593-5",
+          "display": "Immunization summary report"
+        } ]
+      },
+      "category": [ {
+        "coding": [ {
+          "code": "ddcc-vs"
+        } ]
+      } ],
+      "subject": {
+        "reference": "Patient/resource:0"
+      },
+      "author": [ {
+        "reference": "Organization/43293785-70d2-4cbe-8ecf-30b947fd45d5"
+      } ],
+      "title": "International Certificate of Vaccination or Prophylaxis",
+      "event": [ {
+        "period": {
+          "start": "2022-05-17"
+        }
+      } ],
+      "section": [ {
+        "code": {
+          "coding": [ {
+            "system": "http://loinc.org",
+            "code": "30954-2",
+            "display": "Results (Diagnostic findings)"
+          } ]
+        },
+        "author": [ {
+          "reference": "Organization/43293785-70d2-4cbe-8ecf-30b947fd45d5"
+        } ],
+        "entry": [ {
+          "reference": "Observation/43293785-70d2-4cbe-8ecf-30b947fd45d5"
+        } ]
+      } ]
+    }
+  }, {
+    "resource": {
+      "resourceType": "Organization",
+      "id": "43293785-70d2-4cbe-8ecf-30b947fd45d5",
+      "identifier": [ {
+        "value": "https://healthcard.walgreens.com"
+      } ]
+    }
+  }, {
+    "resource": {
+      "resourceType": "Patient",
+      "id": "resource:0",
+      "name": [ {
+        "family": "Mandel",
+        "given": [ "Joshua" ]
+      } ],
+      "birthDate": "1982-10-26"
+    }
+  }, {
+    "resource": {
+      "resourceType": "Observation",
+      "id": "resource:1",
+      "meta": {
+        "security": [ {
+          "system": "https://smarthealth.cards/ial",
+          "code": "IAL2"
+        } ]
+      },
+      "status": "final",
+      "code": {
+        "coding": [ {
+          "system": "http://loinc.org",
+          "code": "94534-5"
+        } ]
+      },
+      "subject": {
+        "reference": "Patient/resource:0"
+      },
+      "effectiveDateTime": "2022-05-17T21:07:44.000Z",
+      "performer": [ {
+        "display": "Abbott"
+      } ],
+      "valueCodeableConcept": {
+        "coding": [ {
+          "system": "http://snomed.info/sct",
+          "code": "260415000",
+          "display": "Negative"
+        } ]
+      }
+    }
+  } ]
+}

@@ -99,7 +99,7 @@ class JsonLDTranslator {
         }
     }
 
-    fun toFhir(vc: DivocVerifier.W3CVC): Composition {
+    fun toFhir(vc: DivocVerifier.W3CVC): Bundle {
         val myPatient = Patient().apply{
             id = vc.credentialSubject.refId
             name = listOfNotNull(HumanName().apply {
@@ -204,13 +204,14 @@ class JsonLDTranslator {
             })
         }
 
-        // Is this really necessary? Why aren't these objects part of contained to start with?
-        myComposition.addContained(myPatient)
-
+        val b = Bundle()
+        b.type = Bundle.BundleType.TRANSACTION
+        b.addEntry().resource = myComposition
+        b.addEntry().resource = myPatient
         for (imm in immunizations) {
-            myComposition.addContained(imm as Resource)
+            b.addEntry().resource = imm
         }
 
-        return myComposition
+        return b
     }
 }

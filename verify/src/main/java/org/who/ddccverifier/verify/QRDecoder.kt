@@ -1,5 +1,6 @@
 package org.who.ddccverifier.verify
 
+import org.hl7.fhir.r4.model.Bundle
 import org.hl7.fhir.r4.model.Composition
 import org.who.ddccverifier.verify.divoc.DivocVerifier
 import org.who.ddccverifier.verify.hcert.HCertVerifier
@@ -29,7 +30,7 @@ class QRDecoder(private val registry: TrustRegistry) {
 
     data class VerificationResult (
         var status: Status,
-        var contents: Composition?, // the DDCC Composition
+        var contents: Bundle?, // the DDCC Composition
         var issuer: TrustRegistry.TrustedEntity?,
         var qr: String,
         var unpacked: String?

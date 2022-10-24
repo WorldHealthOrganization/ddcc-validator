@@ -9,19 +9,19 @@ import java.util.*
  */
 class JWTTranslator {
 
-    fun getPatient(payload: SHCVerifier.JWTPayload): Patient {
+    fun getPatient(payload: JWTPayload): Patient {
         return payload.vc?.credentialSubject?.fhirBundle?.entry
             ?.filter { it -> it.resource.fhirType() == "Patient" }
             ?.first()?.resource as Patient
     }
 
-    fun getImmunizations(payload: SHCVerifier.JWTPayload): List<Resource> {
+    fun getImmunizations(payload: JWTPayload): List<Resource> {
         return payload.vc?.credentialSubject?.fhirBundle?.entry
             ?.filter { it -> it.resource.fhirType() == "Immunization" }
             ?.map {it -> it.resource} ?: listOf()
     }
 
-    fun getObservations(payload: SHCVerifier.JWTPayload): List<Resource> {
+    fun getObservations(payload: JWTPayload): List<Resource> {
         return payload.vc?.credentialSubject?.fhirBundle?.entry
             ?.filter { it -> it.resource.fhirType() == "Observation" }
             ?.map {it -> it.resource} ?: listOf()
@@ -32,14 +32,14 @@ class JWTTranslator {
         return DateTimeType(Date((date*1000).toLong()), TemporalPrecisionEnum.DAY)
     }
 
-    fun toFhir(payload: SHCVerifier.JWTPayload): Composition {
+    fun toFhir(payload: JWTPayload): Bundle {
         val myPatient = getPatient(payload)
         val myImmunizations = getImmunizations(payload)
         val myObservations = getObservations(payload)
 
         val organization = Organization().apply {
             identifier = listOf(Identifier().apply {
-                value = payload.iss
+                value = payload.iss.toString()
             })
         }
 
@@ -54,19 +54,13 @@ class JWTTranslator {
         }
 
         val myComposition = Composition().apply {
-            id = payload.jti
+            id = payload.jti.toString()
             type = CodeableConcept(Coding("http://loinc.org", "82593-5", "Immunization summary report"))
             category = listOf(CodeableConcept(Coding().apply {
                 code = "ddcc-vs"
             }))
             subject = Reference(myPatient)
             title = "International Certificate of Vaccination or Prophylaxis"
-            event = listOf(Composition.CompositionEventComponent().apply {
-                period = Period().apply {
-                    startElement = parseDateType(payload.nbf)
-                    endElement = parseDateType(payload.exp)
-                }
-            })
             author = listOf(Reference(organization))
             section = listOfNotNull(
                 if (immunizations.isEmpty()) null else Composition.SectionComponent().apply {
@@ -80,21 +74,19 @@ class JWTTranslator {
                     entry = observations
                 }
             )
-
-
         }
 
-        // Is this really necessary? Why aren't these objects part of contained to start with?
-        myComposition.addContained(myPatient)
-
+        val b = Bundle()
+        b.type = Bundle.BundleType.TRANSACTION
+        b.addEntry().resource = myComposition
+        b.addEntry().resource = myPatient
         for (imm in myImmunizations) {
-            myComposition.addContained(imm)
+            b.addEntry().resource = imm
         }
-
         for (obs in myObservations) {
-            myComposition.addContained(obs)
+            b.addEntry().resource = obs
         }
 
-        return myComposition
+        return b
     }
 }

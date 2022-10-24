@@ -10,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import kotlinx.coroutines.*
 import org.cqframework.cql.elm.execution.VersionedIdentifier
+import org.hl7.fhir.instance.model.api.IBaseBundle
 import org.hl7.fhir.r4.model.Composition
 import org.who.ddccverifier.R
 import org.who.ddccverifier.databinding.FragmentResultBinding
@@ -142,7 +143,7 @@ class ResultFragment : Fragment() {
         if (DDCC.contents != null) {
             binding.tvResultCard.visibility = TextView.VISIBLE
 
-            val card = DDCCFormatter().run(DDCC.contents!!)
+            val card = DDCCFormatter().run(DDCC.contents!!.entry.filterIsInstance<Composition>().first())
 
             // Credential
             setTextView(binding.tvResultScanDate, card.cardTitle, binding.tvResultScanDate)
@@ -181,7 +182,7 @@ class ResultFragment : Fragment() {
         }
     }
 
-    fun showStatus(DDCC: Composition) = runBlocking {
+    fun showStatus(DDCC: IBaseBundle) = runBlocking {
         val viewModelJob = Job()
         val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
@@ -227,7 +228,7 @@ class ResultFragment : Fragment() {
         return resources.assets.open(file)
     }
 
-    fun resolveStatus(DDCC: Composition): Boolean? {
+    fun resolveStatus(DDCC: IBaseBundle): Boolean? {
         // Might be slow
         return try {
              CQLEvaluator(FHIRLibraryLoader(::open)).resolve(

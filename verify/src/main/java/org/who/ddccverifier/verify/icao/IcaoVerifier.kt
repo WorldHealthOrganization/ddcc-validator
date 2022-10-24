@@ -16,6 +16,7 @@ import org.bouncycastle.asn1.x500.style.BCStyle
 import org.bouncycastle.jcajce.util.BCJcaJceHelper
 import org.bouncycastle.jce.PrincipalUtil
 import org.bouncycastle.util.io.pem.PemReader
+import org.who.ddccverifier.map.icao.ICAO2FHIR
 import org.who.ddccverifier.trust.TrustRegistry
 import org.who.ddccverifier.verify.QRDecoder
 import java.io.ByteArrayInputStream
@@ -32,98 +33,6 @@ class IcaoVerifier (private val registry: TrustRegistry) {
         "ES512" to "SHA512withECDSA"
     )
 
-    data class IJson(
-        val data: Data,
-        val sig: Signature,
-    )
-
-    data class Data(
-        val hdr: Header,
-        val msg: Message,
-    )
-
-    data class Header(
-        @JsonProperty("is")
-        val iss: String, // Issuer
-        val t: String,  // Type "icao.test", "icao.vacc",
-        val v: Int,      // Version
-    )
-
-    data class Message(
-        val pid: Patient?,
-        // For Vaccination Events
-        val uvci: String?,
-        val ve: List<VaccinationEvent>?,
-
-        // For Test REsults
-        val ucti: String?,
-        val sp: ServiceProvider?,
-        val dat: DateTimeTestReport?,
-        val tr: TestResult?,
-        val opt: String?, // Optional DataField
-    )
-
-    data class Patient(
-        val dob: String?,
-        val i: String?, // Identifier (Passport Number)
-        val n: String?, // Name
-        val sex: String?, // Doc 9303-4 Section 4.1.1.1 – Visual Inspection Zone M or F)
-        val dt: String?, // Document Type:
-                        // P – Passport (Doc 9303-4)
-                        // A – ID Card (Doc 9303-5)
-                        // C – ID Card (Doc 9303-5)
-                        // I – ID Card Doc 9303-5)
-                        // AC - Crew Member Certificate (Doc 9303-5)
-                        // V – Visa (Doc 9303-7)
-                        // D – Driving License (ISO18013-1)
-        val dn: String?, // Document Number
-        val ai: String?, // Additional Identifier
-    )
-
-    data class VaccinationEvent(
-        val des: String?,  // Prophilaxis // (http://id.who.int/icd/entity/164949870)
-        val dis: String?,  // Diesease or Agent Targeted (ICD-11)
-        val nam: String?,  // Vaccine Brand
-        val vd: List<VaccinationDetails>?,
-    )
-
-    data class VaccinationDetails(
-        val adm: String?,  // Administering Center
-        val ctr: String?,  // Country AUS
-        val dvc: String?,  // Date of Vaccination
-        val lot: String?,  // Lot #
-        val seq: Int?,      // Dose Sequence
-    )
-
-    data class ServiceProvider(
-        val spn: String?,  // Name of the Service Provider
-        val ctr: String?,  // Country of the Test
-        val cd: Contact?,  // Contact Info
-    )
-
-    data class Contact (
-        val p: String?, // phone
-        val e: String?, // email
-        val a: String?, // address
-    )
-
-    data class DateTimeTestReport(
-        val sc: String?,  // Specimen Collection Time
-        val ri: String?,  // Report Issuance Time
-    )
-
-    data class TestResult(
-        val tc: String?,  // Test Type (molecular(PCR), molecular(other), antigen, antibody)
-        val r: String?,  // Results (positive, negative, normal, abnormal
-        val m: String?,  // Sampling Method nasopharyngeal, oropharyngeal, saliva, blood, other
-    )
-
-    data class Signature(
-        val alg: String,
-        val cer: String,
-        val sigvl: String,
-    )
-
     fun unpack(uri: String): String {
         return uri
     }
@@ -132,6 +41,18 @@ class IcaoVerifier (private val registry: TrustRegistry) {
         return try {
             val mapper = jacksonObjectMapper()
             mapper.readValue(iJson, IJson::class.java)
+        } catch (e: Throwable) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    private fun getData(iJson: String?): String? {
+        return try {
+            val mapper = jacksonObjectMapper()
+            val tree = mapper.readTree(iJson)["data"]
+            mapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
+            mapper.writeValueAsString(tree)
         } catch (e: Throwable) {
             e.printStackTrace()
             null
@@ -152,7 +73,7 @@ class IcaoVerifier (private val registry: TrustRegistry) {
      * Produces a chain of certificate ID where index 0 is the certificate found int the QR.
      */
     private fun getKIDs(payload: IJson): List<String>? {
-        val cert = getCertificate(payload.sig.cer) ?: return null
+        val cert = getCertificate(payload.sig.cer.toString()) ?: return null
         val cf: CertificateFactory = CertificateFactory.getInstance("X.509")
         val chain = cf.generateCertPath(listOf(cert))
 
@@ -180,11 +101,9 @@ class IcaoVerifier (private val registry: TrustRegistry) {
         }
     }
 
-    private fun canonicalizePayload(json: Data): ByteArray? {
+    private fun canonicalizePayload(json: String?): ByteArray? {
         return try {
-            val mapper = jacksonObjectMapper()
-            mapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
-            JsonCanonicalizer(mapper.writeValueAsString(json)).encodedUTF8
+            JsonCanonicalizer(json).encodedUTF8
         } catch (e: Throwable) {
             e.printStackTrace()
             null
@@ -222,13 +141,13 @@ class IcaoVerifier (private val registry: TrustRegistry) {
             || isSignedBy(certificate, issuer.publicKey)
     }
 
-    private fun verify(payload: IJson, pubKey: PublicKey): Boolean {
+    private fun verify(payload: IJson, data: String?, pubKey: PublicKey): Boolean {
         return try {
-            val signature = Base64.getUrlDecoder().decode(payload.sig.sigvl)
+            val signature = Base64.getUrlDecoder().decode(payload.sig.sigvl.toString())
             val derSignature = ECDSA.transcodeSignatureToDER(signature)
-            val sig = java.security.Signature.getInstance(ALGOS[payload.sig.alg], BouncyCastleProviderSingleton.getInstance())
+            val sig = java.security.Signature.getInstance(ALGOS[payload.sig.alg.toString()], BouncyCastleProviderSingleton.getInstance())
             sig.initVerify(pubKey)
-            sig.update(canonicalizePayload(payload.data))
+            sig.update(canonicalizePayload(data))
             return sig.verify(derSignature)
         } catch (e: Throwable) {
             e.printStackTrace()
@@ -238,9 +157,9 @@ class IcaoVerifier (private val registry: TrustRegistry) {
 
     fun unpackAndVerify(qr: String): QRDecoder.VerificationResult {
         val iJSON = parsePayload(qr) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_ENCODING, null, null, qr, qr)
-        val certificate = getCertificate(iJSON.sig.cer) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_SIGNING_FORMAT, null, null, qr, qr)
+        val certificate = getCertificate(iJSON.sig.cer.toString()) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_SIGNING_FORMAT, null, null, qr, qr)
 
-        val contents = IJsonTranslator().toFhir(iJSON)
+        val contents = ICAO2FHIR().run(iJSON)
 
         val kids = getKIDs(iJSON) ?: return QRDecoder.VerificationResult(QRDecoder.Status.KID_NOT_INCLUDED, contents, null, qr, qr)
         val issuer = resolveIssuer(kids, certificate) ?: return QRDecoder.VerificationResult(QRDecoder.Status.ISSUER_NOT_TRUSTED, contents, null, qr, qr)
@@ -250,7 +169,7 @@ class IcaoVerifier (private val registry: TrustRegistry) {
             TrustRegistry.Status.EXPIRED -> QRDecoder.VerificationResult(QRDecoder.Status.EXPIRED_KEYS, contents, issuer, qr, qr)
             TrustRegistry.Status.REVOKED -> QRDecoder.VerificationResult(QRDecoder.Status.REVOKED_KEYS, contents, issuer, qr, qr)
             TrustRegistry.Status.CURRENT ->
-                if (verify(iJSON, certificate.publicKey))
+                if (verify(iJSON, getData(qr), certificate.publicKey))
                     QRDecoder.VerificationResult(QRDecoder.Status.VERIFIED, contents, issuer, qr, qr)
                 else
                     QRDecoder.VerificationResult(QRDecoder.Status.INVALID_SIGNATURE, contents, issuer, qr, qr)

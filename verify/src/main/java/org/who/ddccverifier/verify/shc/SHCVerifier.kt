@@ -3,15 +3,19 @@ package org.who.ddccverifier.verify.shc
 import ca.uhn.fhir.context.FhirContext
 import ca.uhn.fhir.context.FhirVersionEnum
 import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.databind.*
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.JsonSerializer
+import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.nimbusds.jose.crypto.ECDSAVerifier
 import com.nimbusds.jwt.SignedJWT
 import org.hl7.fhir.r4.model.Bundle
+import org.hl7.fhir.r4.model.StringType
+import org.who.ddccverifier.map.shc.SHC2FHIR
 import org.who.ddccverifier.trust.TrustRegistry
+import org.who.ddccverifier.utils.FHIRLogical
 import java.io.ByteArrayOutputStream
 import java.security.PublicKey
 import java.security.interfaces.ECPublicKey
@@ -30,48 +34,16 @@ class SHCVerifier (private val registry: TrustRegistry) {
         val zip: String?,
     )
 
-    data class JWTPayload(
-        val iss: String?,
-        val sub: String?,
-        val aud: String?,
-        val exp: Double?, // some idiots use floating point
-        val nbf: Double?, // some idiots use floating point
-        val iat: Double?, // some idiots use floating point
-        val jti: String?,
-        val vc: VC?,
+    data class JWT(
+        val header: JWTHeader,
+        val payload: JWTPayload
     )
 
-    data class VC(
-        val type: List<String>?,
-        val credentialSubject: CredentialSubject?,
+    data class JWTRaw(
+        val header: ByteArray,
+        val payload: ByteArray,
+        val verified: ByteArray,
     )
-
-    data class CredentialSubject(
-        val fhirVersion: String?,
-        @JsonDeserialize(using = FHIRDeserializer::class)
-        @JsonSerialize(using = FHIRSeserializer::class)
-        val fhirBundle: Bundle?,
-    )
-
-    object FHIRDeserializer : JsonDeserializer<Bundle>() {
-        val fhirContext = FhirContext.forCached(FhirVersionEnum.R4)
-
-        override fun deserialize(p: JsonParser, ctxt: DeserializationContext): Bundle {
-            val node = p.readValueAsTree<JsonNode>()
-            return fhirContext.newJsonParser().parseResource(node.toPrettyString()) as Bundle
-        }
-    }
-
-    object FHIRSeserializer : JsonSerializer<Bundle>() {
-        val fhirContext = FhirContext.forCached(FhirVersionEnum.R4)
-
-        override fun serialize(value: Bundle?, gen: JsonGenerator?, serializers: SerializerProvider?) {
-            if (value != null) {
-                val str = fhirContext.newJsonParser().setPrettyPrint(true).encodeResourceToString(value)
-                gen?.writeRaw(":" + str)
-            }
-        }
-    }
 
     fun inflateRaw(byteArray: ByteArray): ByteArray {
         val decompresser = Inflater(true)
@@ -86,12 +58,6 @@ class SHCVerifier (private val registry: TrustRegistry) {
         outputStream.close()
         return outputStream.toByteArray()
     }
-
-    data class JWTRaw(
-        val header: ByteArray,
-        val payload: ByteArray,
-        val verified: ByteArray,
-    )
 
     private fun parseJWT(token: String): JWTRaw? {
         return try {
@@ -113,7 +79,7 @@ class SHCVerifier (private val registry: TrustRegistry) {
             val header = mapper.readValue(jwt.header.toString(Charsets.UTF_8), JWTHeader::class.java)
             var payloadRaw = jwt.payload
 
-            if (header.zip.equals("DEF")) {
+            if (header.zip.toString().equals("DEF")) {
                 payloadRaw = inflateRaw(jwt.payload)
             }
 
@@ -121,14 +87,10 @@ class SHCVerifier (private val registry: TrustRegistry) {
 
             JWT(header, payload)
         } catch (e: Throwable) {
+            e.printStackTrace()
             return null
         }
     }
-
-    data class JWT(
-        val header: JWTHeader,
-        val payload: JWTPayload
-    )
 
     private fun fromBase10(base10: String): String? {
         return try {
@@ -191,17 +153,39 @@ class SHCVerifier (private val registry: TrustRegistry) {
         }
     }
 
+    /**
+     * avoids using the content parsed and converted to objects
+     */
+    fun originalContents(jwt: JWTRaw): String {
+        val mapper = jacksonObjectMapper()
+
+        val headerStr = jwt.header.toString(Charsets.UTF_8);
+        val originalHeader = mapper.readTree(headerStr)
+
+        var payloadRaw = jwt.payload
+        if (originalHeader["zip"].toString().contains("DEF")) {
+            payloadRaw = inflateRaw(jwt.payload)
+        }
+        val originalPayload = mapper.readTree(payloadRaw)
+
+        var root = mapper.createObjectNode()
+        root.put("header", originalHeader)
+        root.put("body", originalPayload)
+
+        return mapper.writeValueAsString(root)
+    }
+
     fun unpackAndVerify(uri: String): QRDecoder.VerificationResult {
         val hc1Decoded = prefixDecode(uri)
         val decodedBytes = fromBase10(hc1Decoded) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_ENCODING, null, null, uri, null)
         val jwtRaw = parseJWT(decodedBytes) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_ENCODING, null, null, uri, null)
         val jwt = parsePayload(jwtRaw) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_COMPRESSION, null, null, uri, null)
 
-        val unpacked = jacksonObjectMapper().writeValueAsString(jwt)
+        val unpacked = originalContents(jwtRaw)
 
         val signedMessage = decodeSignedMessage(decodedBytes) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_SIGNING_FORMAT, null, null, uri, unpacked)
 
-        val contents = JWTTranslator().toFhir(jwt.payload)
+        val contents = SHC2FHIR().run(jwt.payload)
 
         val kid = getKID(jwt) ?: return QRDecoder.VerificationResult(QRDecoder.Status.KID_NOT_INCLUDED, contents, null, uri, unpacked)
         val issuer = resolveIssuer(kid) ?: return QRDecoder.VerificationResult(QRDecoder.Status.ISSUER_NOT_TRUSTED, contents, null, uri, unpacked)

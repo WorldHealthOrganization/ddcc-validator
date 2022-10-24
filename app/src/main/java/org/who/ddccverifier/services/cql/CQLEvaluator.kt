@@ -32,17 +32,9 @@ class CQLEvaluator(private val libraryLoader: FHIRLibraryLoader) {
         return CompositeDataProvider(LazyLoaderR4FhirModelResolver, bundleRetrieveProvider)
     }
 
-    fun run(library: Library, asset: Composition): Context {
+    fun run(library: Library, asset: Bundle): Context {
         libraryLoader.add(library)
         return run(library.identifier, asset)
-    }
-
-    fun run(libraryIdentifier: VersionedIdentifier, asset: Composition): Context {
-        val bundle = Bundle()
-        asset.contained.forEach {
-            bundle.addEntry().resource = it
-        }
-        return run(libraryIdentifier, bundle)
     }
 
     fun run(libraryIdentifier: VersionedIdentifier, assetBundle: IBaseBundle): Context {
@@ -58,7 +50,7 @@ class CQLEvaluator(private val libraryLoader: FHIRLibraryLoader) {
         return context
     }
 
-    fun resolve(expression: String, libraryIdentifier: VersionedIdentifier, asset: Composition): Any? {
+    fun resolve(expression: String, libraryIdentifier: VersionedIdentifier, asset: IBaseBundle): Any? {
         val context = run(libraryIdentifier, asset)
         return context.resolveExpressionRef(expression).evaluate(context)
     }
