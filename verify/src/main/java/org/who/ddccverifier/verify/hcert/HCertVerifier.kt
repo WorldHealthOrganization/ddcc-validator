@@ -6,10 +6,8 @@ import java.util.zip.InflaterInputStream
 import COSE.MessageTag
 import COSE.OneKey
 import COSE.Sign1Message
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.upokecenter.cbor.CBORObject
-import org.who.ddccverifier.verify.QRDecoder
+import org.who.ddccverifier.QRDecoder
 import org.who.ddccverifier.trust.TrustRegistry
 import java.security.PublicKey
 import java.util.*
@@ -87,7 +85,8 @@ class HCertVerifier (private val registry: TrustRegistry) {
         val hc1Decoded = prefixDecode(qr)
         val decodedBytes = base45Decode(hc1Decoded) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_ENCODING, null, null, qr, null)
         val deflatedBytes = deflate(decodedBytes) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_COMPRESSION, null, null, qr, null)
-        val signedMessage = decodeSignedMessage(deflatedBytes) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_SIGNING_FORMAT, null, null, qr, null)
+        val signedMessage = decodeSignedMessage(deflatedBytes) ?: return QRDecoder.VerificationResult(
+            QRDecoder.Status.INVALID_SIGNING_FORMAT, null, null, qr, null)
 
         val unpacked = getContent(signedMessage).ToJSONString()
 

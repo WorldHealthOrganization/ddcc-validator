@@ -1,12 +1,12 @@
 package org.who.ddccverifier.verify.divoc
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import foundation.identity.jsonld.JsonLDObject
+import org.who.ddccverifier.map.divoc.DIVOC2FHIR
 import org.who.ddccverifier.trust.TrustRegistry
 import java.security.PublicKey
 
-import org.who.ddccverifier.verify.QRDecoder
+import org.who.ddccverifier.QRDecoder
 import org.who.ddccverifier.verify.divoc.jsonldcrypto.RsaSignature2018withPS256Verifier
 import org.who.ddccverifier.verify.divoc.jsonldcrypto.Ed25519Signature2018Verifier
 import java.io.ByteArrayInputStream
@@ -15,79 +15,6 @@ import java.util.zip.ZipInputStream
 
 class DivocVerifier(private val registry: TrustRegistry) {
     private val URI_SCHEMA = "B64:"
-
-    data class W3CVC(
-        @JsonProperty("@context")
-        val context: List<String>,
-        val type: List<String>,
-        val issuer: String,
-        val issuanceDate: String,  // Do not convert to Date to avoid creating precision/timezone problems
-        val nonTransferable: Boolean?,
-        val credentialSubject: CredentialSubject,
-        val evidence: List<Evidence>,
-        val proof: Proof?,
-    )
-
-    data class CredentialSubject(
-        val type: String?,
-        val id: String?,
-        val uhid: String?,
-        val refId: String?,
-        val name: String?,
-        val gender: String?,
-        val sex: String?,
-        val age: String?, //V1 // Do not convert to Date to avoid creating precision/timezone problems
-        val dob: String?, //V2 // Do not convert to Date to avoid creating precision/timezone problems
-        val nationality: String?,
-        val address: Address?,
-    )
-
-    data class Proof(
-        val type: String?,
-        val created: String?,
-        val verificationMethod: String?,
-        val proofPurpose: String?,
-        val jws: String?,
-    )
-
-    data class Address(
-        val streetAddress: String?,
-        val streetAddress2: String?,
-        val district: String?,
-        val city: String?,
-        val addressRegion: String?,
-        val addressCountry: String?,
-        val postalCode: String?,
-    )
-
-    data class Evidence(
-        val id: String?,
-        val feedbackUrl: String?,
-        val infoUrl: String?,
-        val certificateId: String?,
-        val type: List<String>?,
-        val batch: String?,
-        val vaccine: String?,
-        val manufacturer: String?,
-        val date: String?,           // Do not convert to Date to avoid creating precision/timezone problems
-        val effectiveStart: String?, // Do not convert to Date to avoid creating precision/timezone problems
-        val effectiveUntil: String?, // Do not convert to Date to avoid creating precision/timezone problems
-        val dose: Int?,
-        val totalDoses: Int?,
-        val verifier: Verifier?,
-        val facility: Facility?,
-        val icd11Code: String?,  //V2
-        val prophylaxis: String?,  //V2
-    )
-
-    data class Verifier(
-        val name: String?,
-    )
-
-    data class Facility(
-        val name: String?,
-        val address: Address?,
-    )
 
     private fun map(jsonStr: String): W3CVC? {
         return try {
@@ -165,12 +92,14 @@ class DivocVerifier(private val registry: TrustRegistry) {
 
     fun unpackAndVerify(uri: String): QRDecoder.VerificationResult {
         val array = prefixDecode(uri) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_ENCODING, null, null, uri, null)
-        val json = unzipFiles(array)?.get("certificate.json")?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_COMPRESSION, null, null, uri, null)
-        val signedMessage = buildJSonLDDocument(String(json)) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_SIGNING_FORMAT, null, null, uri, String(json))
+        val json = unzipFiles(array)?.get("certificate.json")?: return QRDecoder.VerificationResult(
+            QRDecoder.Status.INVALID_COMPRESSION, null, null, uri, null)
+        val signedMessage = buildJSonLDDocument(String(json)) ?: return QRDecoder.VerificationResult(
+            QRDecoder.Status.INVALID_SIGNING_FORMAT, null, null, uri, String(json))
 
         val mapped = map(String(json)) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_SIGNING_FORMAT, null, null, uri, String(json))
 
-        val contents = JsonLDTranslator().toFhir(mapped)
+        val contents = DIVOC2FHIR().run(mapped)
 
         val kid = getKID(signedMessage) ?: return QRDecoder.VerificationResult(QRDecoder.Status.KID_NOT_INCLUDED, contents, null, uri, String(json))
         val issuer = resolveIssuer(kid) ?: return QRDecoder.VerificationResult(QRDecoder.Status.ISSUER_NOT_TRUSTED, contents, null, uri, String(json))

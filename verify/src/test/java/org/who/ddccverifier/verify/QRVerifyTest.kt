@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.Assert.*
 import org.junit.Test
 import org.mockito.Mockito
+import org.who.ddccverifier.QRDecoder
 import org.who.ddccverifier.verify.divoc.DivocVerifier
 import org.who.ddccverifier.verify.hcert.HCertVerifier
 import org.who.ddccverifier.verify.icao.IcaoVerifier
@@ -175,7 +176,7 @@ class QRVerifyTest: BaseTest() {
 
             val json = jsonParser.encodeResourceToString(verified.contents!!)
 
-            jsonEquals(open("DIVOCQR1FHIRComposition.json"), json)
+            jsonEquals(open("DIVOCQR1FHIRBundle.json"), json)
         }
     }
 
@@ -192,7 +193,7 @@ class QRVerifyTest: BaseTest() {
 
             val json = jsonParser.encodeResourceToString(verified.contents!!)
 
-            jsonEquals(open("DIVOCJamaicaFHIRComposition.json"), json)
+            jsonEquals(open("DIVOCJamaicaFHIRBundle.json"), json)
         }
     }
 
@@ -208,7 +209,7 @@ class QRVerifyTest: BaseTest() {
 
             val json = jsonParser.encodeResourceToString(verified.contents!!)
 
-            jsonEquals(open("DIVOCIndonesiaFHIRComposition.json"), json)
+            jsonEquals(open("DIVOCIndonesiaFHIRBundle.json"), json)
         }
     }
 

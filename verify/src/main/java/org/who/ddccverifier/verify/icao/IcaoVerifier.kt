@@ -1,7 +1,6 @@
 package org.who.ddccverifier.verify.icao
 
 import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton
 import com.nimbusds.jose.crypto.impl.ECDSA
@@ -18,7 +17,7 @@ import org.bouncycastle.jce.PrincipalUtil
 import org.bouncycastle.util.io.pem.PemReader
 import org.who.ddccverifier.map.icao.ICAO2FHIR
 import org.who.ddccverifier.trust.TrustRegistry
-import org.who.ddccverifier.verify.QRDecoder
+import org.who.ddccverifier.QRDecoder
 import java.io.ByteArrayInputStream
 import java.io.StringReader
 import java.lang.Exception
@@ -157,12 +156,14 @@ class IcaoVerifier (private val registry: TrustRegistry) {
 
     fun unpackAndVerify(qr: String): QRDecoder.VerificationResult {
         val iJSON = parsePayload(qr) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_ENCODING, null, null, qr, qr)
-        val certificate = getCertificate(iJSON.sig.cer.toString()) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_SIGNING_FORMAT, null, null, qr, qr)
+        val certificate = getCertificate(iJSON.sig.cer.toString()) ?: return QRDecoder.VerificationResult(
+            QRDecoder.Status.INVALID_SIGNING_FORMAT, null, null, qr, qr)
 
         val contents = ICAO2FHIR().run(iJSON)
 
         val kids = getKIDs(iJSON) ?: return QRDecoder.VerificationResult(QRDecoder.Status.KID_NOT_INCLUDED, contents, null, qr, qr)
-        val issuer = resolveIssuer(kids, certificate) ?: return QRDecoder.VerificationResult(QRDecoder.Status.ISSUER_NOT_TRUSTED, contents, null, qr, qr)
+        val issuer = resolveIssuer(kids, certificate) ?: return QRDecoder.VerificationResult(
+            QRDecoder.Status.ISSUER_NOT_TRUSTED, contents, null, qr, qr)
 
         return when (issuer.status) {
             TrustRegistry.Status.TERMINATED -> QRDecoder.VerificationResult(QRDecoder.Status.TERMINATED_KEYS, contents, issuer, qr, qr)

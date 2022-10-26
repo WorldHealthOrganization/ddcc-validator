@@ -36,7 +36,7 @@ class StructureMapTest {
 
         val logicalObject = MyDCCLogicalModel(StringType("John"), StringType("Smith"))
 
-        val bundle = BaseMapping().run(logicalObject, mapping.byteInputStream())
+        val bundle = BaseMapper().run(logicalObject, mapping.byteInputStream())
 
         val patient = bundle.entry.get(0).resource as Patient
         assertThat(patient.active).isFalse()

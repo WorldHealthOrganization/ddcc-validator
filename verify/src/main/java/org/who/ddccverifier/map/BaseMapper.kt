@@ -8,7 +8,7 @@ import org.hl7.fhir.r4.model.Bundle
 import org.hl7.fhir.r4.utils.StructureMapUtilities
 import java.io.InputStream
 
-open class BaseMapping {
+open class BaseMapper {
     fun run(source: Base, map: InputStream): Bundle {
         val simpleWorkerContext = SimpleWorkerContext()
 

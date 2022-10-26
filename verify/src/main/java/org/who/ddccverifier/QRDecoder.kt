@@ -1,13 +1,11 @@
-package org.who.ddccverifier.verify
+package org.who.ddccverifier
 
 import org.hl7.fhir.r4.model.Bundle
-import org.hl7.fhir.r4.model.Composition
 import org.who.ddccverifier.verify.divoc.DivocVerifier
 import org.who.ddccverifier.verify.hcert.HCertVerifier
 import org.who.ddccverifier.verify.icao.IcaoVerifier
 import org.who.ddccverifier.verify.shc.SHCVerifier
 import org.who.ddccverifier.trust.TrustRegistry
-import java.io.InputStream
 
 /**
  * Finds the right processor for the QR Content and returns the DDCC Composition of that Content.

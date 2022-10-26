@@ -1,27 +1,16 @@
 package org.who.ddccverifier.verify.shc
 
-import ca.uhn.fhir.context.FhirContext
-import ca.uhn.fhir.context.FhirVersionEnum
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.JsonSerializer
-import com.fasterxml.jackson.databind.SerializerProvider
-import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.nimbusds.jose.crypto.ECDSAVerifier
 import com.nimbusds.jwt.SignedJWT
-import org.hl7.fhir.r4.model.Bundle
-import org.hl7.fhir.r4.model.StringType
 import org.who.ddccverifier.map.shc.SHC2FHIR
 import org.who.ddccverifier.trust.TrustRegistry
-import org.who.ddccverifier.utils.FHIRLogical
 import java.io.ByteArrayOutputStream
 import java.security.PublicKey
 import java.security.interfaces.ECPublicKey
 import java.util.zip.Inflater
 
-import org.who.ddccverifier.verify.QRDecoder
+import org.who.ddccverifier.QRDecoder
 import java.util.*
 
 class SHCVerifier (private val registry: TrustRegistry) {
@@ -183,7 +172,8 @@ class SHCVerifier (private val registry: TrustRegistry) {
 
         val unpacked = originalContents(jwtRaw)
 
-        val signedMessage = decodeSignedMessage(decodedBytes) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_SIGNING_FORMAT, null, null, uri, unpacked)
+        val signedMessage = decodeSignedMessage(decodedBytes) ?: return QRDecoder.VerificationResult(
+            QRDecoder.Status.INVALID_SIGNING_FORMAT, null, null, uri, unpacked)
 
         val contents = SHC2FHIR().run(jwt.payload)
 

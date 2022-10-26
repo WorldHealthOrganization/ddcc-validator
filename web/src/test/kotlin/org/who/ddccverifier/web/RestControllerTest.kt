@@ -3,7 +3,7 @@ package org.who.ddccverifier.web
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
-import org.who.ddccverifier.verify.QRDecoder
+import org.who.ddccverifier.QRDecoder
 
 @SpringBootTest
 class RestControllerTest {

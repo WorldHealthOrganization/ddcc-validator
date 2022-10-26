@@ -7,19 +7,15 @@ import org.cqframework.cql.elm.execution.VersionedIdentifier
 import org.hl7.fhir.r4.model.Bundle
 import org.hl7.fhir.r4.model.Composition
 import org.junit.Assert
-import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.opencds.cqf.cql.engine.execution.JsonCqlLibraryReader
 import org.who.ddccverifier.verify.hcert.HCertVerifier
 import org.who.ddccverifier.services.cql.CQLEvaluator
 import org.who.ddccverifier.services.cql.FHIRLibraryLoader
-import org.who.ddccverifier.trust.pathcheck.PCFTrustRegistry
-import org.who.ddccverifier.verify.QRDecoder
 import org.who.ddccverifier.verify.divoc.DivocVerifier
 import org.who.ddccverifier.verify.icao.IcaoVerifier
 import org.who.ddccverifier.verify.shc.SHCVerifier
-import java.io.InputStream
 import java.io.StringReader
 import java.util.*
 

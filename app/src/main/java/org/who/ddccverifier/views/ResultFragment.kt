@@ -19,7 +19,7 @@ import org.who.ddccverifier.services.cql.CQLEvaluator
 import org.who.ddccverifier.services.cql.FHIRLibraryLoader
 import org.who.ddccverifier.services.trust.TrustRegistrySingleton
 import org.who.ddccverifier.trust.TrustRegistry
-import org.who.ddccverifier.verify.QRDecoder
+import org.who.ddccverifier.QRDecoder
 import java.io.InputStream
 
 /**

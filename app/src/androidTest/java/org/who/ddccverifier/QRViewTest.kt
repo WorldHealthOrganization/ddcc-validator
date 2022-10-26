@@ -7,7 +7,6 @@ import org.junit.Assert.*
 import org.who.ddccverifier.services.*
 import org.who.ddccverifier.services.cql.CQLEvaluator
 import org.who.ddccverifier.services.cql.FHIRLibraryLoader
-import org.who.ddccverifier.verify.QRDecoder
 import java.util.*
 
 class QRViewTest: BaseTest() {
