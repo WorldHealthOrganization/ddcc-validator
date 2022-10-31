@@ -29,9 +29,7 @@ class CQLEvaluatorAndroidTest: BaseTest() {
 
     @Test
     fun evaluateDDCCPassOnWHOQR1FromCompositonTest() {
-        val asset = jSONParser.parseResource(open("WHOQR1FHIRComposition.json")) as Composition
-        Assert.assertEquals("Composition/US111222333444555666", asset.id)
-
+        val asset = jSONParser.parseResource(open("WHOQR1FHIRBundle.json")) as Bundle
         val context = cqlEvaluator.run(ddccPass, asset)
 
         Assert.assertEquals(false, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
@@ -42,9 +40,7 @@ class CQLEvaluatorAndroidTest: BaseTest() {
 
     @Test
     fun evaluateDDCCPassOnWHOQR2FromCompositonTest() {
-        val asset = jSONParser.parseResource(open("WHOQR2FHIRComposition.json")) as Composition
-        Assert.assertEquals("Composition/111000111", asset.id)
-
+        val asset = jSONParser.parseResource(open("WHOQR2FHIRBundle.json")) as Bundle
         val context = cqlEvaluator.run(ddccPass, asset)
 
         Assert.assertEquals(true, context.resolveExpressionRef("CompletedImmunization").evaluate(context))

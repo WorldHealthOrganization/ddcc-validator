@@ -1,7 +1,9 @@
 package org.who.ddccverifier.verify.icao
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import org.hl7.fhir.r4.model.DateTimeType
 import org.hl7.fhir.r4.model.IntegerType
+import org.hl7.fhir.r4.model.PositiveIntType
 import org.hl7.fhir.r4.model.StringType
 import org.who.ddccverifier.utils.FHIRLogical
 
@@ -63,9 +65,9 @@ class VaccinationEvent(
 class VaccinationDetails(
     val adm: StringType?,  // Administering Center
     val ctr: StringType?,  // Country AUS
-    val dvc: StringType?,  // Date of Vaccination
+    val dvc: DateTimeType?,  // Date of Vaccination
     val lot: StringType?,  // Lot #
-    val seq: Int?,      // Dose Sequence
+    val seq: PositiveIntType?,      // Dose Sequence
 ): FHIRLogical()
 
 class ServiceProvider(

@@ -88,7 +88,7 @@ class QRVerifyTest: BaseTest() {
 
             val json = jsonParser.encodeResourceToString(verified.contents!!)
 
-            jsonEquals(open("WHOSingaporePCRFHIRComposition.json"), json)
+            jsonEquals(open("WHOSingaporePCRFHIRBundle.json"), json)
         }
     }
 

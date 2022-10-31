@@ -79,7 +79,7 @@ class CQLEvaluatorTest: BaseTest() {
 
     @Test
     fun evaluateDDCCPassAsCQLOnQR1FromCompositionTest() {
-        val asset = jSONParser.parseResource(open("WHOQR1FHIRComposition.json")) as Composition
+        val asset = jSONParser.parseResource(open("WHOQR1FHIRBundle.json")) as Bundle
         assertEquals("Composition/US111222333444555666", asset.id)
 
         val lib = JsonCqlLibraryReader.read(StringReader(toJson(open("DDCCPass.cql"))))
@@ -95,7 +95,7 @@ class CQLEvaluatorTest: BaseTest() {
 
     @Test
     fun evaluateDDCCPassAsJSONOnQR1FromCompositionTest() {
-        val asset = jSONParser.parseResource(open("WHOQR1FHIRComposition.json")) as Composition
+        val asset = jSONParser.parseResource(open("WHOQR1FHIRBundle.json")) as Bundle
         assertEquals("Composition/US111222333444555666", asset.id)
 
         val context = cqlEvaluator.run(ddccPass, asset)
@@ -107,7 +107,7 @@ class CQLEvaluatorTest: BaseTest() {
 
     @Test
     fun evaluateDDCCPassAsCQLOnQR2FromCompositionTest() {
-        val asset = jSONParser.parseResource(open("WHOQR2FHIRComposition.json")) as Composition
+        val asset = jSONParser.parseResource(open("WHOQR2FHIRBundle.json")) as Bundle
         assertEquals("Composition/111000111", asset.id)
 
         val lib = JsonCqlLibraryReader.read(StringReader(toJson(open("DDCCPass.cql"))))
@@ -121,7 +121,7 @@ class CQLEvaluatorTest: BaseTest() {
 
     @Test
     fun evaluateDDCCPassAsJSONOnQR2FromCompositionTest() {
-        val asset = jSONParser.parseResource(open("WHOQR2FHIRComposition.json")) as Composition
+        val asset = jSONParser.parseResource(open("WHOQR2FHIRBundle.json")) as Bundle
         assertEquals("Composition/111000111", asset.id)
 
         val context = cqlEvaluator.run(ddccPass, asset)
@@ -134,7 +134,7 @@ class CQLEvaluatorTest: BaseTest() {
 
     @Test
     fun evaluateDDCCPassAsCQLOnSHCQR1FromCompositionTest() {
-        val asset = jSONParser.parseResource(open("SHCQR1FHIRComposition.json")) as Composition
+        val asset = jSONParser.parseResource(open("SHCQR1FHIRBundle.json")) as Bundle
 
         val lib = JsonCqlLibraryReader.read(StringReader(toJson(open("DDCCPass.cql"))))
         val context = cqlEvaluator.run(lib, asset)
