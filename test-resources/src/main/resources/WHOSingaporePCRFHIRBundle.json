@@ -1,0 +1,150 @@
+{
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "Composition",
+        "type": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "82593-5",
+              "display": "Immunization summary report"
+            }
+          ]
+        },
+        "category": [
+          {
+            "coding": [
+              {
+                "code": "ddcc-vs"
+              }
+            ]
+          }
+        ],
+        "subject": {
+          "reference": "Patient/43293785-70d2-4cbe-8ecf-30b947fd45d5"
+        },
+        "author": [
+          {
+            "reference": "Organization/969e8fbe-52b8-425f-8c4c-bbd6f7aa886f"
+          }
+        ],
+        "title": "International Certificate of Vaccination or Prophylaxis",
+        "section": [
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "http://loinc.org",
+                  "code": "30954-2",
+                  "display": "Results (Diagnostic findings)"
+                }
+              ]
+            },
+            "author": [
+              {
+                "reference": "Organization/969e8fbe-52b8-425f-8c4c-bbd6f7aa886f"
+              }
+            ],
+            "entry": [
+              {
+                "reference": "Observation/a9152ef1-efdd-4e3e-b8c3-d02153afc059"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "43293785-70d2-4cbe-8ecf-30b947fd45d5",
+        "identifier": [
+          {
+            "value": "URN:UVCI:01:SG:ABC-CDE-CDE"
+          }
+        ],
+        "name": [
+          {
+            "text": "TAN CHEN CHEN"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1990-01-15"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Observation",
+        "id": "a9152ef1-efdd-4e3e-b8c3-d02153afc059",
+        "extension": [
+          {
+            "url": "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCCountryOfVaccination",
+            "valueCoding": {
+              "system": "urn:iso:std:iso:3166-1",
+              "code": "SGP"
+            }
+          }
+        ],
+        "status": "final",
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "code": "laboratory"
+              }
+            ]
+          }
+        ],
+        "code": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "LP6464-4",
+              "display": "Nucleic acid amplification with probe detection"
+            },
+            {
+              "system": "http://id.who.int/icd11/mms",
+              "code": "XN109",
+              "display": "SARS-CoV-2"
+            }
+          ]
+        },
+        "subject": {
+          "reference": "Patient/43293785-70d2-4cbe-8ecf-30b947fd45d5"
+        },
+        "encounter": {
+          "reference": "Encounter/d9b35e76-f553-4a18-9254-3372d9ea8c73"
+        },
+        "valueCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "260415000",
+              "display": "Not detected"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Organization",
+        "id": "969e8fbe-52b8-425f-8c4c-bbd6f7aa886f",
+        "name": "Ministry of Health (MOH), Singapore [21M0386]"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "d9b35e76-f553-4a18-9254-3372d9ea8c73",
+        "serviceProvider": {
+          "reference": "Organization/969e8fbe-52b8-425f-8c4c-bbd6f7aa886f"
+        }
+      }
+    }
+  ]
+}

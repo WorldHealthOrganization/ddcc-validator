@@ -1,7 +1,5 @@
 package org.who.ddccverifier.map
 
-import ca.uhn.fhir.context.FhirContext
-import ca.uhn.fhir.context.FhirVersionEnum
 import org.hl7.fhir.r4.context.SimpleWorkerContext
 import org.hl7.fhir.r4.model.Base
 import org.hl7.fhir.r4.model.Bundle
@@ -17,15 +15,9 @@ open class BaseMapper {
             ""
         )
 
-        val bundle = Bundle().apply {
+        return Bundle().apply {
             StructureMapUtilities(simpleWorkerContext)
                 .transform(simpleWorkerContext, source, structureMap, this)
         }
-
-        println(
-            FhirContext.forCached(FhirVersionEnum.R4).newJsonParser().setPrettyPrint(true).encodeResourceToString(bundle)
-        )
-
-        return bundle
     }
 }

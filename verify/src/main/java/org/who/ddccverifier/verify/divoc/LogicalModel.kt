@@ -1,6 +1,5 @@
 package org.who.ddccverifier.verify.divoc
 
-import ca.uhn.fhir.model.api.TemporalPrecisionEnum
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationContext
@@ -8,8 +7,6 @@ import com.fasterxml.jackson.databind.JsonDeserializer
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import org.hl7.fhir.r4.model.*
 import org.who.ddccverifier.utils.FHIRLogical
-import org.who.ddccverifier.verify.shc.DecimalToDataTimeDeserializer
-import java.util.*
 
 class W3CVC(
     @JsonProperty("@context")

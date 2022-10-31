@@ -1,0 +1,280 @@
+map "http://worldhealthorganization.github.io/ddcc/StructureMap/CertWHOtoDDCC" = "WHOtoDDCC"
+
+uses "http://worldhealthorganization.github.io/ddcc/StructureDefinition/CertWHO"     alias WHOLogicalModel as source
+uses "http://worldhealthorganization.github.io/ddcc/StructureDefinition/TestResult"  alias TestResult as source
+uses "http://worldhealthorganization.github.io/ddcc/StructureDefinition/Meta"        alias Meta as source
+
+uses "http://hl7.org/fhir/StructureDefinition/Bundle"                                alias Bundle as target
+
+
+group WHOtoDDCC (source src: WHOLogicalModel, target bundle: Bundle){
+    src -> bundle.type = "transaction" "set bundle type";
+
+    src -> bundle, bundle.entry as entry, entry.resource = create('Composition') as comp then {
+        src -> bundle then ExtractCert(src, bundle, comp) "Certificate";
+        src -> bundle then ExtractComposition(src, comp) "Composition";
+    } "Patient and Composition Create";
+}
+
+group ExtractCert(source src: WHOLogicalModel, target bundle: Bundle, target comp: Composition){
+    src -> comp, bundle.entry as entry, entry.resource = create('Patient') as patient, uuid() as pid then {
+        src -> patient then ExtractPatient(src, pid, patient) "extract patient";
+        src -> comp.subject as subj, subj.reference = append("Patient/", pid) "Composition.Set patient";
+
+        src.vaccine as vac -> comp.section as section then {
+            src ->
+                section.code as code,
+                code.coding as coding,
+                coding.system = "http://loinc.org",
+                coding.code = "11369-6",
+                coding.display = "History of Immunization Narrative"
+                "add section";
+
+            src -> comp,
+                bundle.entry as entryImm, entryImm.resource = create('Immunization') as immunization, uuid() as iid,
+                bundle.entry as entryOrg, entryOrg.resource = create('Organization') as org, uuid() as oid
+                then {
+                    src -> immunization.id = iid "Immunization ID";
+                    src -> org.id = oid "Organization ID";
+
+                    src ->
+                        section.entry as entry,
+                        entry.reference = append("Immunization/", iid ),
+                        section.author as author,
+                        author.reference = append("Organization/", oid)
+                        "add entry/author to section";
+
+                    src.pha as pha -> org.name = pha "Set Organization name";
+
+                    src.hw as performerId ->
+                        bundle.entry as entry,
+                        entry.resource = create('Practitioner') as practitioner,
+                        practitioner.id = uuid() as practitionerId,
+                        practitioner.identifier as identif,
+                        identif.value = performerId,
+                        immunization.performer as performer,
+                        performer.actor as actor,
+                        actor.reference = append("Practitioner/", practitionerId)
+                        "set pract name";
+
+                    src.centre as facility ->
+                        bundle.entry as entry,
+                        entry.resource = create('Location') as location,
+                        location.id = uuid() as locid,
+                        location.name = facility,
+                        immunization.location as loc,
+                        loc.reference = append("Location/", locid)
+                        "facility name";
+
+                    src where (vac.due_date.exists()) ->
+                     bundle.entry as entryRec, entryRec.resource = create('ImmunizationRecommendation') as rec, uuid() as rid
+                     then {
+                         src -> rec.id = rid "Recommendation ID";
+                         src -> rec then ExtractRecommendation(src, oid, rec) "Extract Recommendation";
+                    } "creating recommendation";
+
+                    src -> comp.author as author, author.reference = append("Organization/", oid) "Composition.Set org";
+
+                    src -> immunization.patient as subj, subj.reference = append("Patient/", pid) "Immunization.Set patient";
+
+                    //vac.is as is -> org.name = is "Set Organization name";
+
+                    src -> bundle then ExtractVaccine(src, oid, immunization) "extract vaccine info";
+                } "Immunization Create";
+        } "Vaccination List";
+
+        src.test as test -> comp.section as section then {
+            src ->
+                section.code as code,
+                code.coding as coding,
+                coding.system = "http://loinc.org",
+                coding.code = "30954-2",
+                coding.display = "Results (Diagnostic findings)"
+                "add section";
+
+            test -> comp,
+                bundle.entry as entryObs, entryObs.resource = create('Observation') as observation, uuid() as iid,
+                bundle.entry as entryOrg, entryOrg.resource = create('Organization') as org, uuid() as oid,
+                bundle.entry as entryEnc, entryEnc.resource = create('Encounter') as enc, uuid() as eid
+                then {
+                    src -> observation.id = iid "Observatiopn ID";
+                    src -> org.id = oid "Organization ID";
+                    src -> enc.id = eid "Observatiopn ID";
+
+                    src ->
+                        section.entry as entry,
+                        entry.reference = append("Observation/", iid ),
+                        section.author as author,
+                        author.reference = append("Organization/", oid)
+                        "add entry/author to section";
+
+                    test.centre as pha -> org.name = pha "Set Organization name";
+
+                    src -> comp.author as author, author.reference = append("Organization/", oid) "Composition.Set org";
+
+                    src -> observation.subject as subj, subj.reference = append("Patient/", pid) "observation.Set patient";
+
+                    src -> observation.encounter as encounter, encounter.reference = append("Encounter/", eid) "encounter.Set provider";
+                    src -> enc.serviceProvider as provider, provider.reference = append("Organization/", oid) "encounter.Set provider";
+
+                    src -> bundle then ExtractTestResult(test, oid, observation) "extract testresult info";
+                } "Test Result Create";
+        } "Test Result List";
+
+        // TODO: Recovery
+
+    } "Patient Create";
+}
+
+group ExtractTestResult(source test: TestResult, source oid, target observation: Observation) {
+    test ->
+        observation.status = 'final'
+        "set observation status";
+
+    test ->
+        observation.category as codeable,
+        codeable.coding as coding,
+        coding.system = "http://terminology.hl7.org/CodeSystem/observation-category",
+        coding.code = "laboratory"
+        "set target disease type";
+
+    test -> observation.code as codeable then {
+        test.type as type -> codeable.coding = type "set type";
+        test.pathogen as pathogen -> codeable.coding = pathogen "set pathogen";
+    } "set observation code";
+
+    test.result as result ->
+        observation.value = create('CodeableConcept') as codeable,
+        codeable.coding = result "set result";
+
+    test.country as co ->
+        observation.extension as ext,
+        ext.value = co,
+        ext.url = "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCCountryOfVaccination"
+        "set country";
+}
+
+group ExtractVaccine(source vac: WHOLogicalModel, source oid, target immunization: Immunization) {
+    vac.date as dt ->
+        immunization.occurrence = dt
+        "set occurrence date";
+
+    vac.lot as lot -> immunization.lotNumber = lot "set lot number";
+
+    vac.vaccine as vp ->
+        immunization.vaccineCode as type,
+        type.coding = vp
+        "set vaccine coding";
+
+    vac.hcid as hcid ->
+        immunization.identifier as identif,
+        identif.value = hcid
+        "set identifier ci";
+
+// TODO: Waiting for FHIR 5.0
+//    vac.manufacturer as manufacturer ->
+//        immunization.manufacturer = create('CodeableReference') as manuf,
+//        manuf.concept = manufacturer
+//        "set manufacturer";
+
+    vac.brand as brand ->
+        immunization.extension as ext,
+        ext.value = brand,
+        ext.url = "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineBrand"
+        "set brand";
+
+    vac.ma_holder as ma_holder ->
+        immunization.extension as ext,
+        ext.value = ma_holder,
+        ext.url = "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineMarketAuthorization"
+        "set manufacturer extension";
+
+    vac.country as co ->
+        immunization.extension as ext,
+        ext.value = co,
+        ext.url = "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCCountryOfVaccination"
+        "set country";
+
+    vac.vaccine_valid as vaccine_valid ->
+        immunization.extension as ext,
+        ext.value = vaccine_valid,
+        ext.url = "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineValidFrom"
+        "set vaccine valid from";
+
+    vac -> immunization.protocolApplied as protocolApplied then ExtractProtocolApplied(vac, oid, protocolApplied) "set protocol applied";
+}
+
+group ExtractRecommendation(source vac: WHOLogicalModel, source oid, target recommendation: ImmunizationRecommendation) {
+    vac.vaccine as vp ->
+        recommendation.vaccineCode as type,
+        type.coding = vp
+        "set vaccine coding";
+
+    vac.disease as disease ->
+        recommendation.targetDisease as codeable,
+        codeable.coding = disease
+        "set target disease type";
+
+    vac.dose as dn -> recommendation.doseNumber = evaluate(dn, $this+1) "set dose number";
+
+    vac.total_doses as sd -> recommendation.seriesDoses = sd "set series doses";
+
+    vac ->
+        recommendation.forecastStatus as codeable,
+        codeable.coding as coding,
+        coding.system = "http://terminology.hl7.org/2.1.0/CodeSystem-immunization-recommendation-status.html",
+        coding.code = "due"
+        "set forecastStatus";
+
+    vac.due_date as due_date ->
+        recommendation.dateCriterion as dateCriterion,
+        dateCriterion.code as codeable,
+        dateCriterion.value = due_date,
+        codeable.coding as coding,
+        coding.system = "http://loinc.org",
+        coding.code = "30980-7",
+        coding.display = "Date vaccine due"
+        "set forecastStatus";
+}
+
+group ExtractProtocolApplied(source vac: VacEvent, source oid, target protocol: ProtocolApplied) {
+    vac.dose as dn -> protocol.doseNumber = dn "set dose number";
+    vac.total_doses as sd -> protocol.seriesDoses = sd "set series doses";
+
+    vac.disease as disease ->
+        protocol.targetDisease as codeable,
+        codeable.coding = disease
+        "set target disease type";
+
+    oid -> protocol.authority as authority, authority.reference = append("Organization/", oid) "set authority";
+}
+
+group ExtractPatient(source src: WHOLogicalModel, source pid, target patient: Patient) {
+    pid -> patient.id = pid "Patient ID";
+
+    src.name as patientName -> patient.name = create('HumanName') as humanName, humanName.text = patientName "Patient Name";
+    src.identifier as id -> patient.identifier as identif, identif.value = id "set patient identifier";
+    src.birthDate as birthDate -> patient.birthDate = birthDate "set birthDate";
+    src.sex as sex then {
+        sex.code as code -> patient.gender = code "set gender";
+    } "set gender rule";
+}
+
+group ExtractComposition(source src: WHOLogicalModel, target composition: Composition) {
+    src -> composition.title = "International Certificate of Vaccination or Prophylaxis" "Title";
+
+    src -> composition.category as category, category.coding as coding then {
+        src -> coding.code = "ddcc-vs" "Category";
+    } "set category";
+
+    src -> composition.type as type, type.coding as coding then {
+      src -> coding.system = "http://loinc.org", coding.code = "82593-5", coding.display = "Immunization summary report" "set type coding";
+    } "set type";
+
+    src -> composition.event as event, event.period = create('Period') as period then ExtractPeriod(src, period) "Extract Period";
+}
+
+group ExtractPeriod(source src: WHOLogicalModel, target tgt : Period) {
+    src.valid_from as iat -> tgt.start = iat "Start issuedAt";
+    src.valid_until as exp -> tgt.end = exp "End expiration";
+}

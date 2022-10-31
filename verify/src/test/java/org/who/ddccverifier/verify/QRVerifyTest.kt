@@ -2,6 +2,7 @@ package org.who.ddccverifier.verify
 
 import ca.uhn.fhir.context.FhirContext
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.hl7.fhir.r4.model.Patient
 import org.junit.Assert.*
 import org.junit.Test
 import org.mockito.Mockito
@@ -47,39 +48,48 @@ class QRVerifyTest: BaseTest() {
 
     @Test
     fun verifyWHOQR1() {
-        val qr1 = open("WHOQR1Contents.txt")
-        val verified = HCertVerifier(registry).unpackAndVerify(qr1)
+        Mockito.mockStatic(UUID::class.java).use { mockedUuid ->
+            mockedUuid.`when`<Any> { UUID.randomUUID() }.thenReturn(firstUUID, *uuidList)
+            val qr1 = open("WHOQR1Contents.txt")
+            val verified = HCertVerifier(registry).unpackAndVerify(qr1)
 
-        assertNotNull(verified)
-        assertEquals(QRDecoder.Status.VERIFIED, verified.status)
+            assertNotNull(verified)
+            assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
-        val json = jsonParser.encodeResourceToString(verified.contents!!)
+            val json = jsonParser.encodeResourceToString(verified.contents!!)
 
-        jsonEquals(open("WHOQR1FHIRComposition.json"), json)
+            jsonEquals(open("WHOQR1FHIRBundle.json"), json)
+        }
     }
 
     @Test
     fun verifyWHOQR2() {
-        val qr2 = open("WHOQR2Contents.txt")
-        val verified = HCertVerifier(registry).unpackAndVerify(qr2)
-        assertNotNull(verified)
-        assertEquals(QRDecoder.Status.VERIFIED, verified.status)
+        Mockito.mockStatic(UUID::class.java).use { mockedUuid ->
+            mockedUuid.`when`<Any> { UUID.randomUUID() }.thenReturn(firstUUID, *uuidList)
+            val qr2 = open("WHOQR2Contents.txt")
+            val verified = HCertVerifier(registry).unpackAndVerify(qr2)
+            assertNotNull(verified)
+            assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
-        val json = jsonParser.encodeResourceToString(verified.contents!!)
+            val json = jsonParser.encodeResourceToString(verified.contents!!)
 
-        jsonEquals(open("WHOQR2FHIRComposition.json"), json)
+            jsonEquals(open("WHOQR2FHIRBundle.json"), json)
+        }
     }
 
     @Test
     fun verifyWHOSingaporePCR() {
-        val qr2 = open("WHOSingaporePCRContents.txt")
-        val verified = HCertVerifier(registry).unpackAndVerify(qr2)
-        assertNotNull(verified)
-        assertEquals(QRDecoder.Status.VERIFIED, verified.status)
+        Mockito.mockStatic(UUID::class.java).use { mockedUuid ->
+            mockedUuid.`when`<Any> { UUID.randomUUID() }.thenReturn(firstUUID, *uuidList)
+            val qr2 = open("WHOSingaporePCRContents.txt")
+            val verified = HCertVerifier(registry).unpackAndVerify(qr2)
+            assertNotNull(verified)
+            assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
-        val json = jsonParser.encodeResourceToString(verified.contents!!)
+            val json = jsonParser.encodeResourceToString(verified.contents!!)
 
-        jsonEquals(open("WHOSingaporePCRFHIRComposition.json"), json)
+            jsonEquals(open("WHOSingaporePCRFHIRComposition.json"), json)
+        }
     }
 
     @Test

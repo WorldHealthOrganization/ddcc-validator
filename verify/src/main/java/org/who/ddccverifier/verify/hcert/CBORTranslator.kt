@@ -4,6 +4,8 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.upokecenter.cbor.CBORObject
 import org.hl7.fhir.r4.model.Bundle
 import org.who.ddccverifier.map.hcert.dcc.DCC2FHIR
+import org.who.ddccverifier.map.hcert.who.WHO2FHIR
+import org.who.ddccverifier.verify.hcert.dcc.logical.CWT
 import org.who.ddccverifier.verify.hcert.dcc.logical.WHOLogicalModel
 
 /**
@@ -21,6 +23,11 @@ class CBORTranslator {
                 )
             )
 
-        return WHO2FHIR().run(hcertPayload)
+        return WHO2FHIR().run(
+            jacksonObjectMapper().readValue(
+                hcertPayload.ToJSONString(),
+                WHOLogicalModel::class.java
+            )
+        );
     }
 }

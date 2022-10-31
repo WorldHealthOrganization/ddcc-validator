@@ -1,0 +1,192 @@
+{
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "Composition",
+        "type": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "82593-5",
+              "display": "Immunization summary report"
+            }
+          ]
+        },
+        "category": [
+          {
+            "coding": [
+              {
+                "code": "ddcc-vs"
+              }
+            ]
+          }
+        ],
+        "subject": {
+          "reference": "Patient/43293785-70d2-4cbe-8ecf-30b947fd45d5"
+        },
+        "author": [
+          {
+            "reference": "Organization/969e8fbe-52b8-425f-8c4c-bbd6f7aa886f"
+          }
+        ],
+        "title": "International Certificate of Vaccination or Prophylaxis",
+        "event": [
+          {
+            "period": {
+              "start": "2021-07-08",
+              "end": "2022-07-08"
+            }
+          }
+        ],
+        "section": [
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "http://loinc.org",
+                  "code": "11369-6",
+                  "display": "History of Immunization Narrative"
+                }
+              ]
+            },
+            "author": [
+              {
+                "reference": "Organization/969e8fbe-52b8-425f-8c4c-bbd6f7aa886f"
+              }
+            ],
+            "entry": [
+              {
+                "reference": "Immunization/a9152ef1-efdd-4e3e-b8c3-d02153afc059"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "43293785-70d2-4cbe-8ecf-30b947fd45d5",
+        "identifier": [
+          {
+            "value": "1234567890"
+          }
+        ],
+        "name": [
+          {
+            "text": "Eddie Murphy"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "1986-09-19"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Immunization",
+        "id": "a9152ef1-efdd-4e3e-b8c3-d02153afc059",
+        "extension": [
+          {
+            "url": "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineBrand",
+            "valueCoding": {
+              "system": "http://worldhealthorganization.github.io/ddcc/CodeSystem/DDCC-Example-Test-CodeSystem",
+              "code": "TEST"
+            }
+          },
+          {
+            "url": "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineMarketAuthorization",
+            "valueCoding": {
+              "system": "http://worldhealthorganization.github.io/ddcc/CodeSystem/DDCC-Example-Test-CodeSystem",
+              "code": "TEST"
+            }
+          },
+          {
+            "url": "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCCountryOfVaccination",
+            "valueCoding": {
+              "system": "urn:iso:std:iso:3166",
+              "code": "USA"
+            }
+          },
+          {
+            "url": "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineValidFrom",
+            "valueDate": "2021-07-22"
+          }
+        ],
+        "identifier": [
+          {
+            "value": "US111222333444555666"
+          }
+        ],
+        "vaccineCode": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "1119349007"
+            }
+          ]
+        },
+        "patient": {
+          "reference": "Patient/43293785-70d2-4cbe-8ecf-30b947fd45d5"
+        },
+        "occurrenceDateTime": "2021-07-08",
+        "location": {
+          "reference": "Location/7c967bcb-abc6-4cb6-b590-7b5827d9aae3"
+        },
+        "lotNumber": "PT123F",
+        "performer": [
+          {
+            "actor": {
+              "reference": "Practitioner/d9b35e76-f553-4a18-9254-3372d9ea8c73"
+            }
+          }
+        ],
+        "protocolApplied": [
+          {
+            "authority": {
+              "reference": "Organization/969e8fbe-52b8-425f-8c4c-bbd6f7aa886f"
+            },
+            "targetDisease": [
+              {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "840539006"
+                  }
+                ]
+              }
+            ],
+            "doseNumberPositiveInt": 1,
+            "seriesDosesPositiveInt": 2
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Organization",
+        "id": "969e8fbe-52b8-425f-8c4c-bbd6f7aa886f",
+        "name": "wA69g8VD512TfTTdkTNSsG"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Practitioner",
+        "id": "d9b35e76-f553-4a18-9254-3372d9ea8c73",
+        "identifier": [
+          {
+            "value": "http://www.acme.org/practitioners/23"
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Location",
+        "id": "7c967bcb-abc6-4cb6-b590-7b5827d9aae3",
+        "name": "Vaccination Site"
+      }
+    }
+  ]
+}
