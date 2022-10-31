@@ -88,6 +88,18 @@ android {
     namespace 'org.who.ddccverifier'
 }
 
+configurations {
+    all {
+        exclude module: "xpp3"
+        exclude module: "xpp3_min"
+        exclude module: "xmlpull"
+        exclude module: "javax.json"
+        exclude module: "jcl-over-slf4j"
+        exclude group: "org.apache.httpcomponents"
+        exclude module: "antlr4"
+    }
+}
+
 dependencies {
     implementation 'androidx.core:core-ktx:1.8.0'
     implementation 'androidx.appcompat:appcompat:1.4.2'
@@ -153,7 +165,6 @@ dependencies {
         exclude group: 'ca.uhn.hapi.fhir', module: 'hapi-fhir-structures-r5'                // Do not import FHIR
         exclude group: 'ca.uhn.hapi.fhir', module: 'hapi-fhir-validation-resources-r5'      // Do not import FHIR
         exclude group: 'javax.inject', module: 'javax.inject'                               // Do not import FHIR
-        exclude group: 'xpp3', module: 'xpp3'
     }
 
     // Tests outside Android can process CQL.
