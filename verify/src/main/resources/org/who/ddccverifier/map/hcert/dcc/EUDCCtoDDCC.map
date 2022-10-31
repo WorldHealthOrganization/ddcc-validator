@@ -1,6 +1,6 @@
-map "http://worldhealthorganization.github.io/ddcc/StructureMap/EUDCCtoDDCC" = "EUDCCtoDDCC"
+map "http://worldhealthorganization.github.io/ddcc/StructureMap/CertDCCtoDDCC" = "EUDCCtoDDCC"
 
-uses "http://hl7.eu/fhir/ig/dcc/StructureDefinition/CWT"        alias CWT as source
+uses "http://worldhealthorganization.github.io/ddcc/StructureDefinition/CertDCC"        alias CWT as source
 uses "http://hl7.eu/fhir/ig/dcc/StructureDefinition/HC1"        alias HC1 as source
 uses "http://hl7.eu/fhir/ig/dcc/StructureDefinition/PersonName" alias PersonName as source
 uses "http://hl7.eu/fhir/ig/dcc/StructureDefinition/v"          alias VacEvent as source
@@ -8,20 +8,15 @@ uses "http://hl7.eu/fhir/ig/dcc/StructureDefinition/t"          alias TestEvent 
 uses "http://hl7.eu/fhir/ig/dcc/StructureDefinition/r"          alias RecEvent as source
 
 uses "http://hl7.org/fhir/StructureDefinition/Bundle"                                     alias Bundle as target
-uses "http://worldhealthorganization.github.io/ddcc/StructureDefinition/DDCCDocument"     alias DDCCDocument as produced
-uses "http://worldhealthorganization.github.io/ddcc/StructureDefinition/DDCCPatient"      alias DDCCPatient as produced
-uses "http://worldhealthorganization.github.io/ddcc/StructureDefinition/DDCCComposition"  alias DDCCComposition as produced
-uses "http://worldhealthorganization.github.io/ddcc/StructureDefinition/DDCCOrganization" alias DDCCOrganization as produced
-uses "http://worldhealthorganization.github.io/ddcc/StructureDefinition/DDCCCountryOfVaccination" alias DDCCCountryOfVaccination as produced
-uses "http://worldhealthorganization.github.io/ddcc/StructureDefinition/DDCCVaccineBrand" alias DDCCVaccineBrand as produced
-uses "http://worldhealthorganization.github.io/ddcc/StructureDefinition/DDCCImmunization" alias DDCCImmunization as produced
 
 
 group EUDCCtoDDCC (source src: CWT, target bundle: Bundle){
     src -> bundle.type = "transaction" "set bundle type";
 
     src -> bundle, bundle.entry as entry, entry.resource = create('Composition') as comp then {
-        src.cert as cert -> bundle then ExtractCert(cert, bundle, comp) "Certificate";
+        src.data as data then {
+            data.cert as cert -> bundle then ExtractCert(cert, bundle, comp) "Certificate";
+        } "Processing cert data";
         src -> bundle then ExtractComposition(src, comp) "Composition";
     } "Patient and Composition Create";
 }
