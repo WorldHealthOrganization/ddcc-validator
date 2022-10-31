@@ -4,7 +4,7 @@ import org.hl7.fhir.r4.model.Bundle
 import org.who.ddccverifier.verify.divoc.DivocVerifier
 import org.who.ddccverifier.verify.hcert.HCertVerifier
 import org.who.ddccverifier.verify.icao.IcaoVerifier
-import org.who.ddccverifier.verify.shc.SHCVerifier
+import org.who.ddccverifier.verify.shc.ShcVerifier
 import org.who.ddccverifier.trust.TrustRegistry
 
 /**
@@ -39,7 +39,7 @@ class QRDecoder(private val registry: TrustRegistry) {
             return HCertVerifier(registry).unpackAndVerify(qrPayload)
         }
         if (qrPayload.uppercase().startsWith("SHC:")) {
-            return SHCVerifier(registry).unpackAndVerify(qrPayload)
+            return ShcVerifier(registry).unpackAndVerify(qrPayload)
         }
         if (qrPayload.uppercase().startsWith("B64:") || qrPayload.uppercase().startsWith("PK")) {
             return DivocVerifier(registry).unpackAndVerify(qrPayload)

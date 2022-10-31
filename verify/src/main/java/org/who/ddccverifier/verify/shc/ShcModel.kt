@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import org.hl7.fhir.r4.model.Bundle
 import org.hl7.fhir.r4.model.DateTimeType
 import org.hl7.fhir.r4.model.StringType
-import org.who.ddccverifier.utils.FHIRLogical
+import org.who.ddccverifier.verify.BaseModel
 import java.util.*
 
 class JWTPayload(
@@ -26,19 +26,19 @@ class JWTPayload(
     val iat: DateTimeType?, // it should be int, but some idiots use floating point
     val jti: StringType?,
     val vc: VC?,
-): FHIRLogical()
+): BaseModel()
 
 class VC(
     val type: List<StringType>?,
     val credentialSubject: CredentialSubject?,
-): FHIRLogical()
+): BaseModel()
 
 class CredentialSubject(
     val fhirVersion: StringType?,
     @JsonDeserialize(using = FHIRDeserializer::class)
     @JsonSerialize(using = FHIRSeserializer::class)
     val fhirBundle: Bundle?,
-): FHIRLogical()
+): BaseModel()
 
 object DecimalToDataTimeDeserializer: JsonDeserializer<DateTimeType>() {
     private fun parseDateType(date: Double?): DateTimeType? {

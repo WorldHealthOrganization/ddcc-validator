@@ -5,24 +5,24 @@ import org.hl7.fhir.r4.model.DateTimeType
 import org.hl7.fhir.r4.model.IntegerType
 import org.hl7.fhir.r4.model.PositiveIntType
 import org.hl7.fhir.r4.model.StringType
-import org.who.ddccverifier.utils.FHIRLogical
+import org.who.ddccverifier.verify.BaseModel
 
 class IJson(
     val data: Data,
     val sig: Signature,
-): FHIRLogical()
+): BaseModel()
 
 class Data(
     val hdr: Header,
     val msg: Message,
-): FHIRLogical()
+): BaseModel()
 
 class Header(
     @JsonProperty("is")
     val iss: StringType, // Issuer
     val t: StringType,  // Type "icao.test", "icao.vacc",
     val v: IntegerType,      // Version
-): FHIRLogical()
+): BaseModel()
 
 class Message(
     val pid: Patient?,
@@ -36,7 +36,7 @@ class Message(
     val dat: DateTimeTestReport?,
     val tr: TestResult?,
     val opt: StringType?, // Optional DataField
-): FHIRLogical()
+): BaseModel()
 
 class Patient(
     val dob: StringType?,
@@ -53,14 +53,14 @@ class Patient(
     // D – Driving License (ISO18013-1)
     val dn: StringType?, // Document Number
     val ai: StringType?, // Additional Identifier
-): FHIRLogical()
+): BaseModel()
 
 class VaccinationEvent(
     val des: StringType?,  // Prophilaxis // (http://id.who.int/icd/entity/164949870)
     val dis: StringType?,  // Diesease or Agent Targeted (ICD-11)
     val nam: StringType?,  // Vaccine Brand
     val vd: List<VaccinationDetails>?,
-): FHIRLogical()
+): BaseModel()
 
 class VaccinationDetails(
     val adm: StringType?,  // Administering Center
@@ -68,33 +68,33 @@ class VaccinationDetails(
     val dvc: DateTimeType?,  // Date of Vaccination
     val lot: StringType?,  // Lot #
     val seq: PositiveIntType?,      // Dose Sequence
-): FHIRLogical()
+): BaseModel()
 
 class ServiceProvider(
     val spn: StringType?,  // Name of the Service Provider
     val ctr: StringType?,  // Country of the Test
     val cd: Contact?,  // Contact Info
-): FHIRLogical()
+): BaseModel()
 
 class Contact (
     val p: StringType?, // phone
     val e: StringType?, // email
     val a: StringType?, // address
-): FHIRLogical()
+): BaseModel()
 
 class DateTimeTestReport(
     val sc: StringType?,  // Specimen Collection Time
     val ri: StringType?,  // Report Issuance Time
-): FHIRLogical()
+): BaseModel()
 
 class TestResult(
     val tc: StringType?,  // Test Type (molecular(PCR), molecular(other), antigen, antibody)
     val r: StringType?,  // Results (positive, negative, normal, abnormal
     val m: StringType?,  // Sampling Method nasopharyngeal, oropharyngeal, saliva, blood, other
-): FHIRLogical()
+): BaseModel()
 
 class Signature(
     val alg: StringType,
     val cer: StringType,
     val sigvl: StringType,
-): FHIRLogical()
+): BaseModel()

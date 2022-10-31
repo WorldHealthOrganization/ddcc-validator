@@ -3,7 +3,6 @@ package org.who.ddccverifier.verify.shc
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.nimbusds.jose.crypto.ECDSAVerifier
 import com.nimbusds.jwt.SignedJWT
-import org.who.ddccverifier.map.shc.SHC2FHIR
 import org.who.ddccverifier.trust.TrustRegistry
 import java.io.ByteArrayOutputStream
 import java.security.PublicKey
@@ -13,7 +12,7 @@ import java.util.zip.Inflater
 import org.who.ddccverifier.QRDecoder
 import java.util.*
 
-class SHCVerifier (private val registry: TrustRegistry) {
+class ShcVerifier (private val registry: TrustRegistry) {
     private val URI_SCHEMA = "shc"
     private val SMALLEST_B64_CHAR_CODE = 45
 
@@ -175,7 +174,7 @@ class SHCVerifier (private val registry: TrustRegistry) {
         val signedMessage = decodeSignedMessage(decodedBytes) ?: return QRDecoder.VerificationResult(
             QRDecoder.Status.INVALID_SIGNING_FORMAT, null, null, uri, unpacked)
 
-        val contents = SHC2FHIR().run(jwt.payload)
+        val contents = ShcMapper().run(jwt.payload)
 
         val kid = getKID(jwt) ?: return QRDecoder.VerificationResult(QRDecoder.Status.KID_NOT_INCLUDED, contents, null, uri, unpacked)
         val issuer = resolveIssuer(kid) ?: return QRDecoder.VerificationResult(QRDecoder.Status.ISSUER_NOT_TRUSTED, contents, null, uri, unpacked)

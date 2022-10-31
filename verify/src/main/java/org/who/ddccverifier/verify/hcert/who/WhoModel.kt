@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.hl7.fhir.r4.model.*
-import org.who.ddccverifier.utils.FHIRLogical
+import org.who.ddccverifier.verify.BaseModel
 import kotlin.reflect.full.declaredMemberProperties
 
 class WHOLogicalModel (
@@ -45,7 +45,7 @@ class WHOLogicalModel (
     val manufacturer: Base?,
     val pha: StringType?,
     val country: Coding?
-): FHIRLogical()
+): BaseModel()
 
 class TestResult (
     val pathogen: Coding?,
@@ -57,7 +57,7 @@ class TestResult (
     val result: Coding?,
     val centre: StringType?,
     val country: Coding?
-): FHIRLogical()
+): BaseModel()
 
 class Meta (
     val notarisedOn: DateTimeType?,

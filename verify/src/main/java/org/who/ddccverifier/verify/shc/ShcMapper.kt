@@ -1,13 +1,12 @@
-package org.who.ddccverifier.map.shc
+package org.who.ddccverifier.verify.shc
 
 import org.hl7.fhir.r4.model.*
-import org.who.ddccverifier.map.BaseMapper
-import org.who.ddccverifier.verify.shc.JWTPayload
+import org.who.ddccverifier.verify.BaseMapper
 
 /**
  * Translates a DDCC QR CBOR object into FHIR Objects
  */
-class SHC2FHIR: BaseMapper() {
+class ShcMapper: BaseMapper() {
     fun run(payload: JWTPayload): Bundle {
         return super.run(
             payload,

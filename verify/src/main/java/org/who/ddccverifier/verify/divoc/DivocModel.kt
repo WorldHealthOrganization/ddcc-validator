@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonDeserializer
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import org.hl7.fhir.r4.model.*
-import org.who.ddccverifier.utils.FHIRLogical
+import org.who.ddccverifier.verify.BaseModel
 
 class W3CVC(
     @JsonProperty("@context")
@@ -18,7 +18,7 @@ class W3CVC(
     val credentialSubject: CredentialSubject,
     val evidence: List<Evidence>,
     val proof: Proof?,
-): FHIRLogical()
+): BaseModel()
 
 class CredentialSubject(
     val type: StringType?,
@@ -31,7 +31,7 @@ class CredentialSubject(
     val dob: DateTimeType?, //V2
     val nationality: StringType?,
     val address: Address?,
-): FHIRLogical()
+): BaseModel()
 
 class Proof(
     val type: StringType?,
@@ -39,7 +39,7 @@ class Proof(
     val verificationMethod: StringType?,
     val proofPurpose: StringType?,
     val jws: StringType?,
-): FHIRLogical()
+): BaseModel()
 
 class Address(
     val streetAddress: StringType?,
@@ -50,7 +50,7 @@ class Address(
     val addressCountry: StringType?,
     @JsonDeserialize(using = DecimalToStringDeserializer::class)
     val postalCode: StringType?,
-): FHIRLogical()
+): BaseModel()
 
 object DecimalToStringDeserializer: JsonDeserializer<StringType>() {
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): StringType {
@@ -75,13 +75,13 @@ class Evidence(
     val facility: Facility?,
     val icd11Code: StringType?,  //V2
     val prophylaxis: StringType?,  //V2
-): FHIRLogical()
+): BaseModel()
 
 class Verifier(
     val name: StringType?,
-): FHIRLogical()
+): BaseModel()
 
 class Facility(
     val name: StringType?,
     val address: Address?,
-): FHIRLogical()
+): BaseModel()

@@ -2,11 +2,11 @@ package org.who.ddccverifier.verify.divoc
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import foundation.identity.jsonld.JsonLDObject
-import org.who.ddccverifier.map.divoc.DIVOC2FHIR
 import org.who.ddccverifier.trust.TrustRegistry
 import java.security.PublicKey
 
 import org.who.ddccverifier.QRDecoder
+import org.who.ddccverifier.verify.divoc.jsonldcrypto.ContextLoader
 import org.who.ddccverifier.verify.divoc.jsonldcrypto.RsaSignature2018withPS256Verifier
 import org.who.ddccverifier.verify.divoc.jsonldcrypto.Ed25519Signature2018Verifier
 import java.io.ByteArrayInputStream
@@ -99,7 +99,7 @@ class DivocVerifier(private val registry: TrustRegistry) {
 
         val mapped = map(String(json)) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_SIGNING_FORMAT, null, null, uri, String(json))
 
-        val contents = DIVOC2FHIR().run(mapped)
+        val contents = DivocMapper().run(mapped)
 
         val kid = getKID(signedMessage) ?: return QRDecoder.VerificationResult(QRDecoder.Status.KID_NOT_INCLUDED, contents, null, uri, String(json))
         val issuer = resolveIssuer(kid) ?: return QRDecoder.VerificationResult(QRDecoder.Status.ISSUER_NOT_TRUSTED, contents, null, uri, String(json))

@@ -1,11 +1,10 @@
-package org.who.ddccverifier.verify.divoc
+package org.who.ddccverifier.verify.divoc.jsonldcrypto
 
 import com.apicatalog.jsonld.document.Document
 import com.apicatalog.jsonld.document.JsonDocument
 import com.apicatalog.jsonld.http.media.MediaType
 import com.apicatalog.jsonld.loader.DocumentLoader
 import com.apicatalog.jsonld.loader.DocumentLoaderOptions
-import java.io.InputStream
 import java.net.URI
 
 class ContextLoader : DocumentLoader {

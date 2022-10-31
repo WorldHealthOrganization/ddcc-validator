@@ -1,4 +1,4 @@
-package org.who.ddccverifier.utils
+package org.who.ddccverifier.verify
 
 import com.google.common.truth.Truth.assertThat
 import org.hl7.fhir.r4.model.*
@@ -8,7 +8,7 @@ class FhirLogicalTest {
     class MyDCCLogicalModel(
         var givenName: StringType? = null,
         var familyName: StringType? = null
-    ): FHIRLogical()
+    ): BaseModel()
 
     @Test
     fun testGetProperty() {

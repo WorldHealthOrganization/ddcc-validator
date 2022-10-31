@@ -6,9 +6,15 @@ import java.util.zip.InflaterInputStream
 import COSE.MessageTag
 import COSE.OneKey
 import COSE.Sign1Message
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.upokecenter.cbor.CBORObject
+import org.hl7.fhir.r4.model.Bundle
 import org.who.ddccverifier.QRDecoder
+import org.who.ddccverifier.verify.hcert.dcc.DccMapper
+import org.who.ddccverifier.verify.hcert.who.WhoMapper
 import org.who.ddccverifier.trust.TrustRegistry
+import org.who.ddccverifier.verify.hcert.dcc.logical.CWT
+import org.who.ddccverifier.verify.hcert.dcc.logical.WHOLogicalModel
 import java.security.PublicKey
 import java.util.*
 
@@ -81,6 +87,25 @@ class HCertVerifier (private val registry: TrustRegistry) {
         return getContent(signedMessage)
     }
 
+    val EU_DCC_CODE = -260
+
+    fun toFhir(hcertPayload: CBORObject): Bundle {
+        if (hcertPayload[EU_DCC_CODE] != null)
+            return DccMapper().run(
+                jacksonObjectMapper().readValue(
+                    hcertPayload.ToJSONString(),
+                    CWT::class.java
+                )
+            )
+
+        return WhoMapper().run(
+            jacksonObjectMapper().readValue(
+                hcertPayload.ToJSONString(),
+                WHOLogicalModel::class.java
+            )
+        );
+    }
+
     fun unpackAndVerify(qr: String): QRDecoder.VerificationResult {
         val hc1Decoded = prefixDecode(qr)
         val decodedBytes = base45Decode(hc1Decoded) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_ENCODING, null, null, qr, null)
@@ -90,7 +115,7 @@ class HCertVerifier (private val registry: TrustRegistry) {
 
         val unpacked = getContent(signedMessage).ToJSONString()
 
-        val contents = CBORTranslator().toFhir(getContent(signedMessage))
+        val contents = toFhir(getContent(signedMessage))
 
         val kid = getKID(signedMessage) ?: return QRDecoder.VerificationResult(QRDecoder.Status.KID_NOT_INCLUDED, contents, null, qr, unpacked)
         val issuer = resolveIssuer(kid) ?: return QRDecoder.VerificationResult(QRDecoder.Status.ISSUER_NOT_TRUSTED, contents, null, qr, unpacked)

@@ -1,11 +1,11 @@
-package org.who.ddccverifier.utils
+package org.who.ddccverifier.verify
 
 import org.hl7.fhir.r4.model.Base
 import org.hl7.fhir.r4.model.Resource
 import org.hl7.fhir.r4.model.ResourceType
 import kotlin.reflect.full.declaredMemberProperties
 
-open class FHIRLogical: Resource() {
+open class BaseModel: Resource() {
     override fun copy(): Resource? { return null }
     override fun getResourceType(): ResourceType? { return null }
 

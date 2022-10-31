@@ -4,11 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.Test
 
 import org.junit.Assert.*
-import org.who.ddccverifier.trust.pathcheck.PCFTrustRegistry
 import org.who.ddccverifier.verify.divoc.DivocVerifier
 import org.who.ddccverifier.verify.hcert.HCertVerifier
 import org.who.ddccverifier.verify.icao.IcaoVerifier
-import org.who.ddccverifier.verify.shc.SHCVerifier
+import org.who.ddccverifier.verify.shc.ShcVerifier
 
 class QRUnpackTest: BaseTest() {
     private val mapper = ObjectMapper()
@@ -64,14 +63,14 @@ class QRUnpackTest: BaseTest() {
     @Test
     fun unpackSHCQR1() {
         val qr1 = open("SHCQR1Contents.txt")
-        val jwt = SHCVerifier(registry).unpack(qr1)
+        val jwt = ShcVerifier(registry).unpack(qr1)
         assertEquals(open("SHCQR1Unpacked.txt"), jwt)
     }
 
     @Test
     fun unpackSHCTestResults() {
         val qr1 = open("SHCTestResultsContents.txt")
-        val jwt = SHCVerifier(registry).unpack(qr1)
+        val jwt = ShcVerifier(registry).unpack(qr1)
         assertEquals(open("SHCTestResultsUnpacked.txt"), jwt)
     }
 

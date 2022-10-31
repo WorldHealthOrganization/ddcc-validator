@@ -1,4 +1,4 @@
-package org.who.ddccverifier.map
+package org.who.ddccverifier.verify
 
 import org.hl7.fhir.r4.context.SimpleWorkerContext
 import org.hl7.fhir.r4.model.Base

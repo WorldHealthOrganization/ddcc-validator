@@ -2,7 +2,6 @@ package org.who.ddccverifier.verify
 
 import ca.uhn.fhir.context.FhirContext
 import com.fasterxml.jackson.databind.ObjectMapper
-import org.hl7.fhir.r4.model.Patient
 import org.junit.Assert.*
 import org.junit.Test
 import org.mockito.Mockito
@@ -10,7 +9,7 @@ import org.who.ddccverifier.QRDecoder
 import org.who.ddccverifier.verify.divoc.DivocVerifier
 import org.who.ddccverifier.verify.hcert.HCertVerifier
 import org.who.ddccverifier.verify.icao.IcaoVerifier
-import org.who.ddccverifier.verify.shc.SHCVerifier
+import org.who.ddccverifier.verify.shc.ShcVerifier
 import java.util.*
 
 
@@ -147,7 +146,7 @@ class QRVerifyTest: BaseTest() {
         Mockito.mockStatic(UUID::class.java).use { mockedUuid ->
             mockedUuid.`when`<Any> { UUID.randomUUID() }.thenReturn(firstUUID, *uuidList)
             val qr1 = open("SHCQR1Contents.txt")
-            val verified = SHCVerifier(registry).unpackAndVerify(qr1)
+            val verified = ShcVerifier(registry).unpackAndVerify(qr1)
 
             assertNotNull(verified)
             assertEquals(QRDecoder.Status.VERIFIED, verified.status)
@@ -163,7 +162,7 @@ class QRVerifyTest: BaseTest() {
         Mockito.mockStatic(UUID::class.java).use { mockedUuid ->
             mockedUuid.`when`<Any> { UUID.randomUUID() }.thenReturn(firstUUID, *uuidList)
             val qr1 = open("SHCTestResultsContents.txt")
-            val verified = SHCVerifier(registry).unpackAndVerify(qr1)
+            val verified = ShcVerifier(registry).unpackAndVerify(qr1)
 
             assertNotNull(verified)
             assertEquals(QRDecoder.Status.VERIFIED, verified.status)

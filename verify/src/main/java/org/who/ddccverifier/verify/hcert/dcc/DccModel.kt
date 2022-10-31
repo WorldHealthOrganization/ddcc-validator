@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonDeserializer
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import org.hl7.fhir.r4.model.*
-import org.who.ddccverifier.utils.FHIRLogical
+import org.who.ddccverifier.verify.BaseModel
 import org.who.ddccverifier.verify.shc.DecimalToDataTimeDeserializer
 import java.util.*
 
@@ -31,12 +31,12 @@ class CWT (
     val id: StringType?,   // Audience
     @JsonProperty("-260")
     val data: HCERT?,      // Certificate
-): FHIRLogical()
+): BaseModel()
 
 class HCERT(
     @JsonProperty("1")
     val cert: HC1?          // Cert
-): FHIRLogical()
+): BaseModel()
 
 class HC1(
     val ver: StringType?,       // Schema version
@@ -45,14 +45,14 @@ class HC1(
     val v: List<Vaccination>?,  // Vaccination Group
     val t: List<Test>?,         // Test Group
     val r: List<Recovery>?      // Recovery Group
-): FHIRLogical()
+): BaseModel()
 
 class PersonName(
     val fn	:	StringType?,  // Surname
     val fnt	:	StringType?,  // Standardised surname
     val gn	:	StringType?,  // Forename
     val gnt	:	StringType?   // Standardised forename
-): FHIRLogical()
+): BaseModel()
 
 class Vaccination(
     val tg:	StringType?,    // disease or agent targeted
@@ -65,7 +65,7 @@ class Vaccination(
     val co:	StringType?,    // Country of Vaccination
     val `is`:StringType?,   // Certificate Issuer
     val ci:	StringType?     // Unique Certificate Identifier: UVCI
-): FHIRLogical()
+): BaseModel()
 
 class Test(
     val tg:	StringType?,    //disease or agent targeted
@@ -78,7 +78,7 @@ class Test(
     val co:	StringType?,    // Country of Test
     val `is`:StringType?,   // Certificate Issuer
     val ci:	StringType?     // Unique Certificate Identifier: UVCI
-): FHIRLogical()
+): BaseModel()
 
 class Recovery(
     val tg: StringType?,	// disease or agent targeted
@@ -88,7 +88,7 @@ class Recovery(
     val co:	StringType?,    // Country of Test
     val `is`: StringType?,  // Certificate Issuer
     val ci:	StringType?     // Unique Certificate Identifier: UVCI
-): FHIRLogical()
+): BaseModel()
 
 
 object DecimalToDataTimeDeserializer: JsonDeserializer<DateTimeType>() {

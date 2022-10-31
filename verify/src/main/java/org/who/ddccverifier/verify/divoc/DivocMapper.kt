@@ -1,13 +1,12 @@
-package org.who.ddccverifier.map.divoc
+package org.who.ddccverifier.verify.divoc
 
 import org.hl7.fhir.r4.model.*
-import org.who.ddccverifier.map.BaseMapper
-import org.who.ddccverifier.verify.divoc.W3CVC
+import org.who.ddccverifier.verify.BaseMapper
 
 /**
  * Translates a W3C VC object into FHIR Objects
  */
-class DIVOC2FHIR: BaseMapper() {
+class DivocMapper: BaseMapper() {
     fun run(payload: W3CVC): Bundle {
         return super.run(
             payload,

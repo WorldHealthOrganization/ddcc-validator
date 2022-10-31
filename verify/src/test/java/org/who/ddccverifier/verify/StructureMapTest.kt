@@ -1,15 +1,14 @@
-package org.who.ddccverifier.map
+package org.who.ddccverifier.verify
 
 import com.google.common.truth.Truth.assertThat
 import org.hl7.fhir.r4.model.*
 import org.junit.Test
-import org.who.ddccverifier.utils.FHIRLogical
 
 class StructureMapTest {
     class MyDCCLogicalModel(
         var givenName: StringType? = null,
         var familyName: StringType? = null
-    ): FHIRLogical()
+    ): BaseModel()
 
     @Test
     fun testStructureMapOfCustomeModelIntoFhir() {

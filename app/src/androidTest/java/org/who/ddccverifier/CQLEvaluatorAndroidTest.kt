@@ -5,7 +5,6 @@ import ca.uhn.fhir.context.FhirContext
 import ca.uhn.fhir.context.FhirVersionEnum
 import org.cqframework.cql.elm.execution.VersionedIdentifier
 import org.hl7.fhir.r4.model.Bundle
-import org.hl7.fhir.r4.model.Composition
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -15,7 +14,7 @@ import org.who.ddccverifier.services.cql.CQLEvaluator
 import org.who.ddccverifier.services.cql.FHIRLibraryLoader
 import org.who.ddccverifier.verify.divoc.DivocVerifier
 import org.who.ddccverifier.verify.icao.IcaoVerifier
-import org.who.ddccverifier.verify.shc.SHCVerifier
+import org.who.ddccverifier.verify.shc.ShcVerifier
 import java.io.StringReader
 import java.util.*
 
@@ -93,7 +92,7 @@ class CQLEvaluatorAndroidTest: BaseTest() {
     @Test
     fun evaluateDDCCPassOnSHCQR1FromQRTest() {
         val qr1 = open("SHCQR1Contents.txt")
-        val verified = SHCVerifier(registry).unpackAndVerify(qr1)
+        val verified = ShcVerifier(registry).unpackAndVerify(qr1)
 
         Assert.assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
