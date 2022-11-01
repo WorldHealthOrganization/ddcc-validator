@@ -119,6 +119,7 @@
         "encounter": {
           "reference": "Encounter/d9b35e76-f553-4a18-9254-3372d9ea8c73"
         },
+        "effectiveDateTime": "2022-07-27T06:15:00Z",
         "valueCodeableConcept": {
           "coding": [
             {

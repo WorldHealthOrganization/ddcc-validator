@@ -5,6 +5,9 @@
     {
       "resource": {
         "resourceType": "Composition",
+        "identifier": {
+          "value": "US111222333444555666"
+        },
         "type": {
           "coding": [
             {
@@ -186,6 +189,63 @@
         "resourceType": "Location",
         "id": "7c967bcb-abc6-4cb6-b590-7b5827d9aae3",
         "name": "Vaccination Site"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "ImmunizationRecommendation",
+        "id": "04db279a-ba4d-472d-b93e-3e725f3ecbea",
+        "patient": {
+          "reference": "Patient/43293785-70d2-4cbe-8ecf-30b947fd45d5"
+        },
+        "authority": {
+          "reference": "Organization/969e8fbe-52b8-425f-8c4c-bbd6f7aa886f"
+        },
+        "recommendation": [
+          {
+            "vaccineCode": [
+              {
+                "coding": [
+                  {
+                    "system": "http://snomed.info/sct",
+                    "code": "1119349007"
+                  }
+                ]
+              }
+            ],
+            "targetDisease": {
+              "coding": [
+                {
+                  "system": "http://snomed.info/sct",
+                  "code": "840539006"
+                }
+              ]
+            },
+            "forecastStatus": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/2.1.0/CodeSystem-immunization-recommendation-status.html",
+                  "code": "due"
+                }
+              ]
+            },
+            "dateCriterion": [
+              {
+                "code": {
+                  "coding": [
+                    {
+                      "system": "http://loinc.org",
+                      "code": "30980-7",
+                      "display": "Date vaccine due"
+                    }
+                  ]
+                },
+                "value": "2021-07-29"
+              }
+            ],
+            "seriesDosesPositiveInt": 2
+          }
+        ]
       }
     }
   ]

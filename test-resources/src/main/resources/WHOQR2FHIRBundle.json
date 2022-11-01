@@ -5,6 +5,9 @@
     {
       "resource": {
         "resourceType": "Composition",
+        "identifier": {
+          "value": "111000111"
+        },
         "type": {
           "coding": [
             {
