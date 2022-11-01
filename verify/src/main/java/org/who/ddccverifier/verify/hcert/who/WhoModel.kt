@@ -29,7 +29,7 @@ class WHOLogicalModel (
 
     // Vaccine fields are in the root
     val date: DateTimeType?,
-    val due_date: DateType?,
+    val due_date: DateTimeType?,
     val vaccine_valid: DateType?,
     val hw: StringType?,
     val disease: Coding?,
