@@ -89,7 +89,7 @@ android {
 }
 
 configurations {
-    all {
+    implementation {
         exclude module: "xpp3"
         exclude module: "xpp3_min"
         exclude module: "xmlpull"
