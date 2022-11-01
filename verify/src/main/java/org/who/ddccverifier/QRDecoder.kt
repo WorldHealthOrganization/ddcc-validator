@@ -1,6 +1,7 @@
 package org.who.ddccverifier
 
 import org.hl7.fhir.r4.model.Bundle
+import org.hl7.fhir.r4.model.Composition
 import org.who.ddccverifier.verify.divoc.DivocVerifier
 import org.who.ddccverifier.verify.hcert.HCertVerifier
 import org.who.ddccverifier.verify.icao.IcaoVerifier
@@ -32,7 +33,9 @@ class QRDecoder(private val registry: TrustRegistry) {
         var issuer: TrustRegistry.TrustedEntity?,
         var qr: String,
         var unpacked: String?
-    )
+    ) {
+        fun composition() = contents?.entry?.filter { it.resource is Composition }?.firstOrNull()?.resource as Composition?
+    }
 
     fun decode(qrPayload : String): VerificationResult {
         if (qrPayload.uppercase().startsWith("HC1:")) {

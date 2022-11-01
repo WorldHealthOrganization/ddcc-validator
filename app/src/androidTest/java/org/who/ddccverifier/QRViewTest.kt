@@ -1,5 +1,6 @@
 package org.who.ddccverifier
 
+import ca.uhn.fhir.context.FhirContext
 import org.cqframework.cql.elm.execution.VersionedIdentifier
 import org.hl7.fhir.r4.model.Composition
 import org.junit.Test
@@ -24,7 +25,7 @@ class QRViewTest: BaseTest() {
 
         assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
-        val card2 = DDCCFormatter().run(verified.contents!!.entry.filterIsInstance<Composition>().first())
+        val card2 = DDCCFormatter().run(verified.composition()!!)
         val status = cqlEvaluator.resolve(
             "CompletedImmunization", ddccPass,
             verified.contents!!) as Boolean
@@ -48,9 +49,9 @@ class QRViewTest: BaseTest() {
         assertEquals("Jul 8, 2021", card2.doseDate)
         assertEquals("Jul 22, 2021", card2.vaccineValid)
         assertEquals("COVID-19", card2.vaccineAgainst)
-        assertEquals("TEST (#PT123F), TEST", card2.vaccineInfo)
+        assertEquals("TEST (#PT123F)", card2.vaccineInfo)
         assertEquals("TEST", card2.vaccineInfo2)
-        assertEquals("Vaccination Site, USA", card2.location)
+        assertEquals("Vaccination Site", card2.location)
         assertEquals("US111222333444555666", card2.hcid)
         assertEquals("wA69g8VD512TfTTdkTNSsG", card2.pha)
         assertEquals("http://www.acme.org/practitioners/23", card2.hw)
@@ -68,7 +69,7 @@ class QRViewTest: BaseTest() {
 
         assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
-        val card2 = DDCCFormatter().run(verified.contents!!.entry.filterIsInstance<Composition>().first())
+        val card2 = DDCCFormatter().run(verified.composition()!!)
 
         val status = cqlEvaluator.resolve(
             "CompletedImmunization", ddccPass,
@@ -89,7 +90,7 @@ class QRViewTest: BaseTest() {
         assertEquals(null, card2.doseDate)
         assertEquals(null, card2.vaccineValid)
         assertEquals("COVID 19", card2.vaccineAgainst)
-        assertEquals("Organization/973 (#PT123F.9)", card2.vaccineInfo)
+        assertEquals("Lot #PT123F.9", card2.vaccineInfo)
         assertEquals(null, card2.vaccineInfo2)
         assertEquals("Location/971", card2.location)
         assertEquals("111000111", card2.hcid)
@@ -109,7 +110,7 @@ class QRViewTest: BaseTest() {
 
         assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
-        val card2 = DDCCFormatter().run(verified.contents!!.entry.filterIsInstance<Composition>().first())
+        val card2 = DDCCFormatter().run(verified.composition()!!)
 
         val status = cqlEvaluator.resolve(
             "CompletedImmunization", ddccPass,
@@ -156,7 +157,7 @@ class QRViewTest: BaseTest() {
 
         assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
-        val card2 = DDCCFormatter().run(verified.contents!!.entry.filterIsInstance<Composition>().first())
+        val card2 = DDCCFormatter().run(verified.composition()!!)
         val status = cqlEvaluator.resolve(
             "CompletedImmunization", ddccPass,
             verified.contents!!) as Boolean
@@ -180,7 +181,7 @@ class QRViewTest: BaseTest() {
         assertEquals("May 27, 2021", card2.doseDate)
         assertEquals(null, card2.vaccineValid)
         assertEquals("COVID-19", card2.vaccineAgainst)
-        assertEquals("EU/1/20/1528, ORG-100030215", card2.vaccineInfo)
+        assertEquals("EU/1/20/1528", card2.vaccineInfo)
         assertEquals("ORG-100030215", card2.vaccineInfo2)
         assertEquals("DE", card2.location)
         assertEquals(null, card2.hcid)
@@ -200,7 +201,7 @@ class QRViewTest: BaseTest() {
 
         assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
-        val card2 = DDCCFormatter().run(verified.contents!!.entry.filterIsInstance<Composition>().first())
+        val card2 = DDCCFormatter().run(verified.composition()!!)
         val status = cqlEvaluator.resolve("CompletedImmunization", ddccPass, verified.contents!!) as Boolean
 
         val context = cqlEvaluator.run(ddccPass, verified.contents!!)
@@ -242,7 +243,7 @@ class QRViewTest: BaseTest() {
 
         assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
-        val card2 = DDCCFormatter().run(verified.contents!!.entry.filterIsInstance<Composition>().first())
+        val card2 = DDCCFormatter().run(verified.composition()!!)
 
         // Credential
         assertEquals("Test Result", card2.cardTitle!!.split(" - ")[1])
@@ -283,9 +284,11 @@ class QRViewTest: BaseTest() {
         val qr1 = open("DIVOCQR1Contents.txt")
         val verified = qrUnpacker.decode(qr1)
 
+        println(FhirContext.forR4Cached().newJsonParser().encodeResourceToString(verified.contents!!))
+
         assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
-        val card2 = DDCCFormatter().run(verified.contents!!.entry.filterIsInstance<Composition>().first())
+        val card2 = DDCCFormatter().run(verified.composition()!!)
         val status = cqlEvaluator.resolve(
             "CompletedImmunization", ddccPass,
             verified.contents!!) as Boolean
@@ -311,9 +314,9 @@ class QRViewTest: BaseTest() {
         assertEquals("COVID-19", card2.vaccineAgainst)
         assertEquals("COVISHIELD (#Dummy-TGN-Chamba)", card2.vaccineInfo)
         assertEquals(null, card2.vaccineInfo2)
-        assertEquals("IN", card2.location)
+        assertEquals("Himachal Site Name 176207", card2.location)
         assertEquals("39791185041847", card2.hcid)
-        assertEquals("Himachal Site Name 176207", card2.pha)
+        assertEquals(null, card2.pha)
         assertEquals("Dummy Vaccinator", card2.hw)
 
         // Recommendation
@@ -329,7 +332,7 @@ class QRViewTest: BaseTest() {
 
         assertEquals(QRDecoder.Status.INVALID_SIGNATURE, verified.status)
 
-        val card2 = DDCCFormatter().run(verified.contents!!.entry.filterIsInstance<Composition>().first())
+        val card2 = DDCCFormatter().run(verified.composition()!!)
         val status = cqlEvaluator.resolve(
             "CompletedImmunization", ddccPass,
             verified.contents!!) as Boolean
@@ -355,9 +358,9 @@ class QRViewTest: BaseTest() {
         assertEquals("COVID-19", card2.vaccineAgainst)
         assertEquals("Pfizer (#JM4561)", card2.vaccineInfo)
         assertEquals(null, card2.vaccineInfo2)
-        assertEquals("IND", card2.location)
+        assertEquals("St, Jago Park Health Centre", card2.location)
         assertEquals("9874S1445691", card2.hcid)
-        assertEquals("St, Jago Park Health Centre", card2.pha)
+        assertEquals(null, card2.pha)
         assertEquals("Sanderson, Brandon", card2.hw)
 
         // Recommendation
@@ -373,7 +376,7 @@ class QRViewTest: BaseTest() {
 
         assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
-        val card2 = DDCCFormatter().run(verified.contents!!.entry.filterIsInstance<Composition>().first())
+        val card2 = DDCCFormatter().run(verified.composition()!!)
         val status = cqlEvaluator.resolve("CompletedImmunization", ddccPass, verified.contents!!) as Boolean
 
         val context = cqlEvaluator.run(ddccPass, verified.contents!!)

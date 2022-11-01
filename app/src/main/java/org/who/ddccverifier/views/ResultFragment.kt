@@ -143,7 +143,7 @@ class ResultFragment : Fragment() {
         if (DDCC.contents != null) {
             binding.tvResultCard.visibility = TextView.VISIBLE
 
-            val card = DDCCFormatter().run(DDCC.contents!!.entry.filterIsInstance<Composition>().first())
+            val card = DDCCFormatter().run(DDCC.composition()!!)
 
             // Credential
             setTextView(binding.tvResultScanDate, card.cardTitle, binding.tvResultScanDate)

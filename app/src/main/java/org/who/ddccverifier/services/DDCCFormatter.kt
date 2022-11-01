@@ -302,7 +302,7 @@ class DDCCFormatter {
     val EXT_COUNTRY = "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCCountryOfVaccination"
     val EXT_VACCINE_VALID = "https://WorldHealthOrganization.github.io/ddcc/StructureDefinition/DDCCVaccineValidFrom"
 
-    private fun formatDate(date: DateTimeType?): String? {
+    private fun formatDate(date: BaseDateTimeType?): String? {
         if (date == null) return null
         if (date.value == null) return null
         return fmt.format(date.value)
@@ -453,8 +453,11 @@ class DDCCFormatter {
     }
 
     private fun formatOrganization(org: Organization?): String? {
-        if (org?.identifier == null) return null
-        return org.name ?: org.identifier.groupBy {
+        if (org == null) return null
+        if (org.name != null) return org.name
+        if (org.identifier.isNullOrEmpty()) return null
+
+        return org.identifier.groupBy {
             it.value
         }.keys.joinToString(", ")
     }
@@ -533,7 +536,7 @@ class DDCCFormatter {
 
     private fun formatVaccineValidTo(extensions: List<Extension>?): String? {
         if (extensions == null || extensions.isEmpty()) return null
-        return extensions.groupBy { formatDate(it.value as? DateTimeType) }.keys.joinToString(", ")
+        return extensions.groupBy { formatDate(it.value as? BaseDateTimeType) }.keys.joinToString(", ")
     }
 
     private fun formatCountry(extensions: List<Extension>?): String? {
@@ -553,49 +556,50 @@ class DDCCFormatter {
         ).firstOrNull()
 
         val location = listOfNotNull(
+            (immunization?.location?.resource as? Location)?.name,
             formatLocation(immunization?.location, formatCountry(immunization?.getExtensionsByUrl(EXT_COUNTRY))),
             formatLocation((testResult?.encounter?.resource as? Encounter)?.locationFirstRep?.location, formatCountry(testResult?.getExtensionsByUrl(EXT_COUNTRY)))
         ).firstOrNull()
 
         return ResultFragment.ResultCard(
-            DDCC.id,
-            formatCardTitle(immunization, testResult),
-            formatValidPeriod(DDCC.eventFirstRep.period.start, DDCC.eventFirstRep.period.end),
+            hcid = DDCC.identifier.value,
+            cardTitle = formatCardTitle(immunization, testResult),
+            validUntil = formatValidPeriod(DDCC.eventFirstRep.period.start, DDCC.eventFirstRep.period.end),
 
             // Patient
-            formatName(patient.name),
-            formatPersonDetails(patient.birthDateElement, patient.gender),
-            formatIDs(patient.identifier),
+            personName = formatName(patient.name),
+            personDetails = formatPersonDetails(patient.birthDateElement, patient.gender),
+            identifier = formatIDs(patient.identifier),
 
             // Location / Organization / Practitioner
-            location,
-            formatOrganization(organization),
-            formatPractioners(immunization?.performer),
+            location = location,
+            pha = formatOrganization(organization),
+            hw = formatPractioners(immunization?.performer),
 
             // Test Results
-            formatTestType(testResult?.code),
-            formatTestTypeDetail(testResult?.code),
-            formatDate(testResult?.effectiveDateTimeType),
-            formatTestResult(testResult?.valueCodeableConcept),
+            testType = formatTestType(testResult?.code),
+            testTypeDetail = formatTestTypeDetail(testResult?.code),
+            testDate = formatDate(testResult?.effectiveDateTimeType),
+            testResult = formatTestResult(testResult?.valueCodeableConcept),
 
             // Immunization
-            formatDose(
+            dose = formatDose(
                 immunization?.protocolApplied?.firstOrNull()?.doseNumberPositiveIntType,
                 immunization?.protocolApplied?.firstOrNull()?.seriesDosesPositiveIntType
             ),
-            formatDate(immunization?.occurrenceDateTimeType),
-            formatVaccineValidTo(immunization?.getExtensionsByUrl(EXT_VACCINE_VALID)),
-            formatVaccineAgainst(immunization?.protocolApplied?.firstOrNull()?.targetDisease),
-            formatVaccineType(immunization?.vaccineCode),
-            formatVaccineInfo(
+            doseDate = formatDate(immunization?.occurrenceDateTimeType),
+            vaccineValid = formatVaccineValidTo(immunization?.getExtensionsByUrl(EXT_VACCINE_VALID)),
+            vaccineAgainst = formatVaccineAgainst(immunization?.protocolApplied?.firstOrNull()?.targetDisease),
+            vaccineType = formatVaccineType(immunization?.vaccineCode),
+            vaccineInfo = formatVaccineInfo(
                 immunization?.lotNumber,
                 formatBrand(immunization?.getExtensionsByUrl(EXT_BRAND)),
                 immunization?.manufacturer
             ),
-            formatAuthorizationHolder(immunization?.getExtensionsByUrl(EXT_MA_HOLDER)),
+            vaccineInfo2 = formatAuthorizationHolder(immunization?.getExtensionsByUrl(EXT_MA_HOLDER)),
 
             // recommendation
-            formatDueDate(recommendation?.recommendation)
+            nextDose = formatDueDate(recommendation?.recommendation)
         )
     }
 }
