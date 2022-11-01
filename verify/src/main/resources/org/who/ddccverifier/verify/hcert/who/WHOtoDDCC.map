@@ -66,11 +66,21 @@ group ExtractCert(source src: WHOLogicalModel, target bundle: Bundle, target com
                         loc.reference = append("Location/", locid)
                         "facility name";
 
-                    src where (vac.due_date.exists()) ->
-                     bundle.entry as entryRec, entryRec.resource = create('ImmunizationRecommendation') as rec, uuid() as rid
-                     then {
-                         src -> rec.id = rid "Recommendation ID";
-                         src -> rec then ExtractRecommendation(src, oid, rec) "Extract Recommendation";
+                    src.due_date as due_date ->
+                        bundle.entry as entryRec, entryRec.resource = create('ImmunizationRecommendation') as rec, uuid() as rid
+                        then {
+                            src -> rec.id = rid "Recommendation ID";
+
+                            src -> rec.patient as subj, subj.reference = append("Patient/", pid) "Immunization Recommendation Set patient";
+                            src -> rec.authority as author, author.reference = append("Organization/", oid) "Composition.Set org";
+
+                            src ->
+                                section.entry as entry,
+                                entry.reference = append("ImmunizationRecommendation/", rid )
+                                "add immunization recommendation to section";
+
+                            src -> rec.recommendation as recommendation
+                                then ExtractRecommendation(src, oid, recommendation) "Extract Recommendation";
                     } "creating recommendation";
 
                     src -> comp.author as author, author.reference = append("Organization/", oid) "Composition.Set org";
@@ -143,6 +153,10 @@ group ExtractTestResult(source test: TestResult, source oid, target observation:
         test.pathogen as pathogen -> codeable.coding = pathogen "set pathogen";
     } "set observation code";
 
+    test.date as date ->
+        observation.effective = date
+        "set test date";
+
     test.result as result ->
         observation.value = create('CodeableConcept') as codeable,
         codeable.coding = result "set result";
@@ -204,7 +218,7 @@ group ExtractVaccine(source vac: WHOLogicalModel, source oid, target immunizatio
     vac -> immunization.protocolApplied as protocolApplied then ExtractProtocolApplied(vac, oid, protocolApplied) "set protocol applied";
 }
 
-group ExtractRecommendation(source vac: WHOLogicalModel, source oid, target recommendation: ImmunizationRecommendation) {
+group ExtractRecommendation(source vac: WHOLogicalModel, source oid, target recommendation) {
     vac.vaccine as vp ->
         recommendation.vaccineCode as type,
         type.coding = vp
@@ -215,7 +229,7 @@ group ExtractRecommendation(source vac: WHOLogicalModel, source oid, target reco
         codeable.coding = disease
         "set target disease type";
 
-    vac.dose as dn -> recommendation.doseNumber = evaluate(dn, $this+1) "set dose number";
+    vac.dose as dn -> recommendation.doseNumber = evaluate(dn, $this.valueInt + 1) "set dose number";
 
     vac.total_doses as sd -> recommendation.seriesDoses = sd "set series doses";
 
@@ -261,6 +275,11 @@ group ExtractPatient(source src: WHOLogicalModel, source pid, target patient: Pa
 }
 
 group ExtractComposition(source src: WHOLogicalModel, target composition: Composition) {
+    src.hcid as hcid ->
+        composition.identifier as identif,
+        identif.value = hcid
+        "set identifier ci";
+
     src -> composition.title = "International Certificate of Vaccination or Prophylaxis" "Title";
 
     src -> composition.category as category, category.coding as coding then {
