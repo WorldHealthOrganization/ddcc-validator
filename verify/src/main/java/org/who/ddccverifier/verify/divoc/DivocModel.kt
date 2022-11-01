@@ -1,5 +1,6 @@
 package org.who.ddccverifier.verify.divoc
 
+import ca.uhn.fhir.model.api.TemporalPrecisionEnum
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationContext
@@ -27,7 +28,8 @@ class CredentialSubject(
     val name: StringType?,
     val gender: StringType?,
     val sex: StringType?,
-    val age: StringType?, //V1
+    @JsonDeserialize(using = AgeToQuantityDeserializer::class)
+    val age: Quantity?, //V1
     val dob: DateTimeType?, //V2
     val nationality: StringType?,
     val address: Address?,
@@ -55,6 +57,15 @@ class Address(
 object DecimalToStringDeserializer: JsonDeserializer<StringType>() {
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): StringType {
         return StringType(p.valueAsString)
+    }
+}
+
+object AgeToQuantityDeserializer: JsonDeserializer<Quantity>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): Quantity {
+        return Quantity().apply {
+            this.value = p.valueAsString.toBigDecimal()
+            this.unit = "years"
+        }
     }
 }
 
