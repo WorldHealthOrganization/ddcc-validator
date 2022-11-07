@@ -1,38 +1,76 @@
 package org.who.ddccverifier
 
+import androidx.test.core.app.ApplicationProvider
 import ca.uhn.fhir.context.FhirContext
+import ca.uhn.fhir.context.FhirVersionEnum
+import com.google.android.fhir.FhirEngine
+import com.google.android.fhir.FhirEngineProvider
+import kotlinx.coroutines.runBlocking
 import org.cqframework.cql.elm.execution.VersionedIdentifier
-import org.hl7.fhir.r4.model.Composition
+import org.hl7.fhir.r4.model.*
+import org.junit.Assert
 import org.junit.Test
 
 import org.junit.Assert.*
+import org.junit.Before
 import org.who.ddccverifier.services.*
 import org.who.ddccverifier.services.cql.CQLEvaluator
+import org.who.ddccverifier.services.cql.CqlBuilder
 import org.who.ddccverifier.services.cql.FHIRLibraryLoader
+import org.who.ddccverifier.services.cql.FhirOperator
 import java.util.*
 
 class QRViewTest: BaseTest() {
-
-    private val ddccPass = VersionedIdentifier().withId("DDCCPass").withVersion("0.0.1")
-
-    private val cqlEvaluator = CQLEvaluator(FHIRLibraryLoader(::inputStream))
     private val qrUnpacker = QRDecoder(registry)
 
+    private val fhirContext = FhirContext.forCached(FhirVersionEnum.R4)
+    private lateinit var fhirEngine: FhirEngine
+    private lateinit var fhirOperator: FhirOperator
+
+    private val ddccPass = CqlBuilder.compileAndBuild(inputStream("DDCCPass-1.0.0.cql")!!)
+
+    @Before
+    fun setUp() = runBlocking {
+        fhirEngine = FhirEngineProvider.getInstance(ApplicationProvider.getApplicationContext())
+        fhirOperator = FhirOperator(fhirContext, fhirEngine)
+        fhirOperator.loadLib(ddccPass)
+        TimeZone.setDefault(TimeZone.getTimeZone("GMT"))
+    }
+
+    private suspend fun loadBundle(bundle: Bundle?) {
+        checkNotNull(bundle)
+        for (entry in bundle.entry) {
+            when (entry.resource.resourceType) {
+                ResourceType.Library -> fhirOperator.loadLib(entry.resource as Library)
+                ResourceType.Bundle -> Unit
+                else -> fhirEngine.create(entry.resource)
+            }
+        }
+    }
+
+    private fun patId(bundle: Bundle?): String {
+        checkNotNull(bundle)
+        return bundle.entry.filter { it.resource is Patient }.first().resource.id.removePrefix("Patient/")
+    }
+
     @Test
-    fun viewWHOQR1() {
+    fun viewWHOQR1() = runBlocking {
         val qr1 = open("WHOQR1Contents.txt")
         val verified = qrUnpacker.decode(qr1)
 
+        loadBundle(verified.contents)
+
+        val results = fhirOperator.evaluateLibrary(
+            "http://localhost/Library/DDCCPass|1.0.0",
+            patId(verified.contents),
+            setOf("CompletedImmunization", "GetFinalDose", "GetSingleDose")) as Parameters
+
         assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
-        val card2 = DDCCFormatter().run(verified.composition()!!)
-        val status = cqlEvaluator.resolve(
-            "CompletedImmunization", ddccPass,
-            verified.contents!!) as Boolean
+        assertEquals(false, results.getParameterBool("CompletedImmunization"))
+        assertEquals(Collections.EMPTY_LIST, results.getParameters("GetFinalDose"))
 
-        val context = cqlEvaluator.run(ddccPass, verified.contents!!)
-        assertEquals(false, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
-        assertEquals(Collections.EMPTY_LIST, context.resolveExpressionRef("GetFinalDose").evaluate(context))
+        val card2 = DDCCFormatter().run(verified.composition()!!)
 
         // Credential
         assertEquals("COVID-19 Vaccination", card2.cardTitle!!.split(" - ")[1])
@@ -58,22 +96,26 @@ class QRViewTest: BaseTest() {
 
         // Recommendation
         assertEquals("Jul 29, 2021", card2.nextDose)
-
-        assertEquals(false, status)
     }
 
     @Test
-    fun viewWHOQR2() {
+    fun viewWHOQR2() = runBlocking {
         val qr2 = open("WHOQR2Contents.txt")
         val verified = qrUnpacker.decode(qr2)
 
+        loadBundle(verified.contents)
+
+        val results = fhirOperator.evaluateLibrary(
+            "http://localhost/Library/DDCCPass|1.0.0",
+            patId(verified.contents),
+            setOf("CompletedImmunization", "GetFinalDose", "GetSingleDose")) as Parameters
+
         assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
-        val card2 = DDCCFormatter().run(verified.composition()!!)
+        assertEquals(true, results.getParameterBool("CompletedImmunization"))
+        assertEquals(Collections.EMPTY_LIST, results.getParameters("GetFinalDose"))
 
-        val status = cqlEvaluator.resolve(
-            "CompletedImmunization", ddccPass,
-            verified.contents!!) as Boolean
+        val card2 = DDCCFormatter().run(verified.composition()!!)
 
         // Credential
         assertEquals("COVID 19 Vaccination", card2.cardTitle!!.split(" - ")[1])
@@ -99,22 +141,28 @@ class QRViewTest: BaseTest() {
 
         // Recommendation
         assertEquals(null, card2.nextDose)
-
-        assertEquals(true, status)
     }
 
     @Test
-    fun viewSingaporePCR() {
+    fun viewSingaporePCR() = runBlocking {
         val qr2 = open("WHOSingaporePCRContents.txt")
         val verified = qrUnpacker.decode(qr2)
 
         assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
-        val card2 = DDCCFormatter().run(verified.composition()!!)
+        loadBundle(verified.contents)
 
-        val status = cqlEvaluator.resolve(
-            "CompletedImmunization", ddccPass,
-            verified.contents!!) as Boolean
+        val results = fhirOperator.evaluateLibrary(
+            "http://localhost/Library/DDCCPass|1.0.0",
+            patId(verified.contents),
+            setOf("CompletedImmunization", "GetFinalDose", "GetSingleDose")) as Parameters
+
+        assertEquals(QRDecoder.Status.VERIFIED, verified.status)
+
+        assertEquals(false, results.getParameterBool("CompletedImmunization"))
+        assertEquals(Collections.EMPTY_LIST, results.getParameters("GetFinalDose"))
+
+        val card2 = DDCCFormatter().run(verified.composition()!!)
 
         // Credential
         assertEquals("SARS-CoV-2 Test Result", card2.cardTitle!!.split(" - ")[1])
@@ -146,25 +194,26 @@ class QRViewTest: BaseTest() {
 
         // Recommendation
         assertEquals(null, card2.nextDose)
-
-        assertEquals(false, status)
     }
 
     @Test
-    fun viewEUQR1() {
+    fun viewEUQR1() = runBlocking {
         val qr1 = open("EUQR1Contents.txt")
         val verified = qrUnpacker.decode(qr1)
 
+        loadBundle(verified.contents)
+
+        val results = fhirOperator.evaluateLibrary(
+            "http://localhost/Library/DDCCPass|1.0.0",
+            patId(verified.contents),
+            setOf("CompletedImmunization", "GetFinalDose", "GetSingleDose")) as Parameters
+
         assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
-        val card2 = DDCCFormatter().run(verified.composition()!!)
-        val status = cqlEvaluator.resolve(
-            "CompletedImmunization", ddccPass,
-            verified.contents!!) as Boolean
+        assertEquals(true, results.getParameterBool("CompletedImmunization"))
+        assertNotEquals(Collections.EMPTY_LIST, results.getParameters("GetFinalDose"))
 
-        val context = cqlEvaluator.run(ddccPass, verified.contents!!)
-        assertEquals(true, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
-        assertNotNull(context.resolveExpressionRef("GetFinalDose").evaluate(context))
+        val card2 = DDCCFormatter().run(verified.composition()!!)
 
         // Credential
         assertEquals("COVID-19 Vaccination", card2.cardTitle!!.split(" - ")[1])
@@ -190,23 +239,26 @@ class QRViewTest: BaseTest() {
 
         // Recommendation
         assertEquals(null, card2.nextDose)
-
-        assertEquals(true, status)
     }
 
     @Test
-    fun viewSHCQR1() {
+    fun viewSHCQR1() = runBlocking {
         val qr1 = open("SHCQR1Contents.txt")
         val verified = qrUnpacker.decode(qr1)
 
+        loadBundle(verified.contents)
+
+        val results = fhirOperator.evaluateLibrary(
+            "http://localhost/Library/DDCCPass|1.0.0",
+            patId(verified.contents),
+            setOf("CompletedImmunization", "GetFinalDose", "GetSingleDose")) as Parameters
+
         assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
-        val card2 = DDCCFormatter().run(verified.composition()!!)
-        val status = cqlEvaluator.resolve("CompletedImmunization", ddccPass, verified.contents!!) as Boolean
+        assertEquals(true, results.getParameterBool("CompletedImmunization"))
+        assertNotEquals(Collections.EMPTY_LIST, results.getParameters("GetFinalDose"))
 
-        val context = cqlEvaluator.run(ddccPass, verified.contents!!)
-        assertEquals(true, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
-        assertNotNull(context.resolveExpressionRef("GetFinalDose").evaluate(context))
+        val card2 = DDCCFormatter().run(verified.composition()!!)
 
         // Credential
         assertEquals("Vaccination", card2.cardTitle!!.split(" - ")[1])
@@ -232,12 +284,10 @@ class QRViewTest: BaseTest() {
 
         // Recommendation
         assertEquals(null, card2.nextDose)
-
-        assertEquals(true, status)
     }
 
     @Test
-    fun viewSHCTestResults() {
+    fun viewSHCTestResults() = runBlocking {
         val qr1 = open("SHCTestResultsContents.txt")
         val verified = qrUnpacker.decode(qr1)
 
@@ -278,24 +328,25 @@ class QRViewTest: BaseTest() {
     }
 
     @Test
-    fun viewDIVOCQR1() {
+    fun viewDIVOCQR1() = runBlocking {
         TimeZone.setDefault(TimeZone.getTimeZone( "UTC"))
 
         val qr1 = open("DIVOCQR1Contents.txt")
         val verified = qrUnpacker.decode(qr1)
 
-        println(FhirContext.forR4Cached().newJsonParser().encodeResourceToString(verified.contents!!))
+        loadBundle(verified.contents)
+
+        val results = fhirOperator.evaluateLibrary(
+            "http://localhost/Library/DDCCPass|1.0.0",
+            patId(verified.contents),
+            setOf("CompletedImmunization", "GetFinalDose", "GetSingleDose")) as Parameters
 
         assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
-        val card2 = DDCCFormatter().run(verified.composition()!!)
-        val status = cqlEvaluator.resolve(
-            "CompletedImmunization", ddccPass,
-            verified.contents!!) as Boolean
+        assertEquals(false, results.getParameterBool("CompletedImmunization"))
+        assertEquals(Collections.EMPTY_LIST, results.getParameters("GetFinalDose"))
 
-        val context = cqlEvaluator.run(ddccPass, verified.contents!!)
-        assertEquals(false, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
-        assertEquals(Collections.EMPTY_LIST, context.resolveExpressionRef("GetFinalDose").evaluate(context))
+        val card2 = DDCCFormatter().run(verified.composition()!!)
 
         // Credential
         assertEquals("COVID-19 Vaccination", card2.cardTitle!!.split(" - ")[1])
@@ -321,25 +372,26 @@ class QRViewTest: BaseTest() {
 
         // Recommendation
         assertEquals(null, card2.nextDose)
-
-        assertEquals(false, status)
     }
 
     @Test
-    fun viewDIVOCJamaica() {
+    fun viewDIVOCJamaica() = runBlocking {
         val qr1 = open("DIVOCJamaicaContents.txt")
         val verified = qrUnpacker.decode(qr1)
 
+        loadBundle(verified.contents)
+
+        val results = fhirOperator.evaluateLibrary(
+            "http://localhost/Library/DDCCPass|1.0.0",
+            patId(verified.contents),
+            setOf("CompletedImmunization", "GetFinalDose", "GetSingleDose")) as Parameters
+
         assertEquals(QRDecoder.Status.INVALID_SIGNATURE, verified.status)
 
-        val card2 = DDCCFormatter().run(verified.composition()!!)
-        val status = cqlEvaluator.resolve(
-            "CompletedImmunization", ddccPass,
-            verified.contents!!) as Boolean
+        assertEquals(true, results.getParameterBool("CompletedImmunization"))
+        assertNotEquals(Collections.EMPTY_LIST, results.getParameters("GetFinalDose"))
 
-        val context = cqlEvaluator.run(ddccPass, verified.contents!!)
-        assertEquals(true, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
-        assertNotEquals(Collections.EMPTY_LIST, context.resolveExpressionRef("GetFinalDose").evaluate(context))
+        val card2 = DDCCFormatter().run(verified.composition()!!)
 
         // Credential
         assertEquals("COVID-19 Vaccination", card2.cardTitle!!.split(" - ")[1])
@@ -365,23 +417,26 @@ class QRViewTest: BaseTest() {
 
         // Recommendation
         assertEquals(null, card2.nextDose)
-
-        assertEquals(true, status)
     }
 
     @Test
-    fun viewICAOQR1() {
+    fun viewICAOQR1() = runBlocking {
         val qr1 = open("ICAOAUQR1Contents.txt")
         val verified = qrUnpacker.decode(qr1)
 
+        loadBundle(verified.contents)
+
+        val results = fhirOperator.evaluateLibrary(
+            "http://localhost/Library/DDCCPass|1.0.0",
+            patId(verified.contents),
+            setOf("CompletedImmunization", "GetFinalDose", "GetSingleDose")) as Parameters
+
         assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
-        val card2 = DDCCFormatter().run(verified.composition()!!)
-        val status = cqlEvaluator.resolve("CompletedImmunization", ddccPass, verified.contents!!) as Boolean
+        assertEquals(true, results.getParameterBool("CompletedImmunization"))
+        assertEquals(Collections.EMPTY_LIST, results.getParameters("GetFinalDose"))
 
-        val context = cqlEvaluator.run(ddccPass, verified.contents!!)
-        assertEquals(true, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
-        assertNotNull(context.resolveExpressionRef("GetFinalDose").evaluate(context))
+        val card2 = DDCCFormatter().run(verified.composition()!!)
 
         // Credential
         assertEquals("COVID-19 Vaccination", card2.cardTitle!!.split(" - ")[1])
@@ -407,7 +462,5 @@ class QRViewTest: BaseTest() {
 
         // Recommendation
         assertEquals(null, card2.nextDose)
-
-        assertEquals(true, status)
     }
 }

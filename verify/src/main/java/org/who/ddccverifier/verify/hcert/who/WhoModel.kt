@@ -68,7 +68,6 @@ class Meta (
     private val propertiesByHash = this::class.declaredMemberProperties.associateBy { it.name.hashCode() }
 
     override fun getProperty(hash: Int, name: String?, checkValid: Boolean): Array<Base?> {
-        println(name)
         return propertiesByHash[hash]?.let {
             val prop = it.getter.call(this)
             if (prop == null) {

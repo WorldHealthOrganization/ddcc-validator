@@ -2,8 +2,8 @@ package org.who.ddccverifier.services.cql
 
 import org.cqframework.cql.elm.execution.Library
 import org.cqframework.cql.elm.execution.VersionedIdentifier
-import org.opencds.cqf.cql.engine.execution.JsonCqlLibraryReader
 import org.opencds.cqf.cql.engine.execution.LibraryLoader
+import org.opencds.cqf.cql.engine.serializing.jackson.JsonCqlLibraryReader
 import java.io.IOException
 import java.io.InputStream
 import java.io.InputStreamReader
@@ -23,7 +23,7 @@ class FHIRLibraryLoader(private val open: (String)->InputStream?) : LibraryLoade
     }
 
     fun add(libraryText: InputStream): Library {
-        return add(JsonCqlLibraryReader.read(InputStreamReader(libraryText)))
+        return add(JsonCqlLibraryReader().read(InputStreamReader(libraryText)))
     }
 
     private fun loadFromResource(libraryIdentifier: VersionedIdentifier): Library {

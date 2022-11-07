@@ -5,14 +5,13 @@ import org.hl7.fhir.r4.model.Bundle
 import org.junit.Test
 import ca.uhn.fhir.context.FhirVersionEnum
 import org.cqframework.cql.cql2elm.CqlTranslator
-import org.cqframework.cql.cql2elm.FhirLibrarySourceProvider
 import org.cqframework.cql.cql2elm.LibraryManager
 import org.cqframework.cql.cql2elm.ModelManager
+import org.cqframework.cql.cql2elm.quick.FhirLibrarySourceProvider
 import org.cqframework.cql.elm.execution.VersionedIdentifier
 import org.fhir.ucum.UcumEssenceService
 import org.junit.Assert.*
-import org.hl7.fhir.r4.model.Composition
-import org.opencds.cqf.cql.engine.execution.JsonCqlLibraryReader
+import org.opencds.cqf.cql.engine.serializing.jackson.JsonCqlLibraryReader
 import org.who.ddccverifier.services.cql.CQLEvaluator
 import org.who.ddccverifier.services.cql.FHIRLibraryLoader
 import java.io.StringReader
@@ -55,14 +54,14 @@ class CQLEvaluatorTest: BaseTest() {
             throw IllegalArgumentException(errors.toString())
         }
 
-        return translator.toJxson()
+        return translator.toJson()
     }
 
     @Test
     fun evaluateHypertensivePatientFromCQLTest() {
         val assetBundle = jSONParser.parseResource(open("LibraryTestPatient.json")) as Bundle
 
-        val lib = JsonCqlLibraryReader.read(StringReader(toJson(open("LibraryTestRules.cql"))))
+        val lib = JsonCqlLibraryReader().read(StringReader(toJson(open("LibraryTestRules.cql"))))
         val context = cqlEvaluator.run(lib, assetBundle)
 
         assertEquals(true, context.resolveExpressionRef("AgeRange-548").evaluate(context))
@@ -80,7 +79,7 @@ class CQLEvaluatorTest: BaseTest() {
     fun evaluateDDCCPassAsCQLOnQR1FromCompositionTest() {
         val asset = jSONParser.parseResource(open("WHOQR1FHIRBundle.json")) as Bundle
 
-        val lib = JsonCqlLibraryReader.read(StringReader(toJson(open("DDCCPass.cql"))))
+        val lib = JsonCqlLibraryReader().read(StringReader(toJson(open("DDCCPass.cql"))))
         val context = cqlEvaluator.run(lib, asset)
 
         assertEquals(Collections.EMPTY_LIST, context.resolveExpressionRef("GetFinalDose").evaluate(context))
@@ -106,7 +105,7 @@ class CQLEvaluatorTest: BaseTest() {
     fun evaluateDDCCPassAsCQLOnQR2FromCompositionTest() {
         val asset = jSONParser.parseResource(open("WHOQR2FHIRBundle.json")) as Bundle
 
-        val lib = JsonCqlLibraryReader.read(StringReader(toJson(open("DDCCPass.cql"))))
+        val lib = JsonCqlLibraryReader().read(StringReader(toJson(open("DDCCPass.cql"))))
         val context = cqlEvaluator.run(lib, asset)
 
         assertNotEquals(Collections.EMPTY_LIST, context.resolveExpressionRef("GetSingleDose").evaluate(context))
@@ -131,7 +130,7 @@ class CQLEvaluatorTest: BaseTest() {
     fun evaluateDDCCPassAsCQLOnSHCQR1FromCompositionTest() {
         val asset = jSONParser.parseResource(open("SHCQR1FHIRBundle.json")) as Bundle
 
-        val lib = JsonCqlLibraryReader.read(StringReader(toJson(open("DDCCPass.cql"))))
+        val lib = JsonCqlLibraryReader().read(StringReader(toJson(open("DDCCPass.cql"))))
         val context = cqlEvaluator.run(lib, asset)
 
         assertEquals(Collections.EMPTY_LIST, context.resolveExpressionRef("GetSingleDose").evaluate(context))
