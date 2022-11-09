@@ -38,6 +38,8 @@ import org.opencds.cqf.cql.evaluator.measure.r4.R4MeasureProcessor
 import org.opencds.cqf.cql.evaluator.plandefinition.r4.OperationParametersParser
 import org.opencds.cqf.cql.evaluator.plandefinition.r4.PlanDefinitionProcessor
 import java.util.function.Supplier
+import kotlin.time.ExperimentalTime
+import kotlin.time.measureTimedValue
 
 class MyRetrieveProvider(fhirEngine: FhirEngine, fhirEngineTerminologyProvider: TerminologyProvider) : RetrieveProvider {
   val prov = FhirEngineRetrieveProvider(fhirEngine).apply {
@@ -45,6 +47,7 @@ class MyRetrieveProvider(fhirEngine: FhirEngine, fhirEngineTerminologyProvider: 
     isExpandValueSets = true
   }
 
+  @OptIn(ExperimentalTime::class)
   override fun retrieve(
     context: String?,
     contextPath: String?,
@@ -59,9 +62,11 @@ class MyRetrieveProvider(fhirEngine: FhirEngine, fhirEngineTerminologyProvider: 
     dateHighPath: String?,
     dateRange: Interval?,
   ): Iterable<Any> {
-    val result = prov.retrieve(context, contextPath, contextValue, dataType, templateId, codePath, codes, valueSet, datePath, dateLowPath, dateHighPath, dateRange);
+    val (result, elapsedStructureMapLoad) = measureTimedValue {
+      prov.retrieve(context, contextPath, contextValue, dataType, templateId, codePath, codes, valueSet, datePath, dateLowPath, dateHighPath, dateRange);
+    }
 
-    println("Retrieve: $context $contextPath $contextValue $dataType ${result.joinToString("-")}")
+    println("TIME: Retrieve $elapsedStructureMapLoad for $context $contextPath $contextValue $dataType ${result.joinToString("-")}")
 
     return result;
   }

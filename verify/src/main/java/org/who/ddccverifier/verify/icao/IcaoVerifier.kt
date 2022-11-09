@@ -37,8 +37,7 @@ class IcaoVerifier (private val registry: TrustRegistry) {
 
     private fun parsePayload(iJson: String): IJson? {
         return try {
-            val mapper = jacksonObjectMapper()
-            mapper.readValue(iJson, IJson::class.java)
+            jacksonObjectMapper().readValue(iJson, IJson::class.java)
         } catch (e: Throwable) {
             e.printStackTrace()
             null

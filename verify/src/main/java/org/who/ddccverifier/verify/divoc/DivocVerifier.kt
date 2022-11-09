@@ -12,23 +12,28 @@ import org.who.ddccverifier.verify.divoc.jsonldcrypto.Ed25519Signature2018Verifi
 import java.io.ByteArrayInputStream
 import java.util.*
 import java.util.zip.ZipInputStream
+import kotlin.system.measureTimeMillis
+import kotlin.time.ExperimentalTime
+import kotlin.time.measureTimedValue
 
 class DivocVerifier(private val registry: TrustRegistry) {
+    companion object {
+        val contexts = ContextLoader()
+    }
+
     private val URI_SCHEMA = "B64:"
 
     private fun map(jsonStr: String): W3CVC? {
         return try {
-            val mapper = jacksonObjectMapper()
-            return mapper.readValue(jsonStr, W3CVC::class.java)
+            return jacksonObjectMapper().readValue(jsonStr, W3CVC::class.java)
         } catch (e: Throwable) {
             e.printStackTrace()
             null
         }
     }
 
-    private fun buildJSonLDDocument(str: String):JsonLDObject? {
+    private fun buildJSonLDDocument(str: String): JsonLDObject? {
         return try {
-            val contexts = ContextLoader()
             val jsonLdObject = JsonLDObject.fromJson(str)
             jsonLdObject.documentLoader = contexts
             return jsonLdObject
@@ -90,12 +95,11 @@ class DivocVerifier(private val registry: TrustRegistry) {
         }
     }
 
+    @OptIn(ExperimentalTime::class)
     fun unpackAndVerify(uri: String): QRDecoder.VerificationResult {
         val array = prefixDecode(uri) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_ENCODING, null, null, uri, null)
-        val json = unzipFiles(array)?.get("certificate.json")?: return QRDecoder.VerificationResult(
-            QRDecoder.Status.INVALID_COMPRESSION, null, null, uri, null)
-        val signedMessage = buildJSonLDDocument(String(json)) ?: return QRDecoder.VerificationResult(
-            QRDecoder.Status.INVALID_SIGNING_FORMAT, null, null, uri, String(json))
+        val json = unzipFiles(array)?.get("certificate.json")?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_COMPRESSION, null, null, uri, null)
+        val signedMessage = buildJSonLDDocument(String(json)) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_SIGNING_FORMAT, null, null, uri, String(json))
 
         val mapped = map(String(json)) ?: return QRDecoder.VerificationResult(QRDecoder.Status.INVALID_SIGNING_FORMAT, null, null, uri, String(json))
 
@@ -108,11 +112,25 @@ class DivocVerifier(private val registry: TrustRegistry) {
             TrustRegistry.Status.TERMINATED -> QRDecoder.VerificationResult(QRDecoder.Status.TERMINATED_KEYS, contents, issuer, uri, String(json))
             TrustRegistry.Status.EXPIRED -> QRDecoder.VerificationResult(QRDecoder.Status.EXPIRED_KEYS, contents, issuer, uri, String(json))
             TrustRegistry.Status.REVOKED -> QRDecoder.VerificationResult(QRDecoder.Status.REVOKED_KEYS, contents, issuer, uri, String(json))
-            TrustRegistry.Status.CURRENT ->
-                if (verify(signedMessage, issuer.publicKey))
-                    QRDecoder.VerificationResult(QRDecoder.Status.VERIFIED, contents, issuer, uri, String(json))
+            TrustRegistry.Status.CURRENT -> {
+                val (verified, elapsedStructureMapLoad) = measureTimedValue {
+                    verify(signedMessage, issuer.publicKey)
+                }
+                println("TIME: Verify $elapsedStructureMapLoad")
+
+                if (verified)
+                    QRDecoder.VerificationResult(QRDecoder.Status.VERIFIED,
+                        contents,
+                        issuer,
+                        uri,
+                        String(json))
                 else
-                    QRDecoder.VerificationResult(QRDecoder.Status.INVALID_SIGNATURE, contents, issuer, uri, String(json))
+                    QRDecoder.VerificationResult(QRDecoder.Status.INVALID_SIGNATURE,
+                        contents,
+                        issuer,
+                        uri,
+                        String(json))
+            }
         }
     }
 }

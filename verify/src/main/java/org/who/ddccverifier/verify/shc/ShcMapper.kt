@@ -10,7 +10,7 @@ class ShcMapper: BaseMapper() {
     fun run(payload: JWTPayload): Bundle {
         return super.run(
             payload,
-            javaClass.getResourceAsStream("SHCtoDDCC.map")
+            "SHCtoDDCC.map"
         )
     }
 }

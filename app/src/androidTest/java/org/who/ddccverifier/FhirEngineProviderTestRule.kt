@@ -16,7 +16,7 @@ class FhirEngineProviderTestRule : TestRule {
         val elapsedInit = measureTimeMillis {
           FhirEngineProvider.init(FhirEngineConfiguration(testMode = true))
         }
-        println("FhirEngineProvider Loaded in $elapsedInit milliseconds")
+        println("TIME: FhirEngineProvider Loaded in $elapsedInit")
 
         try {
           base.evaluate()
@@ -24,7 +24,7 @@ class FhirEngineProviderTestRule : TestRule {
           val elapsedCleanup = measureTimeMillis {
             FhirEngineProvider.cleanup()
           }
-          println("FhirEngineProvider Cleaned in $elapsedCleanup milliseconds")
+          println("TIME: FhirEngineProvider Cleaned in $elapsedCleanup")
         }
       }
     }

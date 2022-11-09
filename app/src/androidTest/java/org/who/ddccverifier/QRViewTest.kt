@@ -37,7 +37,7 @@ class QRViewTest: BaseTrustRegistryTest() {
             fhirOperator.loadLib(ddccPass)
             TimeZone.setDefault(TimeZone.getTimeZone("GMT"))
         }
-        println("Test Initialized in $elapsed milliseconds")
+        println("TIME: Test Initialized in $elapsed")
     }
 
     private suspend fun loadBundle(bundle: Bundle?) {
@@ -62,12 +62,12 @@ class QRViewTest: BaseTrustRegistryTest() {
         val (qr1, elapsedOpen) = measureTimedValue {
             open("WHOQR1Contents.txt")
         }
-        println("Opened QR in $elapsedOpen")
+        println("TIME: Opened QR in $elapsedOpen")
 
         val (verified, elapsedDecoded) = measureTimedValue {
             qrUnpacker.decode(qr1)
         }
-        println("Decoded QR in $elapsedDecoded")
+        println("TIME: Decoded QR in $elapsedDecoded")
 
         loadBundle(verified.contents)
 
@@ -78,7 +78,7 @@ class QRViewTest: BaseTrustRegistryTest() {
                 setOf("CompletedImmunization", "GetFinalDose", "GetSingleDose")) as Parameters
         }
 
-        println("Evaluated in $elapsedEval")
+        println("TIME: Evaluated in $elapsedEval")
 
         assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 

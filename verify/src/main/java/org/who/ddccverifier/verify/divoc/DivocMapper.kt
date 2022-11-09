@@ -10,7 +10,7 @@ class DivocMapper: BaseMapper() {
     fun run(payload: W3CVC): Bundle {
         return super.run(
             payload,
-            javaClass.getResourceAsStream("DIVOCtoDDCC.map")
+            "DIVOCtoDDCC.map"
         )
     }
 }

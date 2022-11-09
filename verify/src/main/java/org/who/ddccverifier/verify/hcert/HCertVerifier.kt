@@ -7,7 +7,12 @@ import COSE.MessageTag
 import COSE.OneKey
 import COSE.Sign1Message
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.nimbusds.jose.JWSAlgorithm
+import com.nimbusds.jose.JWSObject
+import com.nimbusds.jose.JWSVerifier
 import com.upokecenter.cbor.CBORObject
+import info.weboftrust.ldsignatures.adapter.JWSVerifierAdapter
+import info.weboftrust.ldsignatures.util.JWSUtil
 import org.hl7.fhir.r4.model.Bundle
 import org.who.ddccverifier.QRDecoder
 import org.who.ddccverifier.verify.hcert.dcc.DccMapper
@@ -17,6 +22,8 @@ import org.who.ddccverifier.verify.hcert.dcc.logical.CWT
 import org.who.ddccverifier.verify.hcert.dcc.logical.WHOLogicalModel
 import java.security.PublicKey
 import java.util.*
+import kotlin.time.ExperimentalTime
+import kotlin.time.measureTimedValue
 
 /**
  * Turns HC1 QR Codes into Fhir Objects
@@ -70,10 +77,16 @@ class HCertVerifier (private val registry: TrustRegistry) {
         return CBORObject.DecodeFromBytes(signedMessage.GetContent())
     }
 
+    @OptIn(ExperimentalTime::class)
     private fun verify(signedMessage: Sign1Message, pubKey: PublicKey): Boolean {
         return try {
-            val key = OneKey(pubKey, null)
-            signedMessage.validate(key)
+            val (verified, elapsedStructureMapLoad) = measureTimedValue {
+                val key = OneKey(pubKey, null)
+                signedMessage.validate(key)
+            }
+            println("TIME: Verify $elapsedStructureMapLoad")
+
+            return verified
         } catch (e: Throwable) {
             false
         }

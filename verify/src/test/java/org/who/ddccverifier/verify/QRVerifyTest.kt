@@ -1,7 +1,9 @@
 package org.who.ddccverifier.verify
 
 import ca.uhn.fhir.context.FhirContext
+import ca.uhn.fhir.context.FhirVersionEnum
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.junit.Assert.*
 import org.junit.Test
 import org.mockito.Mockito
@@ -41,8 +43,8 @@ class QRVerifyTest: BaseTrustRegistryTest() {
         UUID.fromString("ab7805f4-06d7-43a2-aa54-76458bcf623f")
     ).toTypedArray()
 
-    private val mapper = ObjectMapper()
-    private val jsonParser = FhirContext.forR4().newJsonParser().setPrettyPrint(true)
+    private val mapper = jacksonObjectMapper()
+    private val jsonParser = FhirContext.forCached(FhirVersionEnum.R4).newJsonParser()
 
     private fun jsonEquals(v1: String, v2: String) {
         assertEquals(mapper.readTree(v1), mapper.readTree(v2))
@@ -57,7 +59,7 @@ class QRVerifyTest: BaseTrustRegistryTest() {
             val (verified, elapsed) = measureTimedValue {
                 QRDecoder(registry).decode(qr1)
             }
-            println("UnpackAndVerify in $elapsed milliseconds")
+            println("TIME: UnpackAndVerify in $elapsed")
 
             assertNotNull(verified)
             assertEquals(expectedStatus, verified.status)

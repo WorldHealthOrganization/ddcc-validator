@@ -10,7 +10,7 @@ class IcaoMapper: BaseMapper() {
     fun run(iJson: IJson): Bundle {
         return super.run(
             iJson,
-            javaClass.getResourceAsStream("ICAOtoDDCC.map")
+            "ICAOtoDDCC.map"
         )
     }
 }

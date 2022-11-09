@@ -11,7 +11,7 @@ class WhoMapper: BaseMapper() {
     fun run(who: WHOLogicalModel): Bundle {
         return super.run(
             who,
-            javaClass.getResourceAsStream("WHOtoDDCC.map")
+            "WHOtoDDCC.map"
         )
     }
 }

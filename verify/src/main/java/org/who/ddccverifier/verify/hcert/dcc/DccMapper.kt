@@ -11,7 +11,7 @@ class DccMapper: BaseMapper() {
     fun run(cwt: CWT): Bundle {
         return super.run(
             cwt,
-            javaClass.getResourceAsStream("EUDCCtoDDCC.map")
+            "EUDCCtoDDCC.map"
         )
     }
 }

@@ -41,7 +41,7 @@ class CQLEvaluatorTest: BaseTrustRegistryTest() {
 
             TimeZone.setDefault(TimeZone.getTimeZone("GMT"))
         }
-        println("Test Initialized in $elapsed milliseconds")
+        println("TIME: Test Initialized in $elapsed")
     }
 
     private suspend fun loadBundle(bundle: Bundle?) {

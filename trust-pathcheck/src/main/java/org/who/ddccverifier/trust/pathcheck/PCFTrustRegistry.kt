@@ -8,6 +8,8 @@ import java.security.Security
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.time.ExperimentalTime
+import kotlin.time.measureTimedValue
 
 
 operator fun <T> List<T>.component6() = this[5]
@@ -44,9 +46,14 @@ class PCFTrustRegistry : TrustRegistry {
         return "-----BEGIN PUBLIC KEY-----\n$pemB64\n-----END PUBLIC KEY-----"
     }
 
+    @OptIn(ExperimentalTime::class)
     fun load(registryURL: TrustRegistry.RegistryEntity) {
         // Parsing the CSV
-        val reader = registryURL.resolvableURI.toURL().openStream().bufferedReader()
+        val (reader, elapsedServerDownload) = measureTimedValue {
+            registryURL.resolvableURI.toURL().openStream().bufferedReader()
+        }
+        println("TIME: Trust Downloaded in $elapsedServerDownload")
+
         reader.forEachLine {
             val (
                 specName, kid, status, displayNameB64, displayLogoB64,
@@ -72,6 +79,7 @@ class PCFTrustRegistry : TrustRegistry {
         }
     }
 
+    @OptIn(ExperimentalTime::class)
     override fun init(vararg customRegistries: TrustRegistry.RegistryEntity) {
         Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME)
         Security.addProvider(BouncyCastleProvider())
@@ -81,8 +89,11 @@ class PCFTrustRegistry : TrustRegistry {
         }
 
         customRegistries.forEach {
-            println("Loading TrustRegistry from $it");
-            load(it)
+            val (verified, elapsed) = measureTimedValue {
+                load(it)
+            }
+
+            println("TIME: Loading TrustRegistry from $it in $elapsed");
         }
     }
 
