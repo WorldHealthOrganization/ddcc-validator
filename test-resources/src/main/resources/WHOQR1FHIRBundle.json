@@ -62,6 +62,9 @@
             "entry": [
               {
                 "reference": "Immunization/a9152ef1-efdd-4e3e-b8c3-d02153afc059"
+              },
+              {
+                "reference": "ImmunizationRecommendation/04db279a-ba4d-472d-b93e-3e725f3ecbea"
               }
             ]
           }

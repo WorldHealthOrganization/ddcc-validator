@@ -13,18 +13,18 @@ class FhirEngineProviderTestRule : TestRule {
   override fun apply(base: Statement, description: Description): Statement {
     return object : Statement() {
       override fun evaluate() {
-        val elapsedInit = measureTimeMillis {
+        val elapsed = measureTimeMillis {
           FhirEngineProvider.init(FhirEngineConfiguration(testMode = true))
         }
-        println("FhirEngineProvider Loaded in $elapsedInit milliseconds")
+        println("FhirEngineProvider Loaded in $elapsed milliseconds")
 
         try {
           base.evaluate()
         } finally {
-          val elapsedCleanup = measureTimeMillis {
+          val elapsed = measureTimeMillis {
             FhirEngineProvider.cleanup()
           }
-          println("FhirEngineProvider Cleaned in $elapsedCleanup milliseconds")
+          println("FhirEngineProvider Cleaned in $elapsed milliseconds")
         }
       }
     }

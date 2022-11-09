@@ -1,8 +1,21 @@
 plugins {
     id 'java-library'
+    id 'org.jetbrains.kotlin.jvm'
 }
 
 java {
+    group = "org.who.ddccverifier.test"
+    version = "0.0.1-SNAPSHOT"
+
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
+}
+
+dependencies {
+    // needed for the FhirEngineProviderTestRule
+    api 'junit:junit:4.13.2'
+
+    // needed for the BaseTrustTest
+    implementation project(":trust")
+    implementation project(":trust-pathcheck")
 }

@@ -4,12 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.Test
 
 import org.junit.Assert.*
+import org.who.ddccverifier.test.BaseTrustRegistryTest
 import org.who.ddccverifier.verify.divoc.DivocVerifier
 import org.who.ddccverifier.verify.hcert.HCertVerifier
 import org.who.ddccverifier.verify.icao.IcaoVerifier
 import org.who.ddccverifier.verify.shc.ShcVerifier
 
-class QRUnpackTest: BaseTest() {
+class QRUnpackTest: BaseTrustRegistryTest() {
     private val mapper = ObjectMapper()
 
     private fun jsonEquals(v1: String, v2: String) {

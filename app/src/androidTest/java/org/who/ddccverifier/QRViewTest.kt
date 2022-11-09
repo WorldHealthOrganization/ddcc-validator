@@ -6,21 +6,21 @@ import ca.uhn.fhir.context.FhirVersionEnum
 import com.google.android.fhir.FhirEngine
 import com.google.android.fhir.FhirEngineProvider
 import kotlinx.coroutines.runBlocking
-import org.cqframework.cql.elm.execution.VersionedIdentifier
 import org.hl7.fhir.r4.model.*
-import org.junit.Assert
 import org.junit.Test
 
 import org.junit.Assert.*
 import org.junit.Before
 import org.who.ddccverifier.services.*
-import org.who.ddccverifier.services.cql.CQLEvaluator
 import org.who.ddccverifier.services.cql.CqlBuilder
-import org.who.ddccverifier.services.cql.FHIRLibraryLoader
 import org.who.ddccverifier.services.cql.FhirOperator
+import org.who.ddccverifier.test.BaseTrustRegistryTest
 import java.util.*
+import kotlin.system.measureTimeMillis
+import kotlin.time.ExperimentalTime
+import kotlin.time.measureTimedValue
 
-class QRViewTest: BaseTest() {
+class QRViewTest: BaseTrustRegistryTest() {
     private val qrUnpacker = QRDecoder(registry)
 
     private val fhirContext = FhirContext.forCached(FhirVersionEnum.R4)
@@ -31,10 +31,13 @@ class QRViewTest: BaseTest() {
 
     @Before
     fun setUp() = runBlocking {
-        fhirEngine = FhirEngineProvider.getInstance(ApplicationProvider.getApplicationContext())
-        fhirOperator = FhirOperator(fhirContext, fhirEngine)
-        fhirOperator.loadLib(ddccPass)
-        TimeZone.setDefault(TimeZone.getTimeZone("GMT"))
+        val elapsed = measureTimeMillis {
+            fhirEngine = FhirEngineProvider.getInstance(ApplicationProvider.getApplicationContext())
+            fhirOperator = FhirOperator(fhirContext, fhirEngine)
+            fhirOperator.loadLib(ddccPass)
+            TimeZone.setDefault(TimeZone.getTimeZone("GMT"))
+        }
+        println("Test Initialized in $elapsed milliseconds")
     }
 
     private suspend fun loadBundle(bundle: Bundle?) {
@@ -53,17 +56,29 @@ class QRViewTest: BaseTest() {
         return bundle.entry.filter { it.resource is Patient }.first().resource.id.removePrefix("Patient/")
     }
 
+    @OptIn(ExperimentalTime::class)
     @Test
     fun viewWHOQR1() = runBlocking {
-        val qr1 = open("WHOQR1Contents.txt")
-        val verified = qrUnpacker.decode(qr1)
+        val (qr1, elapsedOpen) = measureTimedValue {
+            open("WHOQR1Contents.txt")
+        }
+        println("Opened QR in $elapsedOpen")
+
+        val (verified, elapsedDecoded) = measureTimedValue {
+            qrUnpacker.decode(qr1)
+        }
+        println("Decoded QR in $elapsedDecoded")
 
         loadBundle(verified.contents)
 
-        val results = fhirOperator.evaluateLibrary(
-            "http://localhost/Library/DDCCPass|1.0.0",
-            patId(verified.contents),
-            setOf("CompletedImmunization", "GetFinalDose", "GetSingleDose")) as Parameters
+        val (results, elapsedEval) = measureTimedValue {
+            fhirOperator.evaluateLibrary(
+                "http://localhost/Library/DDCCPass|1.0.0",
+                patId(verified.contents),
+                setOf("CompletedImmunization", "GetFinalDose", "GetSingleDose")) as Parameters
+        }
+
+        println("Evaluated in $elapsedEval")
 
         assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
@@ -256,7 +271,7 @@ class QRViewTest: BaseTest() {
         assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
         assertEquals(true, results.getParameterBool("CompletedImmunization"))
-        assertNotEquals(Collections.EMPTY_LIST, results.getParameters("GetFinalDose"))
+        assertEquals(Collections.EMPTY_LIST, results.getParameters("GetFinalDose"))
 
         val card2 = DDCCFormatter().run(verified.composition()!!)
 

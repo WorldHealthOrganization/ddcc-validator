@@ -6,7 +6,6 @@ import ca.uhn.fhir.context.FhirContext
 import ca.uhn.fhir.context.FhirVersionEnum
 import com.google.android.fhir.FhirEngine
 import com.google.android.fhir.FhirEngineProvider
-import com.google.android.fhir.get
 import kotlinx.coroutines.runBlocking
 import org.hl7.fhir.r4.model.Bundle
 import org.hl7.fhir.r4.model.Library
@@ -18,6 +17,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.who.ddccverifier.test.BaseTrustRegistryTest
 import org.who.ddccverifier.verify.hcert.HCertVerifier
 import org.who.ddccverifier.services.cql.CqlBuilder
 import org.who.ddccverifier.services.cql.FhirOperator
@@ -27,7 +27,7 @@ import org.who.ddccverifier.verify.shc.ShcVerifier
 import java.util.*
 
 @RunWith(AndroidJUnit4::class)
-class CQLEvaluatorAndroidTest: BaseTest() {
+class CQLEvaluatorAndroidTest: BaseTrustRegistryTest() {
     @get:Rule
     val fhirEngineProviderRule = FhirEngineProviderTestRule()
 

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.Assert.*
 import org.junit.Test
 import org.mockito.Mockito
+import org.who.ddccverifier.test.BaseTrustRegistryTest
 import org.who.ddccverifier.QRDecoder
 import org.who.ddccverifier.verify.divoc.DivocVerifier
 import org.who.ddccverifier.verify.hcert.HCertVerifier
@@ -12,8 +13,7 @@ import org.who.ddccverifier.verify.icao.IcaoVerifier
 import org.who.ddccverifier.verify.shc.ShcVerifier
 import java.util.*
 
-
-class QRVerifyTest: BaseTest() {
+class QRVerifyTest: BaseTrustRegistryTest() {
 
     val firstUUID = UUID.fromString("43293785-70d2-4cbe-8ecf-30b947fd45d5")
     val uuidList = listOf<UUID>(

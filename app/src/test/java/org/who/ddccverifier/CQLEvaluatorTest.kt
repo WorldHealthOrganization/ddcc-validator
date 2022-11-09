@@ -1,143 +1,150 @@
 package org.who.ddccverifier
 
+import androidx.test.core.app.ApplicationProvider
 import ca.uhn.fhir.context.FhirContext
-import org.hl7.fhir.r4.model.Bundle
-import org.junit.Test
 import ca.uhn.fhir.context.FhirVersionEnum
-import org.cqframework.cql.cql2elm.CqlTranslator
-import org.cqframework.cql.cql2elm.LibraryManager
-import org.cqframework.cql.cql2elm.ModelManager
-import org.cqframework.cql.cql2elm.quick.FhirLibrarySourceProvider
-import org.cqframework.cql.elm.execution.VersionedIdentifier
-import org.fhir.ucum.UcumEssenceService
+import com.google.android.fhir.FhirEngine
+import com.google.android.fhir.FhirEngineProvider
+import kotlinx.coroutines.runBlocking
+import org.hl7.fhir.r4.model.*
 import org.junit.Assert.*
-import org.opencds.cqf.cql.engine.serializing.jackson.JsonCqlLibraryReader
-import org.who.ddccverifier.services.cql.CQLEvaluator
-import org.who.ddccverifier.services.cql.FHIRLibraryLoader
-import java.io.StringReader
-import java.lang.IllegalArgumentException
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.who.ddccverifier.test.BaseTrustRegistryTest
+import org.who.ddccverifier.services.cql.CqlBuilder
+import org.who.ddccverifier.services.cql.FhirOperator
 import java.util.*
-import kotlin.collections.ArrayList
+import kotlin.system.measureTimeMillis
 
-class CQLEvaluatorTest: BaseTest() {
+@RunWith(RobolectricTestRunner::class)
+class CQLEvaluatorTest: BaseTrustRegistryTest() {
+    @get:Rule
+    val fhirEngineProviderRule = FhirEngineProviderTestRule()
 
     private val fhirContext = FhirContext.forCached(FhirVersionEnum.R4)
     private val jSONParser = fhirContext.newJsonParser()
 
-    private val ddccPass = VersionedIdentifier().withId("DDCCPass").withVersion("0.0.1")
+    private lateinit var fhirEngine: FhirEngine
+    private lateinit var fhirOperator: FhirOperator
 
-    private val cqlEvaluator = CQLEvaluator(FHIRLibraryLoader(::inputStream))
+    private val ddccPass = CqlBuilder.compileAndBuild(inputStream("DDCCPass-1.0.0.cql")!!)
 
+    @Before
+    fun setUp() = runBlocking {
+        val elapsed = measureTimeMillis {
+            fhirEngine = FhirEngineProvider.getInstance(ApplicationProvider.getApplicationContext())
+            fhirOperator = FhirOperator(fhirContext, fhirEngine)
+            fhirOperator.loadLib(ddccPass)
 
-    /**
-     * Translate CQL to Json
-     */
-    private fun toJson(cqlText: String): String {
-        val modelManager = ModelManager()
-        val libraryManager = LibraryManager(modelManager).apply {
-            librarySourceLoader.registerProvider(FhirLibrarySourceProvider())
+            TimeZone.setDefault(TimeZone.getTimeZone("GMT"))
         }
+        println("Test Initialized in $elapsed milliseconds")
+    }
 
-        val ucumService = UcumEssenceService(UcumEssenceService::class.java.getResourceAsStream("/ucum-essence.xml"))
-
-        val translator = CqlTranslator.fromText(cqlText, modelManager, libraryManager, ucumService)
-        if (translator.errors.size > 0) {
-            System.err.println("Translation failed due to errors:")
-            val errors: ArrayList<String> = ArrayList()
-            for (error in translator.errors) {
-                val tb = error.locator
-                val lines = if (tb == null) "[n/a]" else String.format("[%d:%d, %d:%d]",
-                    tb.startLine, tb.startChar, tb.endLine, tb.endChar)
-                System.err.printf("%s %s%n", lines, error.message)
-                errors.add(lines + error.message)
+    private suspend fun loadBundle(bundle: Bundle?) {
+        checkNotNull(bundle)
+        for (entry in bundle.entry) {
+            when (entry.resource.resourceType) {
+                ResourceType.Library -> fhirOperator.loadLib(entry.resource as Library)
+                ResourceType.Bundle -> Unit
+                else -> fhirEngine.create(entry.resource)
             }
-            throw IllegalArgumentException(errors.toString())
         }
+    }
 
-        return translator.toJson()
+    private fun patId(bundle: Bundle?): String {
+        checkNotNull(bundle)
+        return bundle.entry.filter { it.resource is Patient }.first().resource.id.removePrefix("Patient/")
     }
 
     @Test
-    fun evaluateHypertensivePatientFromCQLTest() {
-        val assetBundle = jSONParser.parseResource(open("LibraryTestPatient.json")) as Bundle
-
-        val lib = JsonCqlLibraryReader().read(StringReader(toJson(open("LibraryTestRules.cql"))))
-        val context = cqlEvaluator.run(lib, assetBundle)
-
-        assertEquals(true, context.resolveExpressionRef("AgeRange-548").evaluate(context))
-        assertEquals(true, context.resolveExpressionRef("Essential hypertension (disorder)").evaluate(context))
-        assertEquals(false, context.resolveExpressionRef("Malignant hypertensive chronic kidney disease (disorder)").evaluate(context))
-        assertEquals(true, context.resolveExpressionRef("MeetsInclusionCriteria").evaluate(context))
-        assertEquals(false, context.resolveExpressionRef("MeetsExclusionCriteria").evaluate(context))
-        assertEquals(true, context.resolveExpressionRef("InPopulation").evaluate(context))
-        assertEquals("", context.resolveExpressionRef("Recommendation").evaluate(context))
-        assertEquals(null, context.resolveExpressionRef("Rationale").evaluate(context))
-        assertEquals(null, context.resolveExpressionRef("Errors").evaluate(context))
-    }
-
-    @Test
-    fun evaluateDDCCPassAsCQLOnQR1FromCompositionTest() {
+    fun evaluateDDCCPassAsCQLOnQR1FromBundleTest() = runBlocking {
         val asset = jSONParser.parseResource(open("WHOQR1FHIRBundle.json")) as Bundle
 
-        val lib = JsonCqlLibraryReader().read(StringReader(toJson(open("DDCCPass.cql"))))
-        val context = cqlEvaluator.run(lib, asset)
+        loadBundle(asset)
 
-        assertEquals(Collections.EMPTY_LIST, context.resolveExpressionRef("GetFinalDose").evaluate(context))
-        assertEquals(Collections.EMPTY_LIST, context.resolveExpressionRef("GetSingleDose").evaluate(context))
-        assertEquals(Collections.EMPTY_LIST, context.resolveExpressionRef("GetAllModerna").evaluate(context))
-        assertEquals(false, context.resolveExpressionRef("ModernaProtocol").evaluate(context))
-        assertEquals(false, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
-        assertEquals(false, cqlEvaluator.resolve("CompletedImmunization", ddccPass, asset))
+        val results = fhirOperator.evaluateLibrary(
+            "http://localhost/Library/DDCCPass|1.0.0",
+            patId(asset),
+            setOf("CompletedImmunization", "GetFinalDose", "GetSingleDose",
+                "GetAllModerna", "ModernaProtocol")) as Parameters
+
+        assertEquals(Collections.EMPTY_LIST, results.getParameters("GetFinalDose"))
+        assertEquals(Collections.EMPTY_LIST, results.getParameters("GetSingleDose"))
+        assertEquals(Collections.EMPTY_LIST, results.getParameters("GetAllModerna"))
+        assertEquals(false, results.getParameterBool("ModernaProtocol"))
+        assertEquals(false, results.getParameterBool("CompletedImmunization"))
     }
 
     @Test
-    fun evaluateDDCCPassAsJSONOnQR1FromCompositionTest() {
+    fun evaluateDDCCPassAsJSONOnQR1FromBundleTest() = runBlocking {
         val asset = jSONParser.parseResource(open("WHOQR1FHIRBundle.json")) as Bundle
 
-        val context = cqlEvaluator.run(ddccPass, asset)
+        loadBundle(asset)
 
-        assertEquals(Collections.EMPTY_LIST, context.resolveExpressionRef("GetFinalDose").evaluate(context))
-        assertEquals(false, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
-        assertEquals(false, cqlEvaluator.resolve("CompletedImmunization", ddccPass, asset))
+        val results = fhirOperator.evaluateLibrary(
+            "http://localhost/Library/DDCCPass|1.0.0",
+            patId(asset),
+            setOf("CompletedImmunization", "GetFinalDose", "GetSingleDose",
+                "GetAllModerna", "ModernaProtocol")) as Parameters
+
+        assertEquals(Collections.EMPTY_LIST, results.getParameters("GetFinalDose"))
+        assertEquals(false, results.getParameterBool("CompletedImmunization"))
     }
 
     @Test
-    fun evaluateDDCCPassAsCQLOnQR2FromCompositionTest() {
+    fun evaluateDDCCPassAsCQLOnQR2FromBundleTest() = runBlocking {
         val asset = jSONParser.parseResource(open("WHOQR2FHIRBundle.json")) as Bundle
 
-        val lib = JsonCqlLibraryReader().read(StringReader(toJson(open("DDCCPass.cql"))))
-        val context = cqlEvaluator.run(lib, asset)
+        loadBundle(asset)
 
-        assertNotEquals(Collections.EMPTY_LIST, context.resolveExpressionRef("GetSingleDose").evaluate(context))
-        assertEquals(Collections.EMPTY_LIST,  context.resolveExpressionRef("GetFinalDose").evaluate(context))
-        assertEquals(true, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
-        assertEquals(true, cqlEvaluator.resolve("CompletedImmunization", ddccPass, asset))
+        val results = fhirOperator.evaluateLibrary(
+            "http://localhost/Library/DDCCPass|1.0.0",
+            patId(asset),
+            setOf("CompletedImmunization", "GetFinalDose", "GetSingleDose",
+                "GetAllModerna", "ModernaProtocol")) as Parameters
+
+        assertNotEquals(Collections.EMPTY_LIST, results.getParameters("GetSingleDose"))
+        assertEquals(Collections.EMPTY_LIST,  results.getParameters("GetFinalDose"))
+        assertEquals(true, results.getParameterBool("CompletedImmunization"))
     }
 
     @Test
-    fun evaluateDDCCPassAsJSONOnQR2FromCompositionTest() {
+    fun evaluateDDCCPassAsJSONOnQR2FromBundleTest() = runBlocking {
         val asset = jSONParser.parseResource(open("WHOQR2FHIRBundle.json")) as Bundle
 
-        val context = cqlEvaluator.run(ddccPass, asset)
+        loadBundle(asset)
 
-        assertNotEquals(Collections.EMPTY_LIST, context.resolveExpressionRef("GetSingleDose").evaluate(context))
-        assertEquals(Collections.EMPTY_LIST, context.resolveExpressionRef("GetFinalDose").evaluate(context))
-        assertEquals(true, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
-        assertEquals(true, cqlEvaluator.resolve("CompletedImmunization", ddccPass, asset))
+        val results = fhirOperator.evaluateLibrary(
+            "http://localhost/Library/DDCCPass|1.0.0",
+            patId(asset),
+            setOf("CompletedImmunization", "GetFinalDose", "GetSingleDose",
+                "GetAllModerna", "ModernaProtocol")) as Parameters
+
+        assertNotEquals(Collections.EMPTY_LIST, results.getParameters("GetSingleDose"))
+        assertEquals(Collections.EMPTY_LIST, results.getParameters("GetFinalDose"))
+        assertEquals(true, results.getParameterBool("CompletedImmunization"))
     }
 
     @Test
-    fun evaluateDDCCPassAsCQLOnSHCQR1FromCompositionTest() {
+    fun evaluateDDCCPassAsCQLOnSHCQR1FromBundleTest() = runBlocking {
         val asset = jSONParser.parseResource(open("SHCQR1FHIRBundle.json")) as Bundle
 
-        val lib = JsonCqlLibraryReader().read(StringReader(toJson(open("DDCCPass.cql"))))
-        val context = cqlEvaluator.run(lib, asset)
+        loadBundle(asset)
 
-        assertEquals(Collections.EMPTY_LIST, context.resolveExpressionRef("GetSingleDose").evaluate(context))
-        assertEquals(Collections.EMPTY_LIST, context.resolveExpressionRef("GetFinalDose").evaluate(context))
-        assertNotEquals(Collections.EMPTY_LIST, context.resolveExpressionRef("GetAllModerna").evaluate(context))
-        assertEquals(true, context.resolveExpressionRef("ModernaProtocol").evaluate(context))
-        assertEquals(true, context.resolveExpressionRef("CompletedImmunization").evaluate(context))
-        assertEquals(true, cqlEvaluator.resolve("CompletedImmunization", ddccPass, asset))
+        val results = fhirOperator.evaluateLibrary(
+            "http://localhost/Library/DDCCPass|1.0.0",
+            patId(asset),
+            setOf("CompletedImmunization", "GetFinalDose", "GetSingleDose",
+                "GetAllModerna", "ModernaProtocol")) as Parameters
+
+        assertEquals(Collections.EMPTY_LIST, results.getParameters("GetSingleDose"))
+        assertEquals(Collections.EMPTY_LIST, results.getParameters("GetFinalDose"))
+        assertNotEquals(Collections.EMPTY_LIST, results.getParameters("GetAllModerna"))
+        assertEquals(true, results.getParameterBool("ModernaProtocol"))
+        assertEquals(true, results.getParameterBool("CompletedImmunization"))
     }
 }
