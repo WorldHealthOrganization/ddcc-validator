@@ -12,6 +12,9 @@ import org.who.ddccverifier.verify.hcert.HCertVerifier
 import org.who.ddccverifier.verify.icao.IcaoVerifier
 import org.who.ddccverifier.verify.shc.ShcVerifier
 import java.util.*
+import kotlin.system.measureTimeMillis
+import kotlin.time.ExperimentalTime
+import kotlin.time.measureTimedValue
 
 class QRVerifyTest: BaseTrustRegistryTest() {
 
@@ -45,212 +48,88 @@ class QRVerifyTest: BaseTrustRegistryTest() {
         assertEquals(mapper.readTree(v1), mapper.readTree(v2))
     }
 
-    @Test
-    fun verifyWHOQR1() {
+    @OptIn(ExperimentalTime::class)
+    fun verify(qrContentsFileName: String, expectedJsonFileName: String, expectedStatus: QRDecoder.Status = QRDecoder.Status.VERIFIED) {
         Mockito.mockStatic(UUID::class.java).use { mockedUuid ->
             mockedUuid.`when`<Any> { UUID.randomUUID() }.thenReturn(firstUUID, *uuidList)
-            val qr1 = open("WHOQR1Contents.txt")
-            val verified = HCertVerifier(registry).unpackAndVerify(qr1)
+            val qr1 = open(qrContentsFileName)
+
+            val (verified, elapsed) = measureTimedValue {
+                QRDecoder(registry).decode(qr1)
+            }
+            println("UnpackAndVerify in $elapsed milliseconds")
 
             assertNotNull(verified)
-            assertEquals(QRDecoder.Status.VERIFIED, verified.status)
+            assertEquals(expectedStatus, verified.status)
 
             val json = jsonParser.encodeResourceToString(verified.contents!!)
 
-            jsonEquals(open("WHOQR1FHIRBundle.json"), json)
+            jsonEquals(open(expectedJsonFileName), json)
         }
+    }
+
+    @Test
+    fun verifyWHOQR1() {
+        verify("WHOQR1Contents.txt", "WHOQR1FHIRBundle.json")
     }
 
     @Test
     fun verifyWHOQR2() {
-        Mockito.mockStatic(UUID::class.java).use { mockedUuid ->
-            mockedUuid.`when`<Any> { UUID.randomUUID() }.thenReturn(firstUUID, *uuidList)
-            val qr2 = open("WHOQR2Contents.txt")
-            val verified = HCertVerifier(registry).unpackAndVerify(qr2)
-            assertNotNull(verified)
-            assertEquals(QRDecoder.Status.VERIFIED, verified.status)
-
-            val json = jsonParser.encodeResourceToString(verified.contents!!)
-
-            jsonEquals(open("WHOQR2FHIRBundle.json"), json)
-        }
+        verify("WHOQR2Contents.txt", "WHOQR2FHIRBundle.json")
     }
 
     @Test
     fun verifyWHOSingaporePCR() {
-        Mockito.mockStatic(UUID::class.java).use { mockedUuid ->
-            mockedUuid.`when`<Any> { UUID.randomUUID() }.thenReturn(firstUUID, *uuidList)
-            val qr2 = open("WHOSingaporePCRContents.txt")
-            val verified = HCertVerifier(registry).unpackAndVerify(qr2)
-            assertNotNull(verified)
-            assertEquals(QRDecoder.Status.VERIFIED, verified.status)
-
-            val json = jsonParser.encodeResourceToString(verified.contents!!)
-
-            jsonEquals(open("WHOSingaporePCRFHIRBundle.json"), json)
-        }
+        verify("WHOSingaporePCRContents.txt", "WHOSingaporePCRFHIRBundle.json")
     }
 
     @Test
     fun verifyWHOEUQR1() {
-        Mockito.mockStatic(UUID::class.java).use { mockedUuid ->
-            mockedUuid.`when`<Any> { UUID.randomUUID() }.thenReturn(firstUUID, *uuidList)
-
-            val qr1 = open("EUQR1Contents.txt")
-            val verified = HCertVerifier(registry).unpackAndVerify(qr1)
-
-            assertNotNull(verified)
-            assertEquals(QRDecoder.Status.VERIFIED, verified.status)
-
-            val json = jsonParser.encodeResourceToString(verified.contents!!)
-
-            jsonEquals(open("EUQR1FHIRBundle.json"), json)
-        }
+        verify("EUQR1Contents.txt", "EUQR1FHIRBundle.json")
     }
 
     @Test
     fun verifyDCCIndonesia() {
-        Mockito.mockStatic(UUID::class.java).use { mockedUuid ->
-            mockedUuid.`when`<Any> { UUID.randomUUID() }.thenReturn(firstUUID, *uuidList)
-
-            val qr1 = open("EUIndonesiaContents.txt")
-            val verified = HCertVerifier(registry).unpackAndVerify(qr1)
-
-            assertNotNull(verified)
-            assertEquals(QRDecoder.Status.VERIFIED, verified.status)
-
-            val json = jsonParser.encodeResourceToString(verified.contents!!)
-
-            jsonEquals(open("EUIndonesiaFHIRBundle.json"), json)
-        }
+        verify("EUIndonesiaContents.txt", "EUIndonesiaFHIRBundle.json")
     }
 
     @Test
     fun verifyDCCUruguay() {
-        Mockito.mockStatic(UUID::class.java).use { mockedUuid ->
-            mockedUuid.`when`<Any> { UUID.randomUUID() }.thenReturn(firstUUID, *uuidList)
-            val qr1 = open("EUUruguayContents.txt")
-            val verified = HCertVerifier(registry).unpackAndVerify(qr1)
-
-            assertNotNull(verified)
-            assertEquals(QRDecoder.Status.ISSUER_NOT_TRUSTED, verified.status)
-
-            val json = jsonParser.encodeResourceToString(verified.contents!!)
-
-            jsonEquals(open("EUUruguayFHIRBundle.json"), json)
-        }
+        verify("EUUruguayContents.txt", "EUUruguayFHIRBundle.json", QRDecoder.Status.ISSUER_NOT_TRUSTED)
     }
 
     @Test
     fun verifySHCQR1() {
-        Mockito.mockStatic(UUID::class.java).use { mockedUuid ->
-            mockedUuid.`when`<Any> { UUID.randomUUID() }.thenReturn(firstUUID, *uuidList)
-            val qr1 = open("SHCQR1Contents.txt")
-            val verified = ShcVerifier(registry).unpackAndVerify(qr1)
-
-            assertNotNull(verified)
-            assertEquals(QRDecoder.Status.VERIFIED, verified.status)
-
-            val json = jsonParser.encodeResourceToString(verified.contents!!)
-
-            jsonEquals(open("SHCQR1FHIRBundle.json"), json)
-        }
+        verify("SHCQR1Contents.txt", "SHCQR1FHIRBundle.json")
     }
 
     @Test
     fun verifySHCTestResults() {
-        Mockito.mockStatic(UUID::class.java).use { mockedUuid ->
-            mockedUuid.`when`<Any> { UUID.randomUUID() }.thenReturn(firstUUID, *uuidList)
-            val qr1 = open("SHCTestResultsContents.txt")
-            val verified = ShcVerifier(registry).unpackAndVerify(qr1)
-
-            assertNotNull(verified)
-            assertEquals(QRDecoder.Status.VERIFIED, verified.status)
-
-            val json = jsonParser.encodeResourceToString(verified.contents!!)
-
-            jsonEquals(open("SHCTestResultsFHIRBundle.json"), json)
-        }
+        verify("SHCTestResultsContents.txt", "SHCTestResultsFHIRBundle.json")
     }
 
     @Test
     fun verifyDIVOCQR() {
-        Mockito.mockStatic(UUID::class.java).use { mockedUuid ->
-            mockedUuid.`when`<Any> { UUID.randomUUID() }.thenReturn(firstUUID, *uuidList)
-            val qr1 = open("DIVOCQR1Contents.txt")
-            val verified = DivocVerifier(registry).unpackAndVerify(qr1)
-
-            assertNotNull(verified)
-            assertEquals(QRDecoder.Status.VERIFIED, verified.status)
-
-            val json = jsonParser.encodeResourceToString(verified.contents!!)
-
-            jsonEquals(open("DIVOCQR1FHIRBundle.json"), json)
-        }
+        verify("DIVOCQR1Contents.txt", "DIVOCQR1FHIRBundle.json")
     }
 
     @Test
     fun verifyDIVOCJamaica() {
-        Mockito.mockStatic(UUID::class.java).use { mockedUuid ->
-            mockedUuid.`when`<Any> { UUID.randomUUID() }.thenReturn(firstUUID, *uuidList)
-
-            val qr1 = open("DIVOCJamaicaContents.txt")
-            val verified = DivocVerifier(registry).unpackAndVerify(qr1)
-
-            assertNotNull(verified)
-            assertEquals(QRDecoder.Status.INVALID_SIGNATURE, verified.status)
-
-            val json = jsonParser.encodeResourceToString(verified.contents!!)
-
-            jsonEquals(open("DIVOCJamaicaFHIRBundle.json"), json)
-        }
+        verify("DIVOCJamaicaContents.txt", "DIVOCJamaicaFHIRBundle.json", QRDecoder.Status.INVALID_SIGNATURE)
     }
 
     @Test
     fun verifyDIVOCIndonesia() {
-        Mockito.mockStatic(UUID::class.java).use { mockedUuid ->
-            mockedUuid.`when`<Any> { UUID.randomUUID() }.thenReturn(firstUUID, *uuidList)
-            val qr1 = open("DIVOCIndonesiaContents.txt")
-            val verified = DivocVerifier(registry).unpackAndVerify(qr1)
-
-            assertNotNull(verified)
-            assertEquals(QRDecoder.Status.VERIFIED, verified.status)
-
-            val json = jsonParser.encodeResourceToString(verified.contents!!)
-
-            jsonEquals(open("DIVOCIndonesiaFHIRBundle.json"), json)
-        }
+        verify("DIVOCIndonesiaContents.txt", "DIVOCIndonesiaFHIRBundle.json")
     }
 
     @Test
     fun verifyICAOAustraliaQR1() {
-        Mockito.mockStatic(UUID::class.java).use { mockedUuid ->
-            mockedUuid.`when`<Any> { UUID.randomUUID() }.thenReturn(firstUUID, *uuidList)
-            val qr1 = open("ICAOAUQR1Contents.txt")
-            val verified = IcaoVerifier(registry).unpackAndVerify(qr1)
-
-            assertNotNull(verified)
-            assertEquals(QRDecoder.Status.VERIFIED, verified.status)
-
-            val json = jsonParser.encodeResourceToString(verified.contents!!)
-
-            jsonEquals(open("ICAOAUQR1FHIRBundle.json"), json)
-        }
+        verify("ICAOAUQR1Contents.txt", "ICAOAUQR1FHIRBundle.json")
     }
 
     @Test
     fun verifyICAOJapanQR1() {
-        Mockito.mockStatic(UUID::class.java).use { mockedUuid ->
-            mockedUuid.`when`<Any> { UUID.randomUUID() }.thenReturn(firstUUID, *uuidList)
-            val qr1 = open("ICAOJPQR1Contents.txt")
-            val verified = IcaoVerifier(registry).unpackAndVerify(qr1)
-
-            assertNotNull(verified)
-            assertEquals(QRDecoder.Status.VERIFIED, verified.status)
-
-            val json = jsonParser.encodeResourceToString(verified.contents!!)
-
-            jsonEquals(open("ICAOJPQR1FHIRBundle.json"), json)
-        }
+        verify("ICAOJPQR1Contents.txt", "ICAOJPQR1FHIRBundle.json")
     }
 }
