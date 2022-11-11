@@ -9,8 +9,8 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import org.who.ddccverifier.databinding.ActivityMainBinding
-import org.who.ddccverifier.services.trust.TrustRegistrySingleton
-import org.who.ddccverifier.trust.TrustRegistry
+import java.net.URI
+import kotlin.system.measureTimeMillis
 
 /**
  * Screen / Class flow:
@@ -85,8 +85,12 @@ class MainActivity : AuthActivity() {
 
     override fun backgroundInit() {
         super.backgroundInit()
-        // Triggers Networking
-        TrustRegistrySingleton.init()
+        // kicks of the loading of Fhir Engine, Operator and Trust Registry
+        FhirApplication.fhirContext(applicationContext)
+        FhirApplication.fhirEngine(applicationContext)
+        FhirApplication.fhirOperator(applicationContext)
+        FhirApplication.subscribedIGs(applicationContext)
+        FhirApplication.trustRegistry(applicationContext)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

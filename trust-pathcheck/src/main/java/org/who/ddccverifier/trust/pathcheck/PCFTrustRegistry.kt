@@ -8,6 +8,7 @@ import java.security.Security
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.system.measureTimeMillis
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTimedValue
 
@@ -48,38 +49,44 @@ class PCFTrustRegistry : TrustRegistry {
 
     @OptIn(ExperimentalTime::class)
     fun load(registryURL: TrustRegistry.RegistryEntity) {
-        // Parsing the CSV
-        val (reader, elapsedServerDownload) = measureTimedValue {
-            registryURL.resolvableURI.toURL().openStream().bufferedReader()
-        }
-        println("TIME: Trust Downloaded in $elapsedServerDownload")
-
-        reader.forEachLine {
-            val (
-                specName, kid, status, displayNameB64, displayLogoB64,
-                validFromISOStr, validUntilISOStr, publicKey,
-            ) = it.split(",")
-
-            try {
-                registry[TrustRegistry.Framework.valueOf(specName.uppercase())]
-                    ?.put(kid, TrustRegistry.TrustedEntity(
-                        mapOf("en" to decode(displayNameB64)),
-                        decode(displayLogoB64),
-                        TrustRegistry.Status.valueOf(status.uppercase()),
-                        registryURL.scope,
-                        parseDate(validFromISOStr),
-                        parseDate(validUntilISOStr),
-                        KeyUtils.publicKeyFromPEM(wrapPem(publicKey))
-                    )
-                )
-            } catch(t: Throwable) {
-                println("Exception while loading kid: $specName $kid");
-                t.printStackTrace()
+        try {
+            // Parsing the CSV
+            val (reader, elapsedServerDownload) = measureTimedValue {
+                registryURL.resolvableURI.toURL().openStream().bufferedReader()
             }
+            println("TIME: Trust Downloaded in $elapsedServerDownload")
+
+            reader.forEachLine {
+                val (
+                    specName, kid, status, displayNameB64, displayLogoB64,
+                    validFromISOStr, validUntilISOStr, publicKey,
+                ) = it.split(",")
+
+                try {
+                    registry[TrustRegistry.Framework.valueOf(specName.uppercase())]
+                        ?.put(kid,
+                            TrustRegistry.TrustedEntity(
+                                mapOf("en" to decode(displayNameB64)),
+                                decode(displayLogoB64),
+                                TrustRegistry.Status.valueOf(status.uppercase()),
+                                registryURL.scope,
+                                parseDate(validFromISOStr),
+                                parseDate(validUntilISOStr),
+                                KeyUtils.publicKeyFromPEM(wrapPem(publicKey))
+                            )
+                        )
+                } catch(t: Throwable) {
+                    println("Exception while loading kid: $specName $kid")
+                    t.printStackTrace()
+                }
+            }
+
+        } catch(t: Throwable) {
+            println("Exception while loading registry from github")
+            t.printStackTrace()
         }
     }
 
-    @OptIn(ExperimentalTime::class)
     override fun init(vararg customRegistries: TrustRegistry.RegistryEntity) {
         Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME)
         Security.addProvider(BouncyCastleProvider())
@@ -89,7 +96,7 @@ class PCFTrustRegistry : TrustRegistry {
         }
 
         customRegistries.forEach {
-            val (verified, elapsed) = measureTimedValue {
+            val elapsed = measureTimeMillis {
                 load(it)
             }
 

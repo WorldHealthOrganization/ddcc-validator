@@ -1,26 +1,27 @@
 package org.who.ddccverifier.views
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import kotlinx.coroutines.*
-import org.cqframework.cql.elm.execution.VersionedIdentifier
-import org.hl7.fhir.instance.model.api.IBaseBundle
-import org.hl7.fhir.r4.model.Composition
+import org.hl7.fhir.r4.model.Parameters
+import org.hl7.fhir.r4.model.Patient
+import org.who.ddccverifier.FhirApplication
+import org.who.ddccverifier.QRDecoder
 import org.who.ddccverifier.R
 import org.who.ddccverifier.databinding.FragmentResultBinding
-import org.who.ddccverifier.services.*
-import org.who.ddccverifier.services.cql.CQLEvaluator
-import org.who.ddccverifier.services.cql.FHIRLibraryLoader
-import org.who.ddccverifier.services.trust.TrustRegistrySingleton
+import org.who.ddccverifier.services.DDCCFormatter
 import org.who.ddccverifier.trust.TrustRegistry
-import org.who.ddccverifier.QRDecoder
-import java.io.InputStream
+import kotlin.time.ExperimentalTime
+import kotlin.time.measureTimedValue
+
 
 /**
  * Displays a Verifiable Credential after being Scanned by the QRScan Fragment
@@ -32,8 +33,8 @@ class ResultFragment : Fragment() {
     private val binding get() = _binding!!
 
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentResultBinding.inflate(inflater, container, false)
         return binding.root
@@ -76,7 +77,7 @@ class ResultFragment : Fragment() {
         val vaccineInfo2: String?,
 
         // recommendations
-        val nextDose: String?
+        val nextDose: String?,
     )
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -178,28 +179,54 @@ class ResultFragment : Fragment() {
             setTextView(binding.tvResultNextDose, card.nextDose, binding.llResultNextDose)
 
             // Status
-            setTextView(binding.tvResultStatus, "", binding.tvResultStatus)
+            binding.llResultStatus.removeAllViews()
         }
     }
 
-    fun showStatus(DDCC: IBaseBundle) = runBlocking {
+    @OptIn(ExperimentalTime::class)
+    fun showStatus(patientId: String) = runBlocking {
         val viewModelJob = Job()
         val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
         uiScope.launch {
             withContext(Dispatchers.IO) {
-                val statusStr = when (resolveStatus(DDCC)) {
-                    true -> null // "COVID Safe"
-                    false -> null // "COVID Vulnerable"
-                    null -> "Unable to evaluate"
+                val results = context?.let {
+                    FhirApplication.subscribedIGs(it).associate {
+                        val (status, elapsed) = measureTimedValue {
+                            resolveStatus(patientId, it.url, "CompletedImmunization")
+                        }
+                        println("TIME: Evaluation of ${it.url} in $elapsed")
+                        Pair(it.name, status)
+                    }
                 }
-                withContext(Dispatchers.Main){
-                    _binding?.let {
-                        setTextView(binding.tvResultStatus, statusStr, binding.tvResultStatus)
+
+                if (results != null) {
+                    withContext(Dispatchers.Main) {
+                        _binding?.let {
+                            results.forEach {
+                                binding.llResultStatus.addView(TextView(context).apply {
+                                    text = when (it.value) {
+                                        true -> "${it.key}: COVID Safe"
+                                        false -> "${it.key}: COVID Vulnerable"
+                                        null -> "${it.key}: Unable to evaluate"
+                                    }
+                                    layoutParams = LinearLayout.LayoutParams(
+                                        LinearLayout.LayoutParams.MATCH_PARENT,
+                                        LinearLayout.LayoutParams.WRAP_CONTENT
+                                    )
+                                    textAlignment = TextView.TEXT_ALIGNMENT_CENTER
+                                    setTextSize(TypedValue.COMPLEX_UNIT_SP, 24f)
+                                })
+                            }
+                        }
                     }
                 }
             }
         }
+    }
+
+    private fun patId(bundle: org.hl7.fhir.r4.model.Bundle): String {
+        return bundle.entry.filter { it.resource is Patient }.first().resource.id.removePrefix("Patient/")
     }
 
     private fun resolveAndShowQR(qr: String) = runBlocking {
@@ -210,31 +237,36 @@ class ResultFragment : Fragment() {
             withContext(Dispatchers.IO) {
                 val result = resolveQR(qr)
 
-                if (result.contents != null)
-                    showStatus(result.contents!!)
-
                 withContext(Dispatchers.Main){
                     updateScreen(result)
                 }
+
+                val bundle = result.contents
+
+                checkNotNull(bundle)
+
+                for (entry in bundle.entry) {
+                    FhirApplication.fhirEngine(requireContext()).create(entry.resource)
+                }
+
+                showStatus(patId(bundle))
             }
         }
     }
 
     private fun resolveQR(qr: String): QRDecoder.VerificationResult {
-        return QRDecoder(TrustRegistrySingleton.get()).decode(qr)
+        return QRDecoder(FhirApplication.trustRegistry(requireContext())).decode(qr)
     }
 
-    private fun open(file: String): InputStream {
-        return resources.assets.open(file)
-    }
-
-    fun resolveStatus(DDCC: IBaseBundle): Boolean? {
+    fun resolveStatus(patientId: String, libUrl: String, funcName: String): Boolean? {
         // Might be slow
         return try {
-             CQLEvaluator(FHIRLibraryLoader(::open)).resolve(
-                "CompletedImmunization",
-                VersionedIdentifier().withId("DDCCPass").withVersion("0.0.1"),
-                DDCC) as Boolean
+            val results = FhirApplication.fhirOperator(requireContext()).evaluateLibrary(
+                libUrl,
+                patientId,
+                setOf(funcName)) as Parameters
+
+            results.getParameterBool(funcName)
         } catch (t: Throwable) {
             t.printStackTrace()
             null
