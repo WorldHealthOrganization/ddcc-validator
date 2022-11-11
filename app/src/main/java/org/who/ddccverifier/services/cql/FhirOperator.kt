@@ -11,6 +11,7 @@ import org.hl7.fhir.instance.model.api.IBaseParameters
 import org.hl7.fhir.r4.model.*
 import org.opencds.cqf.cql.engine.data.CompositeDataProvider
 import org.opencds.cqf.cql.engine.fhir.converter.FhirTypeConverterFactory
+import org.opencds.cqf.cql.engine.fhir.model.R4FhirModelResolver
 import org.opencds.cqf.cql.engine.retrieve.RetrieveProvider
 import org.opencds.cqf.cql.engine.runtime.Code
 import org.opencds.cqf.cql.engine.runtime.Interval
@@ -72,6 +73,15 @@ class MyRetrieveProvider(fhirEngine: FhirEngine, fhirEngineTerminologyProvider: 
   }
 }
 
+object LazyLoaderR4FhirModelResolver: R4FhirModelResolver() {
+  override fun initialize() {
+    // Override the creation of a new Context, use Cached Version instead
+    fhirContext = FhirContext.forCached(FhirVersionEnum.R4)
+    // do not load everything (Overriding initialize cuts 50% of evaluation time)
+    fhirContext.registerCustomType(AnnotatedUuidType::class.java)
+  }
+}
+
 class FhirOperator(fhirContext: FhirContext, fhirEngine: FhirEngine) {
   // Initialize the measure processor
   private val fhirEngineTerminologyProvider = FhirEngineTerminologyProvider(fhirContext, fhirEngine)
@@ -82,7 +92,7 @@ class FhirOperator(fhirContext: FhirContext, fhirEngine: FhirEngine) {
 
   private val dataProvider =
     CompositeDataProvider(
-      CachingModelResolverDecorator(LazyLoaderR4FhirModelResolver),
+      CachingModelResolverDecorator(R4FhirModelResolver()),
       fhirEngineRetrieveProvider
     )
   private val fhirEngineDal = FhirEngineDal(fhirEngine)
