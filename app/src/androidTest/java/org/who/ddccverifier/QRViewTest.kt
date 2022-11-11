@@ -37,7 +37,7 @@ class QRViewTest: BaseTrustRegistryTest() {
             fhirOperator.loadLib(ddccPass)
             TimeZone.setDefault(TimeZone.getTimeZone("GMT"))
         }
-        println("TIME: Test Initialized in $elapsed")
+        println("TIME: Test Initialized in $elapsed ms")
     }
 
     private suspend fun loadBundle(bundle: Bundle?) {
