@@ -86,6 +86,7 @@ class MainActivity : AuthActivity() {
     override fun backgroundInit() {
         super.backgroundInit()
         // kicks of the loading of Fhir Engine, Operator and Trust Registry
+        FhirApplication.initInMemory(applicationContext)
         FhirApplication.fhirContext(applicationContext)
         FhirApplication.fhirEngine(applicationContext)
         FhirApplication.fhirOperator(applicationContext)

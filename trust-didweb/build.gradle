@@ -1,0 +1,33 @@
+plugins {
+    id 'java-library'
+    id 'org.jetbrains.kotlin.jvm'
+}
+
+java {
+    group = "org.who.ddccverifier.trust.didweb"
+    version = "0.0.1-SNAPSHOT"
+
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+dependencies {
+    // Provides the trust interface
+    implementation project(":trust")
+
+    // Provides the DID Document object
+    implementation 'decentralized-identity:did-common-java:1.2.0'
+
+    // Necessary to call JSON APIs (Parse the DID Document)
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.13.3'
+
+    // Adds BouncyCastle to work with keys.
+    implementation 'org.bouncycastle:bcpkix-jdk15to18:1.68'
+    // Adds JWK parsing capability
+    implementation 'com.nimbusds:nimbus-jose-jwt:9.25.6'
+
+    // Adds Multibase/Base 58 support
+    implementation 'com.github.multiformats:java-multibase:v1.0.0'
+
+    testImplementation 'junit:junit:4.13.2'
+}

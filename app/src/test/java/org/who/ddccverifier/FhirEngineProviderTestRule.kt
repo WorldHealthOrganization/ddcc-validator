@@ -21,10 +21,10 @@ class FhirEngineProviderTestRule : TestRule {
         try {
           base.evaluate()
         } finally {
-          val elapsed = measureTimeMillis {
+          val elapsedCleanup = measureTimeMillis {
             FhirEngineProvider.cleanup()
           }
-          println("TIME: FhirEngineProvider Cleaned in $elapsed")
+          println("TIME: FhirEngineProvider Cleaned in $elapsedCleanup")
         }
       }
     }

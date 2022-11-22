@@ -3,7 +3,6 @@ package org.who.ddccverifier.trust.pathcheck
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.who.ddccverifier.trust.TrustRegistry
 import java.net.URI
-import java.net.URL
 import java.security.Security
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -11,7 +10,6 @@ import java.util.*
 import kotlin.system.measureTimeMillis
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTimedValue
-
 
 operator fun <T> List<T>.component6() = this[5]
 operator fun <T> List<T>.component7() = this[6]
@@ -105,7 +103,7 @@ class PCFTrustRegistry : TrustRegistry {
     }
 
     override fun init() {
-        init(PRODUCTION_REGISTRY)
+        init(PRODUCTION_REGISTRY, ACCEPTANCE_REGISTRY)
     }
 
     override fun resolve(framework: TrustRegistry.Framework, kid: String): TrustRegistry.TrustedEntity? {

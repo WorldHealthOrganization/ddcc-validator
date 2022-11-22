@@ -4,16 +4,14 @@ import android.app.Application
 import android.content.Context
 import ca.uhn.fhir.context.FhirContext
 import ca.uhn.fhir.context.FhirVersionEnum
-import com.google.android.fhir.DatabaseErrorStrategy.RECREATE_AT_OPEN
 import com.google.android.fhir.FhirEngine
 import com.google.android.fhir.FhirEngineConfiguration
 import com.google.android.fhir.FhirEngineProvider
 import org.hl7.fhir.r4.model.Library
 import org.who.ddccverifier.services.cql.CqlBuilder
 import org.who.ddccverifier.services.cql.FhirOperator
-import org.who.ddccverifier.trust.TrustRegistry
-import org.who.ddccverifier.trust.pathcheck.PCFTrustRegistry
-import kotlin.system.measureTimeMillis
+import org.who.ddccverifier.trust.CompoundRegistry
+import org.who.ddccverifier.trust.TrustRegistryFactory
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTimedValue
 
@@ -25,7 +23,7 @@ class FhirApplication : Application() {
   private val fhirContext: FhirContext by lazy(inSync) { timed( "FhirContext", ::loadContext) }
   private val fhirOperator: FhirOperator by lazy(inSync) { timed( "FhirOperator", ::constructOperator) }
   private val subscribedIGs: List<Library> by lazy(inSync) { timed( "CQL Libs", ::compileIGs) }
-  private val registry: TrustRegistry by lazy(inSync) { timed("Registry", ::createRegistry) }
+  private val registry: CompoundRegistry by lazy(inSync) { timed("Registry", ::createRegistries) }
 
   private val availableIGs = listOf(
     "DDCCPass-1.0.0.cql",
@@ -33,13 +31,13 @@ class FhirApplication : Application() {
     "LacPass-1.0.0.cql"
   )
 
-  override fun onCreate() {
-    super.onCreate()
+  fun initInMemory() {
     FhirEngineProvider.init(
       FhirEngineConfiguration(
         testMode = true // does not save anything.
       )
     )
+    println("Application onCreate")
   }
 
   private fun constructFhirEngine(): FhirEngine {
@@ -60,10 +58,10 @@ class FhirApplication : Application() {
     return libs
   }
 
-  private fun createRegistry(): PCFTrustRegistry {
-    val reg = PCFTrustRegistry();
-    reg.init(*BuildConfig.TRUST_REGISTRY_URL);
-    return reg
+  private fun createRegistries(): CompoundRegistry {
+    val registry = CompoundRegistry(TrustRegistryFactory.getTrustRegistries())
+    registry.init()
+    return registry
   }
 
   @OptIn(ExperimentalTime::class)
@@ -81,5 +79,6 @@ class FhirApplication : Application() {
     fun fhirOperator(context: Context) = (context.applicationContext as FhirApplication).fhirOperator
     fun trustRegistry(context: Context) = (context.applicationContext as FhirApplication).registry
     fun subscribedIGs(context: Context) = (context.applicationContext as FhirApplication).subscribedIGs
+    fun initInMemory(context: Context) = (context.applicationContext as FhirApplication).initInMemory()
   }
 }
