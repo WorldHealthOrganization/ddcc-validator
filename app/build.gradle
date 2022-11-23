@@ -7,6 +7,8 @@ plugins {
 android {
     compileSdk 33
 
+    namespace 'org.who.ddccverifier'
+
     defaultConfig {
         applicationId "org.who.ddccverifier"
         minSdk 26
@@ -57,7 +59,6 @@ android {
             resources.srcDirs += ['src/main/assets']
         }
     }
-    namespace 'org.who.ddccverifier'
 }
 
 configurations {
@@ -89,6 +90,7 @@ dependencies {
     implementation project(':verify')
     implementation project(":trust")
     implementation project(":trust-pathcheck")
+    implementation project(":trust-didweb")
 
     // Necessary to unpack DIVOC QR Codes
     // LD-signatures requires Jakarta JSON and HTTP Client
