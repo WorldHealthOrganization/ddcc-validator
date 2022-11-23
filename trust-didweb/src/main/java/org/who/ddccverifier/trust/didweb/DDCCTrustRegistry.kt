@@ -8,6 +8,8 @@ import io.ipfs.multibase.Multibase
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.who.ddccverifier.trust.TrustRegistry
 import java.net.URI
+import java.net.URLDecoder
+import java.net.URLEncoder
 import java.security.PublicKey
 import java.security.Security
 import java.util.*
@@ -81,8 +83,6 @@ class DDCCTrustRegistry : TrustRegistry {
 
             didDocumentResolution?.didDocument?.verificationMethods?.forEach {
                 try {
-                    println("${it.id}")
-
                     val key = buildPublicKey(it)
                     if (key != null)
                         registry.put(it.id,
@@ -129,8 +129,9 @@ class DDCCTrustRegistry : TrustRegistry {
     }
 
     override fun resolve(framework: TrustRegistry.Framework, kid: String): TrustRegistry.TrustedEntity? {
+        val encKid = URLEncoder.encode(kid,"UTF-8")
         println("DID:WEB: Resolving $kid -> $PROD_KEY_ID:$kid#$kid")
-        return registry[URI.create("$PROD_KEY_ID:$kid#$kid")]
-            ?: registry[URI.create("$TEST_KEY_ID:$kid#$kid")]
+        return registry[URI.create("$PROD_KEY_ID:$kid#$encKid")]
+            ?: registry[URI.create("$TEST_KEY_ID:$kid#$encKid")]
     }
 }

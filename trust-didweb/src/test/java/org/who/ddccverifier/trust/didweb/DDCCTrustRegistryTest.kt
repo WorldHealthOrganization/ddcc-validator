@@ -18,4 +18,10 @@ class DDCCTrustRegistryTest {
         val t = registry.resolve(TrustRegistry.Framework.DIVOC, "india")
         assertNotNull(t)
     }
+
+    @Test
+    fun testMattrDCC() {
+        val t = registry.resolve(TrustRegistry.Framework.DCC, "Gwmv3xzreKs=")
+        assertNotNull(t)
+    }
 }
