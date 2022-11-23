@@ -4,7 +4,7 @@ import java.util.*
 
 object TrustRegistryFactory {
     fun providers(refresh: Boolean): ServiceLoader<TrustRegistryProvider> {
-        val loader = ServiceLoader.load<TrustRegistryProvider>(TrustRegistryProvider::class.java)
+        val loader = ServiceLoader.load(TrustRegistryProvider::class.java)
         if (refresh) {
             loader.reload()
         }
@@ -13,6 +13,7 @@ object TrustRegistryFactory {
 
     fun getTrustRegistries(): List<TrustRegistry> {
         return providers(false).map {
+            println(it::class.java.simpleName)
             it.create()
         }.ifEmpty {
             throw RuntimeException(java.lang.String.join(" ",

@@ -103,11 +103,12 @@ class PCFTrustRegistry : TrustRegistry {
     }
 
     override fun init() {
+        println("PathCheck: Initializing")
         init(PRODUCTION_REGISTRY, ACCEPTANCE_REGISTRY)
     }
 
     override fun resolve(framework: TrustRegistry.Framework, kid: String): TrustRegistry.TrustedEntity? {
-        println("DDCCVerifer: Resolving $kid");
+        println("PathCheck: Resolving $kid");
         return registry[framework]?.get(kid)
     }
 }

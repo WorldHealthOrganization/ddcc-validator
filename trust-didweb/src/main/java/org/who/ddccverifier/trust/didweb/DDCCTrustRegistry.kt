@@ -124,11 +124,12 @@ class DDCCTrustRegistry : TrustRegistry {
     }
 
     override fun init() {
+        println("DID:WEB: Initializing")
         init(PRODUCTION_REGISTRY, ACCEPTANCE_REGISTRY)
     }
 
     override fun resolve(framework: TrustRegistry.Framework, kid: String): TrustRegistry.TrustedEntity? {
-        println("DDCCVerifer: Resolving $kid -> $PROD_KEY_ID:$kid#$kid");
+        println("DID:WEB: Resolving $kid -> $PROD_KEY_ID:$kid#$kid")
         return registry[URI.create("$PROD_KEY_ID:$kid#$kid")]
             ?: registry[URI.create("$TEST_KEY_ID:$kid#$kid")]
     }
