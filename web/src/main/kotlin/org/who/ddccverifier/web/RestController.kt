@@ -12,14 +12,16 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
 import org.who.ddccverifier.trust.pathcheck.PCFTrustRegistry
 import org.who.ddccverifier.QRDecoder
+import org.who.ddccverifier.trust.CompoundRegistry
+import org.who.ddccverifier.trust.TrustRegistryFactory
 import java.io.ByteArrayInputStream
 import javax.imageio.ImageIO
 
 @RestController
 class RestController {
     companion object {
-        var registry = PCFTrustRegistry().apply {
-            init(PCFTrustRegistry.PRODUCTION_REGISTRY, PCFTrustRegistry.ACCEPTANCE_REGISTRY)
+        var registry = CompoundRegistry(TrustRegistryFactory.getTrustRegistries()).apply {
+            init()
         }
     }
 

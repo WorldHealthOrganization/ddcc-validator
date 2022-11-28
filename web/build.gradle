@@ -37,6 +37,7 @@ dependencies {
     implementation project(':verify')
     implementation project(":trust")
     implementation project(":trust-pathcheck")
+    implementation project(":trust-didweb")
 
     providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
