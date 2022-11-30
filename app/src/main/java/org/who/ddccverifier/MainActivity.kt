@@ -12,46 +12,6 @@ import org.who.ddccverifier.databinding.ActivityMainBinding
 import java.net.URI
 import kotlin.system.measureTimeMillis
 
-/**
- * Screen / Class flow:
- *
- * ┌──────────────────────────────────────────────────┐      ┌────────────────┐ ┌──────────┐
- * │                  MainActivity                    │      │ TrustRegistry  ├↔┤ KeyUtils │
- * └──────────────────────────────────────────────────┘      └─────────────╥──┘ └──────────┘
- * ┌──────────────┐ ┌──────────────┐ ┌────────────────┐                    ║
- * │ HomeFragment ├→┤ ScanFragment ├→┤ ResultFragment │←─DDCC UI Card──────╫─────────┐
- * └──────────────┘ └─────┬──▲─────┘ └────────┬───────┘                    ║         │
- *                   Image│  │QRContent       │QRContent                   ║         │
- *                  ┌─────▼──┴─────┐     ┌────▼───────┐                    ║         │
- *                  │   QRFinder   │     │ QRDecoder  │                    ║         │
- *                  └──────────────┘     └────┬───────┘                    ║         │
- *                                            │QRContent                   ║         │
- *             ┌─────────────────┬────────────┴─────┬───────────────────┐  ║         │
- *  ╔══════════╪═════════════════╪══════════════════╪═══════════════════╪══╩══════╗  │
- *  ║ ┌────────▼───────┐  ┌──────▼──────┐   ┌───────▼───────┐   ┌───────▼───────┐ ║  │
- *  ║ │  HCertVerifier │  │ SHCVerifier │   │ DivocVerifier │   │ ICAOVerifier  │ ║  │
- *  ║ └────┬───────────┘  └──────┬──────┘   └───────┬───────┘   └───────┬───────┘ ║  │
- *  ╚══════╪═════════════════════╪══════════════════╪═══════════════════╪═════════╝  │
- *         │HCERT CBOR           │JWT               │JSONLD             │iJSON       │
- *    ┌────▼───────────┐ ┌───────▼───────┐ ┌────────▼─────────┐ ┌───────▼─────────┐  │
- *    │ CBORTranslator │ │ JWTTranslator │ │ JSONLDTranslator │ │ IJsonTranslator │  │
- *    └──┬──────────┬──┘ └───────┬───────┘ └────────┬─────────┘ └───────┬─────────┘  │
- *   FHIR│Struct    │DCC CWT     │FHIR DDCC         │FHIR DDCC          │FHIR DDCC   │
- * ┌─────▼────┐┌────▼─────┐      │                  │                   │            │
- * │ WHO2FHIR ││ DCC2FHIR │      │                  │                   │            │
- * └─────┬────┘└────┬─────┘      │                  │                   │            │
- *   FHIR│DDCC  FHIR│DDCC        │                  │                   │            │
- *       └──────────┴────────────┴────────────┬─────┴───────────────────┘            │
- *                                            │                                      │
- *  ┌──────────────┐                          │DDCC Composite                        │
- *  │ Assets       │ ┌────────────────┐  ┌────▼───────────┐                          │
- *  │ - ModelInfo  ├↔┤CQLLibraryLoader├←→┤ CQLEvaluator   │                          │
- *  │ - FHIRHelper │ └────────────────┘  └────┬───────────┘                          │
- *  │ - DDCCPass   │                          │DDCC Composite                        │
- *  └──────────────┘                     ┌────▼───────────┐                          │
- *                                       │ DDCCFormatter  ├→─DDCC UI Card────────────┘
- *                                       └────────────────┘
- */
 class MainActivity : AuthActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
