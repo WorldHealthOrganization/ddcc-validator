@@ -75,32 +75,35 @@ class DDCCTrustRegistry : TrustRegistry {
     @OptIn(ExperimentalTime::class)
     fun load(registryURL: TrustRegistry.RegistryEntity) {
         try {
-            println("TIME: Trust Downloading in ${registryURL.resolvableURI}")
             val (didDocumentResolution, elapsedServerDownload) = measureTimedValue {
                 DIDWebResolver().resolve(registryURL.resolvableURI)
             }
-            println("TIME: Trust Downloaded in $elapsedServerDownload")
+            println("TIME: Trust Downloaded in $elapsedServerDownload from ${registryURL.resolvableURI}")
 
-            didDocumentResolution?.didDocument?.verificationMethods?.forEach {
-                try {
-                    val key = buildPublicKey(it)
-                    if (key != null)
-                        registry.put(it.id,
-                            TrustRegistry.TrustedEntity(
-                                mapOf("en" to it.id.toString()),
-                                "",
-                                TrustRegistry.Status.CURRENT,
-                                registryURL.scope,
-                                null,
-                                null,
-                                key
+            val elapsed = measureTimeMillis {
+                didDocumentResolution?.didDocument?.verificationMethods?.forEach {
+                    try {
+                        val key = buildPublicKey(it)
+                        if (key != null)
+                            registry.put(it.id,
+                                TrustRegistry.TrustedEntity(
+                                    mapOf("en" to it.id.toString()),
+                                    "",
+                                    TrustRegistry.Status.CURRENT,
+                                    registryURL.scope,
+                                    null,
+                                    null,
+                                    key
+                                )
                             )
-                        )
-                } catch(t: Throwable) {
-                    println("Exception while loading kid: ${it.id}")
-                    t.printStackTrace()
+                    } catch(t: Throwable) {
+                        println("Exception while loading kid: ${it.id}")
+                        t.printStackTrace()
+                    }
                 }
             }
+
+            println("TIME: Trust Parsed and Loaded in ${elapsed}ms")
 
         } catch(t: Throwable) {
             println("Exception while loading registry from github")
@@ -115,11 +118,7 @@ class DDCCTrustRegistry : TrustRegistry {
         registry.clear()
 
         customRegistries.forEach {
-            val elapsed = measureTimeMillis {
-                load(it)
-            }
-
-            println("TIME: Loading TrustRegistry from $it in $elapsed");
+            load(it)
         }
     }
 

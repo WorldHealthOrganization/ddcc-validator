@@ -30,7 +30,7 @@ class CQLEvaluatorTest: BaseTrustRegistryTest() {
     private lateinit var fhirEngine: FhirEngine
     private lateinit var fhirOperator: FhirOperator
 
-    private val ddccPass = CqlBuilder.compileAndBuild(inputStream("DDCCPass-1.0.0.cql")!!)
+    private val ddccPass = CqlBuilder.compileAndBuild(inputStream("ModernaOrPfizerPass-1.0.0.cql")!!)
 
     @Before
     fun setUp() = runBlocking {
@@ -61,13 +61,13 @@ class CQLEvaluatorTest: BaseTrustRegistryTest() {
     }
 
     @Test
-    fun evaluateDDCCPassAsCQLOnQR1FromBundleTest() = runBlocking {
+    fun evaluateOldPassAsCQLOnQR1FromBundleTest() = runBlocking {
         val asset = jSONParser.parseResource(open("WHOQR1FHIRBundle.json")) as Bundle
 
         loadBundle(asset)
 
         val results = fhirOperator.evaluateLibrary(
-            "http://localhost/Library/DDCCPass|1.0.0",
+            "http://localhost/Library/OldPass|1.0.0",
             patId(asset),
             setOf("CompletedImmunization", "GetFinalDose", "GetSingleDose",
                 "GetAllModerna", "ModernaProtocol")) as Parameters
@@ -80,13 +80,13 @@ class CQLEvaluatorTest: BaseTrustRegistryTest() {
     }
 
     @Test
-    fun evaluateDDCCPassAsJSONOnQR1FromBundleTest() = runBlocking {
+    fun evaluateOldPassAsJSONOnQR1FromBundleTest() = runBlocking {
         val asset = jSONParser.parseResource(open("WHOQR1FHIRBundle.json")) as Bundle
 
         loadBundle(asset)
 
         val results = fhirOperator.evaluateLibrary(
-            "http://localhost/Library/DDCCPass|1.0.0",
+            "http://localhost/Library/OldPass|1.0.0",
             patId(asset),
             setOf("CompletedImmunization", "GetFinalDose", "GetSingleDose",
                 "GetAllModerna", "ModernaProtocol")) as Parameters
@@ -96,13 +96,13 @@ class CQLEvaluatorTest: BaseTrustRegistryTest() {
     }
 
     @Test
-    fun evaluateDDCCPassAsCQLOnQR2FromBundleTest() = runBlocking {
+    fun evaluateOldPassAsCQLOnQR2FromBundleTest() = runBlocking {
         val asset = jSONParser.parseResource(open("WHOQR2FHIRBundle.json")) as Bundle
 
         loadBundle(asset)
 
         val results = fhirOperator.evaluateLibrary(
-            "http://localhost/Library/DDCCPass|1.0.0",
+            "http://localhost/Library/OldPass|1.0.0",
             patId(asset),
             setOf("CompletedImmunization", "GetFinalDose", "GetSingleDose",
                 "GetAllModerna", "ModernaProtocol")) as Parameters
@@ -113,13 +113,13 @@ class CQLEvaluatorTest: BaseTrustRegistryTest() {
     }
 
     @Test
-    fun evaluateDDCCPassAsJSONOnQR2FromBundleTest() = runBlocking {
+    fun evaluateOldPassAsJSONOnQR2FromBundleTest() = runBlocking {
         val asset = jSONParser.parseResource(open("WHOQR2FHIRBundle.json")) as Bundle
 
         loadBundle(asset)
 
         val results = fhirOperator.evaluateLibrary(
-            "http://localhost/Library/DDCCPass|1.0.0",
+            "http://localhost/Library/OldPass|1.0.0",
             patId(asset),
             setOf("CompletedImmunization", "GetFinalDose", "GetSingleDose",
                 "GetAllModerna", "ModernaProtocol")) as Parameters
@@ -130,13 +130,13 @@ class CQLEvaluatorTest: BaseTrustRegistryTest() {
     }
 
     @Test
-    fun evaluateDDCCPassAsCQLOnSHCQR1FromBundleTest() = runBlocking {
+    fun evaluateOldPassAsCQLOnSHCQR1FromBundleTest() = runBlocking {
         val asset = jSONParser.parseResource(open("SHCQR1FHIRBundle.json")) as Bundle
 
         loadBundle(asset)
 
         val results = fhirOperator.evaluateLibrary(
-            "http://localhost/Library/DDCCPass|1.0.0",
+            "http://localhost/Library/OldPass|1.0.0",
             patId(asset),
             setOf("CompletedImmunization", "GetFinalDose", "GetSingleDose",
                 "GetAllModerna", "ModernaProtocol")) as Parameters

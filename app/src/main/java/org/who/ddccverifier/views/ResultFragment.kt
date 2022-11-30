@@ -212,7 +212,7 @@ class ResultFragment : Fragment() {
                 val results = context?.let {
                     FhirApplication.subscribedIGs(it).associate {
                         val (status, elapsed) = measureTimedValue {
-                            resolveStatus(patientId, it.url, "CompletedImmunization")
+                            resolveStatus(patientId, it.url, "Completed Immunization")
                         }
                         println("TIME: Evaluation of ${it.url} in $elapsed")
                         Pair(it.name, status)
@@ -244,7 +244,7 @@ class ResultFragment : Fragment() {
                 LinearLayout.LayoutParams.WRAP_CONTENT
             )
             textAlignment = TextView.TEXT_ALIGNMENT_CENTER
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, 24f)
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
         })
     }
 

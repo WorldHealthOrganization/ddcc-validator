@@ -1,35 +1,17 @@
+// Declare the name and version of the Library of functions
 library DDCCPass version '1.0.0'
 
+// The version of FHIR we are using
 using FHIR version '4.0.1'
 
-include "FHIRHelpers" version '4.0.1' called FHIRHelpers
-
+// Execute all business rules relative to a specific Patient content
 context Patient
 
-define "CompletedImmunization":
-  exists(GetFinalDose) or exists(GetSingleDose) or ModernaProtocol or PfizerProtocol
+// Define boolean valued business rule to check if there is an immunization that was completed
+define "Completed Immunization": exists ("Completed Immunizations")
 
-define "GetFinalDose":
+// Define a list of completed immunizations for which the dose number is the same as the series dose
+// Immunization resources are queried from those that reference the Patient we are executing against
+define "Completed Immunizations":
   [Immunization] I
-    where exists(I.protocolApplied)
-      and I.protocolApplied.doseNumber.value = I.protocolApplied.seriesDoses.value
-
-define "GetSingleDose":
-  [Immunization] I
-    where exists(I.protocolApplied)
-      and exists(I.protocolApplied.doseNumber.value)
-      and not exists(I.protocolApplied.seriesDoses.value)
-
-define "ModernaProtocol":
-  Count(GetAllModerna) > 1
-
-define "PfizerProtocol":
-  Count(GetAllPfizer) > 1
-
-define "GetAllModerna":
-  [Immunization] I
-    where I.vaccineCode.coding.code.value contains '207'
-
-define "GetAllPfizer":
-  [Immunization] I
-    where I.vaccineCode.coding.code.value contains '208'
+    where ( I.protocolApplied.doseNumber.value = I.protocolApplied.seriesDoses.value )

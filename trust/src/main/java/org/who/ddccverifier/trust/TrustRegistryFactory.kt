@@ -13,7 +13,6 @@ object TrustRegistryFactory {
 
     fun getTrustRegistries(): List<TrustRegistry> {
         return providers(false).map {
-            println(it::class.java.simpleName)
             it.create()
         }.ifEmpty {
             throw RuntimeException(java.lang.String.join(" ",

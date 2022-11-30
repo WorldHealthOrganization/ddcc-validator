@@ -27,7 +27,7 @@ class QRViewTest: BaseTrustRegistryTest() {
     private lateinit var fhirEngine: FhirEngine
     private lateinit var fhirOperator: FhirOperator
 
-    private val ddccPass = CqlBuilder.compileAndBuild(inputStream("DDCCPass-1.0.0.cql")!!)
+    private val ddccPass = CqlBuilder.compileAndBuild(inputStream("OldPass-1.0.0.cql")!!)
 
     @Before
     fun setUp() = runBlocking {
@@ -73,7 +73,7 @@ class QRViewTest: BaseTrustRegistryTest() {
 
         val (results, elapsedEval) = measureTimedValue {
             fhirOperator.evaluateLibrary(
-                "http://localhost/Library/DDCCPass|1.0.0",
+                "http://localhost/Library/OldPass|1.0.0",
                 patId(verified.contents),
                 setOf("CompletedImmunization", "GetFinalDose", "GetSingleDose")) as Parameters
         }
@@ -121,7 +121,7 @@ class QRViewTest: BaseTrustRegistryTest() {
         loadBundle(verified.contents)
 
         val results = fhirOperator.evaluateLibrary(
-            "http://localhost/Library/DDCCPass|1.0.0",
+            "http://localhost/Library/OldPass|1.0.0",
             patId(verified.contents),
             setOf("CompletedImmunization", "GetFinalDose", "GetSingleDose")) as Parameters
 
@@ -168,7 +168,7 @@ class QRViewTest: BaseTrustRegistryTest() {
         loadBundle(verified.contents)
 
         val results = fhirOperator.evaluateLibrary(
-            "http://localhost/Library/DDCCPass|1.0.0",
+            "http://localhost/Library/OldPass|1.0.0",
             patId(verified.contents),
             setOf("CompletedImmunization", "GetFinalDose", "GetSingleDose")) as Parameters
 
@@ -219,7 +219,7 @@ class QRViewTest: BaseTrustRegistryTest() {
         loadBundle(verified.contents)
 
         val results = fhirOperator.evaluateLibrary(
-            "http://localhost/Library/DDCCPass|1.0.0",
+            "http://localhost/Library/OldPass|1.0.0",
             patId(verified.contents),
             setOf("CompletedImmunization", "GetFinalDose", "GetSingleDose")) as Parameters
 
@@ -264,7 +264,7 @@ class QRViewTest: BaseTrustRegistryTest() {
         loadBundle(verified.contents)
 
         val results = fhirOperator.evaluateLibrary(
-            "http://localhost/Library/DDCCPass|1.0.0",
+            "http://localhost/Library/OldPass|1.0.0",
             patId(verified.contents),
             setOf("CompletedImmunization", "GetFinalDose", "GetSingleDose")) as Parameters
 
@@ -352,7 +352,7 @@ class QRViewTest: BaseTrustRegistryTest() {
         loadBundle(verified.contents)
 
         val results = fhirOperator.evaluateLibrary(
-            "http://localhost/Library/DDCCPass|1.0.0",
+            "http://localhost/Library/OldPass|1.0.0",
             patId(verified.contents),
             setOf("CompletedImmunization", "GetFinalDose", "GetSingleDose")) as Parameters
 
@@ -397,7 +397,7 @@ class QRViewTest: BaseTrustRegistryTest() {
         loadBundle(verified.contents)
 
         val results = fhirOperator.evaluateLibrary(
-            "http://localhost/Library/DDCCPass|1.0.0",
+            "http://localhost/Library/OldPass|1.0.0",
             patId(verified.contents),
             setOf("CompletedImmunization", "GetFinalDose", "GetSingleDose")) as Parameters
 
@@ -442,7 +442,7 @@ class QRViewTest: BaseTrustRegistryTest() {
         loadBundle(verified.contents)
 
         val results = fhirOperator.evaluateLibrary(
-            "http://localhost/Library/DDCCPass|1.0.0",
+            "http://localhost/Library/OldPass|1.0.0",
             patId(verified.contents),
             setOf("CompletedImmunization", "GetFinalDose", "GetSingleDose")) as Parameters
 

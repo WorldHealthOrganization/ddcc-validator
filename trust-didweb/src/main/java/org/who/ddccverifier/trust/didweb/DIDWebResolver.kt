@@ -48,7 +48,6 @@ class DIDWebResolver {
             }
 
         val url = toUrl(parsed)
-        println("Downloading from $url")
 
         var didDocument = try {
             jacksonObjectMapper().readValue(url, DIDDocument::class.java)

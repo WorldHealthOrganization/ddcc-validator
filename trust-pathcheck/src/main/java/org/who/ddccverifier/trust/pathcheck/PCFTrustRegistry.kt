@@ -52,32 +52,36 @@ class PCFTrustRegistry : TrustRegistry {
             val (reader, elapsedServerDownload) = measureTimedValue {
                 registryURL.resolvableURI.toURL().openStream().bufferedReader()
             }
-            println("TIME: Trust Downloaded in $elapsedServerDownload")
+            println("TIME: Trust Downloaded in $elapsedServerDownload from ${registryURL.resolvableURI}")
 
-            reader.forEachLine {
-                val (
-                    specName, kid, status, displayNameB64, displayLogoB64,
-                    validFromISOStr, validUntilISOStr, publicKey,
-                ) = it.split(",")
+            val elapsed = measureTimeMillis {
+                reader.forEachLine {
+                    val (
+                        specName, kid, status, displayNameB64, displayLogoB64,
+                        validFromISOStr, validUntilISOStr, publicKey,
+                    ) = it.split(",")
 
-                try {
-                    registry[TrustRegistry.Framework.valueOf(specName.uppercase())]
-                        ?.put(kid,
-                            TrustRegistry.TrustedEntity(
-                                mapOf("en" to decode(displayNameB64)),
-                                decode(displayLogoB64),
-                                TrustRegistry.Status.valueOf(status.uppercase()),
-                                registryURL.scope,
-                                parseDate(validFromISOStr),
-                                parseDate(validUntilISOStr),
-                                KeyUtils.publicKeyFromPEM(wrapPem(publicKey))
+                    try {
+                        registry[TrustRegistry.Framework.valueOf(specName.uppercase())]
+                            ?.put(kid,
+                                TrustRegistry.TrustedEntity(
+                                    mapOf("en" to decode(displayNameB64)),
+                                    decode(displayLogoB64),
+                                    TrustRegistry.Status.valueOf(status.uppercase()),
+                                    registryURL.scope,
+                                    parseDate(validFromISOStr),
+                                    parseDate(validUntilISOStr),
+                                    KeyUtils.publicKeyFromPEM(wrapPem(publicKey))
+                                )
                             )
-                        )
-                } catch(t: Throwable) {
-                    println("Exception while loading kid: $specName $kid")
-                    t.printStackTrace()
+                    } catch (t: Throwable) {
+                        println("Exception while loading kid: $specName $kid")
+                        t.printStackTrace()
+                    }
                 }
             }
+
+            println("TIME: Trust Parsed and Loaded in ${elapsed}ms")
 
         } catch(t: Throwable) {
             println("Exception while loading registry from github")
@@ -94,11 +98,7 @@ class PCFTrustRegistry : TrustRegistry {
         }
 
         customRegistries.forEach {
-            val elapsed = measureTimeMillis {
-                load(it)
-            }
-
-            println("TIME: Loading TrustRegistry from $it in $elapsed");
+            load(it)
         }
     }
 

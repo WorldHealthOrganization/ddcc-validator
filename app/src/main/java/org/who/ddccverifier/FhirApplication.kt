@@ -27,8 +27,8 @@ class FhirApplication : Application() {
 
   private val availableIGs = listOf(
     "DDCCPass-1.0.0.cql",
-    "EuroPass-1.0.0.cql",
-    "LacPass-1.0.0.cql"
+    "AnyDosePass-1.0.0.cql",
+    "ModernaOrPfizerPass-1.0.0.cql"
   )
 
   fun initInMemory() {
@@ -37,7 +37,6 @@ class FhirApplication : Application() {
         testMode = true // does not save anything.
       )
     )
-    println("Application onCreate")
   }
 
   private fun constructFhirEngine(): FhirEngine {
@@ -54,7 +53,9 @@ class FhirApplication : Application() {
 
   private fun compileIGs(): List<Library> {
     val libs = availableIGs.map { CqlBuilder.compileAndBuild(resources.assets.open(it)) }
-    libs.forEach { fhirOperator.loadLib(it) }
+    libs.forEach {
+      fhirOperator.loadLib(it)
+    }
     return libs
   }
 

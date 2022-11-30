@@ -1,4 +1,3 @@
 <resources>
     <dimen name="fab_margin">32dp</dimen>
-    <dimen name="cql_result">24dp</dimen>
 </resources>
