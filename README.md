@@ -6,60 +6,16 @@ COVID-19 Credential Verifier app for Android using the WHO's Digital Documentati
 
 # Current Features
 
-- [x] 0. Base Kotlin App
-- [x] 1. Screen Flow
-- [x] 1.1. Home Screen
-- [x] 1.2. Camera Screen
-- [x] 1.3. Result Screen
-- [x] 2. Camera Development
-- [x] 2.1. Manage Permissions
-- [x] 2.2. Camera View
-- [x] 2.3. QRs Finding and Processing
-- [x] 3. Displaying Card Info on Screen
-- [x] 3.1. Display Patient Info
-- [x] 3.2. Display Vaccine Info
-- [x] 3.3. Display Test Result Info
-- [x] 3.4. Display Error Messages
-- [x] 4. QR Unpacking into Verifiable Credential
-- [x] 4.1 QR to COSE-signed CBOR
-- [x] 4.2 COSE-signed CBOR to FHIR DDCC Composite
-- [x] 4.3 FHIR DDCC Composite to Screen Card
-- [x] 5. Credential Verification (Off-line)
-- [x] 5.1. Public Key Resolver (Key Management)
-- [x] 5.2. Check Trust of Public Key
-- [x] 5.3. Cryptographic verification
-- [x] 5.4. Error handling
-- [ ] 6. Credential Status Verification (On-line)
-- [ ] 6.1. Call issuer to check status of the credential
-- [ ] 6.2. Call issuer to download a new version of the Credential.
-- [ ] 6.3. Screen changes to inform updates/issues
-- [x] 7. Rule Engine Integration (CQL)
-- [x] 7.1. Load FHIR Models & Context
-- [x] 7.2. Load Rules Library
-- [x] 7.3. Run Rule engines on the FHIR dataset.
-- [x] 8. Key Cloak Integration
-- [x] 8.1. Define the need for screens.
-- [x] 9. DIVOC Processing.
-- [x] 9.1. Unpack and Verify
-- [x] 9.2. Trust Registry check
-- [x] 9.3. Display Info on Screen
-- [x] 10. SHC Processing
-- [x] 10.1. Unpack and Verify
-- [x] 10.2. Trust Registry check
-- [x] 10.3. Display Vacination Info on Screen
-- [ ] 10.4. Display Test Info on Screen
-- [ ] 10.5. Display Recovery Info on Screen
-- [x] 11. ICAO Processing.
-- [x] 11.1. Unpack and Verify
-- [x] 11.2. Trust Registry check
-- [x] 11.3. Display Vaccination Info on Screen
-- [ ] 11.4. Display Test Result Info on Screen
-- [x] 12. EU DCC Processing.
-- [x] 12.1. Unpack and Verify
-- [x] 12.2. Trust Registry check
-- [x] 12.3. Display Vacination Info on Screen
-- [ ] 12.4. Display Test Info on Screen
-- [ ] 12.5. Display Recovery Info on Screen
+1. Decodes QR Codes
+2. Cryptographically Verifies the information following the specifications of
+   1. W3C VC
+   2. Smart Health Cards 
+   3. EU DCC, WHO DCC and LAC PASS DCC 
+   4. ICAO Visible Digital Seals
+3. Verifies the issuer's trust using a [DID-Based](https://www.w3.org/TR/did-core/) Trust List from the [DDCC repo](https://github.com/WorldHealthOrganization/ddcc-trust)
+4. Transform the QR Payload using the DDCC [FHIR Structure Maps](https://worldhealthorganization.github.io/ddcc/)
+5. Calculates the assessment of the health information using CQL Libraries from subscribed IGs
+6. Displays the medical information, the credential information, the issuer information and the assessment results in the screen.
 
 # Development Overview
 
