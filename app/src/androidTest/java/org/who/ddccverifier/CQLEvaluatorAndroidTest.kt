@@ -37,7 +37,7 @@ class CQLEvaluatorAndroidTest: BaseTrustRegistryTest() {
     private lateinit var fhirEngine: FhirEngine
     private lateinit var fhirOperator: FhirOperator
 
-    private val ddccPass = CqlBuilder.compileAndBuild(inputStream("OldPass-1.0.0.cql")!!)
+    private val ddccPass = CqlBuilder.compileAndBuild(inputStream("TestPass-1.0.0.cql")!!)
 
     @Before
     fun setUp() = runBlocking {
@@ -64,13 +64,13 @@ class CQLEvaluatorAndroidTest: BaseTrustRegistryTest() {
     }
 
     @Test
-    fun evaluateOldPassOnWHOQR1FromCompositonTest() = runBlocking {
+    fun evaluateTestPassOnWHOQR1FromCompositonTest() = runBlocking {
         val asset = jSONParser.parseResource(open("WHOQR1FHIRBundle.json")) as Bundle
 
         loadBundle(asset)
 
         val results = fhirOperator.evaluateLibrary(
-            "http://localhost/Library/OldPass|1.0.0",
+            "http://localhost/Library/TestPass|1.0.0",
             patId(asset),
             setOf("CompletedImmunization", "GetFinalDose", "GetSingleDose")) as Parameters
 
@@ -81,13 +81,13 @@ class CQLEvaluatorAndroidTest: BaseTrustRegistryTest() {
 
 
     @Test
-    fun evaluateOldPassOnWHOQR2FromCompositonTest() = runBlocking {
+    fun evaluateTestPassOnWHOQR2FromCompositonTest() = runBlocking {
         val asset = jSONParser.parseResource(open("WHOQR2FHIRBundle.json")) as Bundle
 
         loadBundle(asset)
 
         val results = fhirOperator.evaluateLibrary(
-            "http://localhost/Library/OldPass|1.0.0",
+            "http://localhost/Library/TestPass|1.0.0",
             patId(asset),
             setOf("CompletedImmunization", "GetFinalDose", "GetSingleDose")) as Parameters
 
@@ -97,7 +97,7 @@ class CQLEvaluatorAndroidTest: BaseTrustRegistryTest() {
     }
 
     @Test
-    fun evaluateOldPassOnWHOQR1FromQRTest() = runBlocking {
+    fun evaluateTestPassOnWHOQR1FromQRTest() = runBlocking {
         val qr1 = open("WHOQR1Contents.txt")
         val verified = HCertVerifier(registry).unpackAndVerify(qr1)
 
@@ -106,7 +106,7 @@ class CQLEvaluatorAndroidTest: BaseTrustRegistryTest() {
         Assert.assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
         val results = fhirOperator.evaluateLibrary(
-            "http://localhost/Library/OldPass|1.0.0",
+            "http://localhost/Library/TestPass|1.0.0",
             patId(verified.contents),
             setOf("CompletedImmunization", "GetFinalDose", "GetSingleDose")) as Parameters
 
@@ -116,7 +116,7 @@ class CQLEvaluatorAndroidTest: BaseTrustRegistryTest() {
     }
 
     @Test
-    fun evaluateOldPassOnWHOQR2FromQRTest() = runBlocking {
+    fun evaluateTestPassOnWHOQR2FromQRTest() = runBlocking {
         val qr1 = open("WHOQR2Contents.txt")
         val verified = HCertVerifier(registry).unpackAndVerify(qr1)
 
@@ -125,7 +125,7 @@ class CQLEvaluatorAndroidTest: BaseTrustRegistryTest() {
         Assert.assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
         val results = fhirOperator.evaluateLibrary(
-            "http://localhost/Library/OldPass|1.0.0",
+            "http://localhost/Library/TestPass|1.0.0",
             patId(verified.contents),
             setOf("CompletedImmunization", "GetFinalDose", "GetSingleDose")) as Parameters
 
@@ -135,7 +135,7 @@ class CQLEvaluatorAndroidTest: BaseTrustRegistryTest() {
     }
 
     @Test
-    fun evaluateOldPassOnEUQR1FromQRTest() = runBlocking {
+    fun evaluateTestPassOnEUQR1FromQRTest() = runBlocking {
         val qr1 = open("EUQR1Contents.txt")
         val verified = HCertVerifier(registry).unpackAndVerify(qr1)
 
@@ -144,7 +144,7 @@ class CQLEvaluatorAndroidTest: BaseTrustRegistryTest() {
         Assert.assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
         val results = fhirOperator.evaluateLibrary(
-            "http://localhost/Library/OldPass|1.0.0",
+            "http://localhost/Library/TestPass|1.0.0",
             patId(verified.contents),
             setOf("CompletedImmunization", "GetFinalDose", "GetSingleDose")) as Parameters
 
@@ -154,7 +154,7 @@ class CQLEvaluatorAndroidTest: BaseTrustRegistryTest() {
     }
 
     @Test
-    fun evaluateOldPassOnSHCQR1FromQRTest() = runBlocking {
+    fun evaluateTestPassOnSHCQR1FromQRTest() = runBlocking {
         val qr1 = open("SHCQR1Contents.txt")
         val verified = ShcVerifier(registry).unpackAndVerify(qr1)
 
@@ -163,7 +163,7 @@ class CQLEvaluatorAndroidTest: BaseTrustRegistryTest() {
         Assert.assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
         val results = fhirOperator.evaluateLibrary(
-            "http://localhost/Library/OldPass|1.0.0",
+            "http://localhost/Library/TestPass|1.0.0",
             patId(verified.contents),
             setOf("CompletedImmunization", "GetFinalDose", "GetSingleDose")) as Parameters
 
@@ -173,7 +173,7 @@ class CQLEvaluatorAndroidTest: BaseTrustRegistryTest() {
     }
 
     @Test
-    fun evaluateOldPassOnDIVOCQR1FromQRTest() = runBlocking {
+    fun evaluateTestPassOnDIVOCQR1FromQRTest() = runBlocking {
         val qr1 = open("DIVOCQR1Contents.txt")
         val verified = DivocVerifier(registry).unpackAndVerify(qr1)
 
@@ -182,7 +182,7 @@ class CQLEvaluatorAndroidTest: BaseTrustRegistryTest() {
         Assert.assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
         val results = fhirOperator.evaluateLibrary(
-            "http://localhost/Library/OldPass|1.0.0",
+            "http://localhost/Library/TestPass|1.0.0",
             patId(verified.contents),
             setOf("CompletedImmunization", "GetFinalDose", "GetSingleDose")) as Parameters
 
@@ -192,7 +192,7 @@ class CQLEvaluatorAndroidTest: BaseTrustRegistryTest() {
     }
 
     @Test
-    fun evaluateOldPassOnICAOQR1FromQRTest() = runBlocking {
+    fun evaluateTestPassOnICAOQR1FromQRTest() = runBlocking {
         val qr1 = open("ICAOAUQR1Contents.txt")
         val verified = IcaoVerifier(registry).unpackAndVerify(qr1)
 
@@ -201,7 +201,7 @@ class CQLEvaluatorAndroidTest: BaseTrustRegistryTest() {
         Assert.assertEquals(QRDecoder.Status.VERIFIED, verified.status)
 
         val results = fhirOperator.evaluateLibrary(
-            "http://localhost/Library/OldPass|1.0.0",
+            "http://localhost/Library/TestPass|1.0.0",
             patId(verified.contents),
             setOf("CompletedImmunization", "GetFinalDose", "GetSingleDose")) as Parameters
 

@@ -70,7 +70,7 @@ class FhirApplication : Application() {
     val (result, elapsed) = measureTimedValue {
       function()
     }
-    println("TIME: $name Initialized in $elapsed")
+    println("TIME: $name Initialized in ${elapsed}ms")
     return result
   }
 
