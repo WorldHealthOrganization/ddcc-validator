@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
+import org.hl7.fhir.r4.model.Bundle
 import org.hl7.fhir.r4.model.Composition
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer
 import org.springframework.context.annotation.Bean
@@ -29,20 +30,20 @@ open class JacksonConfig {
                     .serializationInclusion(JsonInclude.Include.NON_NULL)
                     .indentOutput(true)
                     .serializers(
-                        CompositionSerializer(),
+                        BundleSerializer(),
                         PublicKeySerializer()
                     )
         }
     }
 
-    class CompositionSerializer : JsonSerializer<Composition>() {
-        override fun serialize(dt: Composition, json: JsonGenerator, prov: SerializerProvider?) {
+    class BundleSerializer : JsonSerializer<Bundle>() {
+        override fun serialize(dt: Bundle, json: JsonGenerator, prov: SerializerProvider?) {
             json.writeString(
                 FhirContext.forCached(FhirVersionEnum.R4).newJsonParser()
                     .encodeResourceToString(dt)
             )
         }
-        override fun handledType() = Composition::class.java
+        override fun handledType() = Bundle::class.java
     }
 
     class PublicKeySerializer : JsonSerializer<PublicKey>() {
