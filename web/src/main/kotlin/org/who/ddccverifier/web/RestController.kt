@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
-import org.who.ddccverifier.trust.pathcheck.PCFTrustRegistry
 import org.who.ddccverifier.QRDecoder
 import org.who.ddccverifier.trust.CompoundRegistry
 import org.who.ddccverifier.trust.TrustRegistryFactory
