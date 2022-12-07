@@ -20,13 +20,21 @@ class DDCCTrustRegistryTest {
     }
 
     @Test
-    fun testWASHC() {
-        val t = registry.resolve(TrustRegistry.Framework.DCC, "https://waverify.doh.wa.gov/creds#n0S0H6_mbA93e3pEu-a67qoiF4CAWYsOGoWo6TLHUzQ")
+    fun testSHCWA() {
+        val t = registry.resolve(TrustRegistry.Framework.SHC, "https://waverify.doh.wa.gov/creds#n0S0H6_mbA93e3pEu-a67qoiF4CAWYsOGoWo6TLHUzQ")
         assertNotNull(t)
     }
-}
+
     @Test
     fun testDCCItalyAcceptance() {
         val t = registry.resolve(TrustRegistry.Framework.DCC, "OTAXaM3aBRM=")
         assertNotNull(t)
     }
+
+    @Test
+    fun testSCHSenegal() {
+        val t = registry.resolve(TrustRegistry.Framework.SHC, "https://senegal.tbi.ohms.oracle.com#VEccqX9LvPZJXqv11staEs0qPN2OR9bMS_PXEAZODXg")
+        assertNotNull(t)
+    }
+}
+

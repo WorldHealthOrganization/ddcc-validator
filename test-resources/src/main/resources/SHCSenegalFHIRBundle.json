@@ -1,0 +1,151 @@
+{
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "Composition",
+        "type": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "82593-5",
+              "display": "Immunization summary report"
+            }
+          ]
+        },
+        "category": [
+          {
+            "coding": [
+              {
+                "code": "ddcc-vs"
+              }
+            ]
+          }
+        ],
+        "subject": {
+          "reference": "Patient/resource:0"
+        },
+        "author": [
+          {
+            "reference": "Organization/43293785-70d2-4cbe-8ecf-30b947fd45d5"
+          }
+        ],
+        "title": "International Certificate of Vaccination or Prophylaxis",
+        "event": [
+          {
+            "period": {
+              "start": "2022-12-02"
+            }
+          }
+        ],
+        "section": [
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "http://loinc.org",
+                  "code": "11369-6",
+                  "display": "History of Immunization Narrative"
+                }
+              ]
+            },
+            "author": [
+              {
+                "reference": "Organization/43293785-70d2-4cbe-8ecf-30b947fd45d5"
+              }
+            ],
+            "entry": [
+              {
+                "reference": "Immunization/resource:1"
+              },
+              {
+                "reference": "Immunization/resource:2"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Organization",
+        "id": "43293785-70d2-4cbe-8ecf-30b947fd45d5",
+        "identifier": [
+          {
+            "value": "https://senegal.tbi.ohms.oracle.com"
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "resource:0",
+        "name": [
+          {
+            "use": "official",
+            "family": "Surname",
+            "given": [
+              "Name"
+            ]
+          }
+        ],
+        "birthDate": "1982-09-11"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Immunization",
+        "id": "resource:1",
+        "status": "completed",
+        "vaccineCode": {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/sid/cvx",
+              "code": "210"
+            }
+          ]
+        },
+        "patient": {
+          "reference": "Patient/resource:0"
+        },
+        "occurrenceDateTime": "2021-04-19",
+        "lotNumber": "202378657",
+        "performer": [
+          {
+            "actor": {
+              "display": "CS GASPARD KAMARA"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Immunization",
+        "id": "resource:2",
+        "status": "completed",
+        "vaccineCode": {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/sid/cvx",
+              "code": "212"
+            }
+          ]
+        },
+        "patient": {
+          "reference": "Patient/resource:0"
+        },
+        "occurrenceDateTime": "2022-02-14",
+        "performer": [
+          {
+            "actor": {
+              "display": "CS GASPARD KAMARA"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

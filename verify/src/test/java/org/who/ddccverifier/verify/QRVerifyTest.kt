@@ -111,6 +111,11 @@ class QRVerifyTest: BaseTrustRegistryTest() {
     }
 
     @Test
+    fun verifySHCSenegal() {
+        verify("SHCSenegalContents.txt", "SHCSenegalFHIRBundle.json")
+    }
+
+    @Test
     fun verifySHCTestResults() {
         verify("SHCTestResultsContents.txt", "SHCTestResultsFHIRBundle.json")
     }

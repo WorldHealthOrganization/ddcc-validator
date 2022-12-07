@@ -79,6 +79,13 @@ class QRUnpackTest: BaseTrustRegistryTest() {
     }
 
     @Test
+    fun unpackSHCSenegal() {
+        val qr1 = open("SHCSenegalContents.txt")
+        val jwt = ShcVerifier(registry).unpack(qr1)
+        assertEquals(open("SHCSenegalUnpacked.txt"), jwt)
+    }
+
+    @Test
     fun unpackSHCWAVax() {
         val qr1 = open("SHCWAVaxContents.txt")
         val jwt = ShcVerifier(registry).unpack(qr1)
