@@ -1,7 +1,7 @@
 package org.who.ddccverifier.verify
 
 import com.google.common.truth.Truth.assertThat
-import org.hl7.fhir.r4.model.*
+import org.hl7.fhir.r4.model.StringType
 import org.junit.Test
 
 class FhirLogicalTest {

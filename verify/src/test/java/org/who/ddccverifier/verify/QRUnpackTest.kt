@@ -1,17 +1,16 @@
 package org.who.ddccverifier.verify
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import org.junit.Test
-
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Before
+import org.junit.Test
 import org.who.ddccverifier.test.BaseTrustRegistryTest
 import org.who.ddccverifier.verify.divoc.DivocVerifier
 import org.who.ddccverifier.verify.hcert.HCertVerifier
 import org.who.ddccverifier.verify.icao.IcaoVerifier
 import org.who.ddccverifier.verify.shc.ShcVerifier
 import java.util.*
-import kotlin.system.measureTimeMillis
 
 class QRUnpackTest: BaseTrustRegistryTest() {
     private val mapper = ObjectMapper()

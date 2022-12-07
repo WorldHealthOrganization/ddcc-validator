@@ -7,13 +7,13 @@ import com.apicatalog.jsonld.http.media.MediaType
 import com.apicatalog.jsonld.processor.ToRdfProcessor
 import com.apicatalog.rdf.RdfDataset
 import com.apicatalog.rdf.io.nquad.NQuadsWriter
-import info.weboftrust.ldsignatures.canonicalizer.Canonicalizer
-import info.weboftrust.ldsignatures.util.SHAUtil
-import info.weboftrust.ldsignatures.LdProof
-import io.setl.rdf.normalization.RdfNormalize
-import java.io.StringWriter
 import foundation.identity.jsonld.JsonLDException
 import foundation.identity.jsonld.JsonLDObject
+import info.weboftrust.ldsignatures.LdProof
+import info.weboftrust.ldsignatures.canonicalizer.Canonicalizer
+import info.weboftrust.ldsignatures.util.SHAUtil
+import io.setl.rdf.normalization.RdfNormalize
+import java.io.StringWriter
 
 // Override URDNA Canonizalizer to:
 // 1. Set the correct document loader for LDProof.

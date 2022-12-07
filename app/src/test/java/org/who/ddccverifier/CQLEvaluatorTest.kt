@@ -13,9 +13,9 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import org.who.ddccverifier.test.BaseTrustRegistryTest
 import org.who.ddccverifier.services.cql.CqlBuilder
 import org.who.ddccverifier.services.cql.FhirOperator
+import org.who.ddccverifier.test.BaseTrustRegistryTest
 import java.util.*
 import kotlin.system.measureTimeMillis
 

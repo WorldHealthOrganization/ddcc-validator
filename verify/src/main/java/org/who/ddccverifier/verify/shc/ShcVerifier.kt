@@ -3,14 +3,13 @@ package org.who.ddccverifier.verify.shc
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.nimbusds.jose.crypto.ECDSAVerifier
 import com.nimbusds.jwt.SignedJWT
+import org.who.ddccverifier.QRDecoder
 import org.who.ddccverifier.trust.TrustRegistry
 import java.io.ByteArrayOutputStream
 import java.security.PublicKey
 import java.security.interfaces.ECPublicKey
-import java.util.zip.Inflater
-
-import org.who.ddccverifier.QRDecoder
 import java.util.*
+import java.util.zip.Inflater
 
 class ShcVerifier (private val registry: TrustRegistry) {
     private val URI_SCHEMA = "shc"

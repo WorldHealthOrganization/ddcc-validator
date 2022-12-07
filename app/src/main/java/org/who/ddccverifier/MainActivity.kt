@@ -1,16 +1,14 @@
 package org.who.ddccverifier
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
+import android.widget.Toast
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
-import android.view.Menu
-import android.view.MenuItem
-import android.widget.Toast
 import org.who.ddccverifier.databinding.ActivityMainBinding
-import java.net.URI
-import kotlin.system.measureTimeMillis
 
 class MainActivity : AuthActivity() {
 

@@ -7,10 +7,9 @@ import com.google.android.fhir.FhirEngine
 import com.google.android.fhir.FhirEngineProvider
 import kotlinx.coroutines.runBlocking
 import org.hl7.fhir.r4.model.*
-import org.junit.Test
-
 import org.junit.Assert.*
 import org.junit.Before
+import org.junit.Test
 import org.who.ddccverifier.services.*
 import org.who.ddccverifier.services.cql.CqlBuilder
 import org.who.ddccverifier.services.cql.FhirOperator

@@ -1,7 +1,5 @@
 package org.who.ddccverifier.services.cql
 
-import java.io.InputStream
-import java.io.StringReader
 import org.cqframework.cql.cql2elm.CqlTranslator
 import org.cqframework.cql.cql2elm.CqlTranslatorOptions
 import org.cqframework.cql.cql2elm.LibraryManager
@@ -12,6 +10,8 @@ import org.hl7.fhir.r4.model.Attachment
 import org.hl7.fhir.r4.model.Enumerations
 import org.hl7.fhir.r4.model.Library
 import org.opencds.cqf.cql.engine.serializing.CqlLibraryReaderFactory
+import java.io.InputStream
+import java.io.StringReader
 
 object CqlBuilder {
   fun load(asset: InputStream): String {

@@ -2,20 +2,14 @@ package org.who.ddccverifier.verify
 
 import ca.uhn.fhir.context.FhirContext
 import ca.uhn.fhir.context.FhirVersionEnum
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
-import org.who.ddccverifier.test.BaseTrustRegistryTest
 import org.who.ddccverifier.QRDecoder
-import org.who.ddccverifier.verify.divoc.DivocVerifier
-import org.who.ddccverifier.verify.hcert.HCertVerifier
-import org.who.ddccverifier.verify.icao.IcaoVerifier
-import org.who.ddccverifier.verify.shc.ShcVerifier
+import org.who.ddccverifier.test.BaseTrustRegistryTest
 import java.util.*
-import kotlin.system.measureTimeMillis
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTimedValue
 

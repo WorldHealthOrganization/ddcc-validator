@@ -8,7 +8,6 @@ import io.ipfs.multibase.Multibase
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.who.ddccverifier.trust.TrustRegistry
 import java.net.URI
-import java.net.URLDecoder
 import java.net.URLEncoder
 import java.security.PublicKey
 import java.security.Security

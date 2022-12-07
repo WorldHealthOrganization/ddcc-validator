@@ -14,8 +14,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.fragment.findNavController
 import com.google.common.util.concurrent.ListenableFuture
-import org.who.ddccverifier.services.QRFinder
 import org.who.ddccverifier.databinding.FragmentScanBinding
+import org.who.ddccverifier.services.QRFinder
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 

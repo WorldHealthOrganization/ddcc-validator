@@ -1,27 +1,21 @@
 package org.who.ddccverifier.verify.hcert
 
-import nl.minvws.encoding.Base45
-import java.util.zip.InflaterInputStream
-
 import COSE.MessageTag
 import COSE.OneKey
 import COSE.Sign1Message
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.nimbusds.jose.JWSAlgorithm
-import com.nimbusds.jose.JWSObject
-import com.nimbusds.jose.JWSVerifier
 import com.upokecenter.cbor.CBORObject
-import info.weboftrust.ldsignatures.adapter.JWSVerifierAdapter
-import info.weboftrust.ldsignatures.util.JWSUtil
+import nl.minvws.encoding.Base45
 import org.hl7.fhir.r4.model.Bundle
 import org.who.ddccverifier.QRDecoder
-import org.who.ddccverifier.verify.hcert.dcc.DccMapper
-import org.who.ddccverifier.verify.hcert.who.WhoMapper
 import org.who.ddccverifier.trust.TrustRegistry
+import org.who.ddccverifier.verify.hcert.dcc.DccMapper
 import org.who.ddccverifier.verify.hcert.dcc.logical.CWT
 import org.who.ddccverifier.verify.hcert.dcc.logical.WHOLogicalModel
+import org.who.ddccverifier.verify.hcert.who.WhoMapper
 import java.security.PublicKey
 import java.util.*
+import java.util.zip.InflaterInputStream
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTimedValue
 

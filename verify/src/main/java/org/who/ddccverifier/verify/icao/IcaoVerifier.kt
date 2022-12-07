@@ -4,22 +4,21 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton
 import com.nimbusds.jose.crypto.impl.ECDSA
-import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier
-import org.bouncycastle.asn1.x509.Extension
-import org.erdtman.jcs.JsonCanonicalizer
-import java.security.PublicKey
-import java.security.cert.CertificateFactory
-import java.security.cert.X509Certificate
 import org.bouncycastle.asn1.ASN1OctetString
 import org.bouncycastle.asn1.x500.style.BCStyle
+import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier
+import org.bouncycastle.asn1.x509.Extension
 import org.bouncycastle.jcajce.util.BCJcaJceHelper
 import org.bouncycastle.jce.PrincipalUtil
 import org.bouncycastle.util.io.pem.PemReader
-import org.who.ddccverifier.trust.TrustRegistry
+import org.erdtman.jcs.JsonCanonicalizer
 import org.who.ddccverifier.QRDecoder
+import org.who.ddccverifier.trust.TrustRegistry
 import java.io.ByteArrayInputStream
 import java.io.StringReader
-import java.lang.Exception
+import java.security.PublicKey
+import java.security.cert.CertificateFactory
+import java.security.cert.X509Certificate
 import java.util.*
 
 

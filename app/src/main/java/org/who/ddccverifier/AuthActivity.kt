@@ -1,17 +1,15 @@
 package org.who.ddccverifier
 
-import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import kotlinx.coroutines.*
-import org.who.ddccverifier.services.AuthStateManager
 import android.content.Intent
 import android.net.Uri
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import kotlinx.coroutines.*
 import net.openid.appauth.*
-
+import org.who.ddccverifier.services.AuthStateManager
 import org.who.ddccverifier.services.ConnectionBuilderForTesting
-
 import java.net.URL
 import java.util.concurrent.atomic.AtomicReference
 

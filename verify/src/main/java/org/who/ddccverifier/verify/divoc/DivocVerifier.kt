@@ -2,17 +2,15 @@ package org.who.ddccverifier.verify.divoc
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import foundation.identity.jsonld.JsonLDObject
-import org.who.ddccverifier.trust.TrustRegistry
-import java.security.PublicKey
-
 import org.who.ddccverifier.QRDecoder
+import org.who.ddccverifier.trust.TrustRegistry
 import org.who.ddccverifier.verify.divoc.jsonldcrypto.ContextLoader
-import org.who.ddccverifier.verify.divoc.jsonldcrypto.RsaSignature2018withPS256Verifier
 import org.who.ddccverifier.verify.divoc.jsonldcrypto.Ed25519Signature2018Verifier
+import org.who.ddccverifier.verify.divoc.jsonldcrypto.RsaSignature2018withPS256Verifier
 import java.io.ByteArrayInputStream
+import java.security.PublicKey
 import java.util.*
 import java.util.zip.ZipInputStream
-import kotlin.system.measureTimeMillis
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTimedValue
 

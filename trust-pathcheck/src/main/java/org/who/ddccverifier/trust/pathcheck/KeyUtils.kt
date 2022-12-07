@@ -2,7 +2,6 @@ package org.who.ddccverifier.trust.pathcheck
 
 import io.ipfs.multibase.Base58
 import org.bouncycastle.asn1.edec.EdECObjectIdentifiers
-import org.bouncycastle.asn1.isismtt.ocsp.RequestedCertificate.certificate
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo
 import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey

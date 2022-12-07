@@ -1,6 +1,6 @@
 package org.who.ddccverifier.verify.icao
 
-import org.hl7.fhir.r4.model.*
+import org.hl7.fhir.r4.model.Bundle
 import org.who.ddccverifier.verify.BaseMapper
 
 /**

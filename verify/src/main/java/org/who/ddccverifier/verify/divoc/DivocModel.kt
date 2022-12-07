@@ -1,6 +1,5 @@
 package org.who.ddccverifier.verify.divoc
 
-import ca.uhn.fhir.model.api.TemporalPrecisionEnum
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationContext
