@@ -5,6 +5,7 @@ import ca.uhn.fhir.context.FhirVersionEnum
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.junit.Assert.*
+import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
 import org.who.ddccverifier.test.BaseTrustRegistryTest
@@ -42,6 +43,13 @@ class QRVerifyTest: BaseTrustRegistryTest() {
         UUID.fromString("8f0ce1de-65ca-41a7-9d35-e6580177ed7a"),
         UUID.fromString("ab7805f4-06d7-43a2-aa54-76458bcf623f")
     ).toTypedArray()
+
+
+    @Before
+    fun setUp() {
+        // fixes timezone for testing
+        TimeZone.setDefault(TimeZone.getTimeZone("GMT"))
+    }
 
     private val mapper = jacksonObjectMapper()
     private val jsonParser = FhirContext.forCached(FhirVersionEnum.R4).newJsonParser()

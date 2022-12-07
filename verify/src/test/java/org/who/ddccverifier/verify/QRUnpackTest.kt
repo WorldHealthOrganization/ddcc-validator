@@ -4,17 +4,26 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.Test
 
 import org.junit.Assert.*
+import org.junit.Before
 import org.who.ddccverifier.test.BaseTrustRegistryTest
 import org.who.ddccverifier.verify.divoc.DivocVerifier
 import org.who.ddccverifier.verify.hcert.HCertVerifier
 import org.who.ddccverifier.verify.icao.IcaoVerifier
 import org.who.ddccverifier.verify.shc.ShcVerifier
+import java.util.*
+import kotlin.system.measureTimeMillis
 
 class QRUnpackTest: BaseTrustRegistryTest() {
     private val mapper = ObjectMapper()
 
     private fun jsonEquals(v1: String, v2: String) {
         return assertEquals(mapper.readTree(v1), mapper.readTree(v2))
+    }
+
+    @Before
+    fun setUp() {
+        // fixes timezone for testing
+        TimeZone.setDefault(TimeZone.getTimeZone("GMT"))
     }
 
     @Test
