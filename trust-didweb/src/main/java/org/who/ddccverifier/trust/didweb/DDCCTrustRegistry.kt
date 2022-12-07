@@ -130,7 +130,7 @@ class DDCCTrustRegistry : TrustRegistry {
     override fun resolve(framework: TrustRegistry.Framework, kid: String): TrustRegistry.TrustedEntity? {
         val encKid = URLEncoder.encode(kid,"UTF-8")
         println("DID:WEB: Resolving $kid -> $PROD_KEY_ID:$kid#$kid")
-        return registry[URI.create("$PROD_KEY_ID:$kid#$encKid")]
-            ?: registry[URI.create("$TEST_KEY_ID:$kid#$encKid")]
+        return registry[URI.create("$PROD_KEY_ID:$encKid#$encKid")]
+            ?: registry[URI.create("$TEST_KEY_ID:$encKid#$encKid")]
     }
 }
