@@ -111,6 +111,11 @@ class QRVerifyTest: BaseTrustRegistryTest() {
     }
 
     @Test
+    fun verifySHCWAVaxTestResults() {
+        verify("SHCWAVaxContents.txt", "SHCWAVaxFHIRBundle.json")
+    }
+
+    @Test
     fun verifyDIVOCQR() {
         verify("DIVOCQR1Contents.txt", "DIVOCQR1FHIRBundle.json")
     }

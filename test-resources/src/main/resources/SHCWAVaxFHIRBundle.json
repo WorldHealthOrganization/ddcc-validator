@@ -1,0 +1,164 @@
+{
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "Composition",
+        "type": {
+          "coding": [
+            {
+              "system": "http://loinc.org",
+              "code": "82593-5",
+              "display": "Immunization summary report"
+            }
+          ]
+        },
+        "category": [
+          {
+            "coding": [
+              {
+                "code": "ddcc-vs"
+              }
+            ]
+          }
+        ],
+        "subject": {
+          "reference": "Patient/resource:0"
+        },
+        "author": [
+          {
+            "reference": "Organization/43293785-70d2-4cbe-8ecf-30b947fd45d5"
+          }
+        ],
+        "title": "International Certificate of Vaccination or Prophylaxis",
+        "event": [
+          {
+            "period": {
+              "start": "2022-12-06"
+            }
+          }
+        ],
+        "section": [
+          {
+            "code": {
+              "coding": [
+                {
+                  "system": "http://loinc.org",
+                  "code": "11369-6",
+                  "display": "History of Immunization Narrative"
+                }
+              ]
+            },
+            "author": [
+              {
+                "reference": "Organization/43293785-70d2-4cbe-8ecf-30b947fd45d5"
+              }
+            ],
+            "entry": [
+              {
+                "reference": "Immunization/resource:1"
+              },
+              {
+                "reference": "Immunization/resource:2"
+              },
+              {
+                "reference": "Immunization/resource:3"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Organization",
+        "id": "43293785-70d2-4cbe-8ecf-30b947fd45d5",
+        "identifier": [
+          {
+            "value": "https://waverify.doh.wa.gov/creds"
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "resource:0",
+        "name": [
+          {
+            "family": "BADSHAW",
+            "given": [
+              "PRINCE",
+              "KENT"
+            ],
+            "suffix": [
+              "SR"
+            ]
+          }
+        ],
+        "birthDate": "2015-05-15"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Immunization",
+        "id": "resource:1",
+        "status": "completed",
+        "vaccineCode": {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/sid/cvx",
+              "code": "218"
+            }
+          ]
+        },
+        "patient": {
+          "reference": "Patient/resource:0"
+        },
+        "occurrenceDateTime": "2022-01-10",
+        "lotNumber": "EN6198"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Immunization",
+        "id": "resource:2",
+        "status": "completed",
+        "vaccineCode": {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/sid/cvx",
+              "code": "218"
+            }
+          ]
+        },
+        "patient": {
+          "reference": "Patient/resource:0"
+        },
+        "occurrenceDateTime": "2022-02-01",
+        "lotNumber": "EP6956"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Immunization",
+        "id": "resource:3",
+        "status": "completed",
+        "vaccineCode": {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/sid/cvx",
+              "code": "301"
+            }
+          ]
+        },
+        "patient": {
+          "reference": "Patient/resource:0"
+        },
+        "occurrenceDateTime": "2022-09-06",
+        "lotNumber": "HRSA040B21A"
+      }
+    }
+  ]
+}
