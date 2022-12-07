@@ -52,6 +52,16 @@ class QRUnpackTest: BaseTrustRegistryTest() {
     }
 
     @Test
+    fun unpackEUItalyAcceptanceQR() {
+        val qr1 = open("EUItalyAcceptanceQRContents.txt")
+        val cwt = HCertVerifier(registry).unpack(qr1)
+        assertNotNull(cwt)
+
+        val dcc = cwt!![-260][1]
+        jsonEquals(open("EUItalyAcceptanceQRUnpacked.txt"), dcc.toString())
+    }
+
+    @Test
     fun unpackEUIndonesia() {
         val qr1 = open("EUIndonesiaContents.txt")
         val cwt = HCertVerifier(registry).unpack(qr1)

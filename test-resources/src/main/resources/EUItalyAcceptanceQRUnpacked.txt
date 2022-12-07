@@ -1,0 +1,22 @@
+{
+  "v" : [ {
+    "ci" : "01ITD626BCAD08C2434EA021BEAF1FAEC1FB#3",
+    "co" : "IT",
+    "dn" : 1,
+    "dt" : "2021-06-07",
+    "is" : "Ministero della Salute",
+    "ma" : "ORG-100001699",
+    "mp" : "EU/1/21/1529",
+    "sd" : 2,
+    "tg" : "840539006",
+    "vp" : "1119305005"
+  } ],
+  "dob" : "1980-07-20",
+  "nam" : {
+    "fn" : "ROSSI VERDI",
+    "gn" : "MARIO LUIGI",
+    "fnt" : "ROSSI<VERDI",
+    "gnt" : "MARIO<LUIGI"
+  },
+  "ver" : "1.3.0"
+}
