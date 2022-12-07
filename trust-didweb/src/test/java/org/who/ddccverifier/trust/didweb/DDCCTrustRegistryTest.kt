@@ -20,8 +20,8 @@ class DDCCTrustRegistryTest {
     }
 
     @Test
-    fun testMattrDCC() {
-        val t = registry.resolve(TrustRegistry.Framework.DCC, "Gwmv3xzreKs=")
+    fun testWASHC() {
+        val t = registry.resolve(TrustRegistry.Framework.DCC, "https://waverify.doh.wa.gov/creds#n0S0H6_mbA93e3pEu-a67qoiF4CAWYsOGoWo6TLHUzQ")
         assertNotNull(t)
     }
 }

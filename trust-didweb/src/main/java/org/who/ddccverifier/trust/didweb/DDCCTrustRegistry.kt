@@ -128,9 +128,18 @@ class DDCCTrustRegistry : TrustRegistry {
     }
 
     override fun resolve(framework: TrustRegistry.Framework, kid: String): TrustRegistry.TrustedEntity? {
-        val encKid = URLEncoder.encode(kid,"UTF-8")
-        println("DID:WEB: Resolving $kid -> $PROD_KEY_ID:$kid#$kid")
-        return registry[URI.create("$PROD_KEY_ID:$encKid#$encKid")]
-            ?: registry[URI.create("$TEST_KEY_ID:$encKid#$encKid")]
+        if (kid.contains("#")) {
+            val parts = kid.split("#")
+            val encController = URLEncoder.encode(parts[0],"UTF-8")
+            val encKid = URLEncoder.encode(parts[1],"UTF-8")
+            println("DID:WEB: Resolving $kid -> $PROD_KEY_ID:$encController#$encKid")
+            return registry[URI.create("$PROD_KEY_ID:$encController#$encKid")]
+                ?: registry[URI.create("$TEST_KEY_ID:$encController#$encKid")]
+        } else {
+            val encKid = URLEncoder.encode(kid,"UTF-8")
+            println("DID:WEB: Resolving $kid -> $PROD_KEY_ID:$encKid#$encKid")
+            return registry[URI.create("$PROD_KEY_ID:$encKid#$encKid")]
+                ?: registry[URI.create("$TEST_KEY_ID:$encKid#$encKid")]
+        }
     }
 }
