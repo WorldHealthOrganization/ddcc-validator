@@ -36,5 +36,17 @@ class DDCCTrustRegistryTest {
         val t = registry.resolve(TrustRegistry.Framework.SHC, "https://senegal.tbi.ohms.oracle.com#VEccqX9LvPZJXqv11staEs0qPN2OR9bMS_PXEAZODXg")
         assertNotNull(t)
     }
+
+    @Test
+    fun testICAOAustrala() {
+        val t = registry.resolve(TrustRegistry.Framework.ICAO, "AU#NhfB5/VnlXEuN3VwjlWDMYbpOA4=")
+        assertNotNull(t)
+    }
+
+    @Test
+    fun testICAOJapan() {
+        val t = registry.resolve(TrustRegistry.Framework.ICAO, "JP#arTykoK9lkf2/yoC95RNdJ6XhGM=")
+        assertNotNull(t)
+    }
 }
 

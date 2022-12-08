@@ -11,6 +11,7 @@ import java.net.URI
 import java.net.URLEncoder
 import java.security.PublicKey
 import java.security.Security
+import java.text.ParseException
 import java.util.*
 import kotlin.system.measureTimeMillis
 import kotlin.time.ExperimentalTime
@@ -47,9 +48,21 @@ class DDCCTrustRegistry : TrustRegistry {
 
     private fun buildPublicKey(verif: VerificationMethod): PublicKey? {
         if (verif.publicKeyJwk != null) {
-            val key = JWK.parse(verif.publicKeyJwk)
-            if (key is AsymmetricJWK) {
-                return key.toPublicKey()
+            try {
+                val key = JWK.parse(verif.publicKeyJwk)
+                if (key is AsymmetricJWK) {
+                    return key.toPublicKey()
+                }
+            } catch (e: ParseException) {
+                // tries to reassemble the public key from the first certificate
+                if (verif.publicKeyJwk.containsKey("x5c")) {
+                    val certPem = (verif.publicKeyJwk.get("x5c") as List<*>).firstOrNull()
+                    return KeyUtils.certificatePublicKeyFromPEM(
+                        "-----BEGIN CERTIFICATE-----\n$certPem\n-----END CERTIFICATE-----"
+                    )
+                } else {
+                    throw e
+                }
             }
         }
 
