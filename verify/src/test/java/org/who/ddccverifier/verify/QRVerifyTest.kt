@@ -108,6 +108,11 @@ class QRVerifyTest: BaseTrustRegistryTest() {
     }
 
     @Test
+    fun verifyDCCUruguay2() {
+        verify("EUUruguay2Contents.txt", "EUUruguay2FHIRBundle.json")
+    }
+
+    @Test
     fun verifyDCCColombia() {
         verify("EUColombiaContents.txt", "EUColombiaFHIRBundle.json")
     }
