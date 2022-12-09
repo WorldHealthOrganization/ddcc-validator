@@ -31,6 +31,7 @@ dependencies {
 
     implementation("com.google.zxing:core:3.3.0")
     implementation("com.google.zxing:javase:3.3.0")
+    implementation("org.apache.pdfbox:pdfbox:2.0.22")
     
     implementation('ca.uhn.hapi.fhir:hapi-fhir-structures-r4:6.0.3')
 
