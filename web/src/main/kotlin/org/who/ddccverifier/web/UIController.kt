@@ -39,9 +39,12 @@ class UIController {
 
         redirect.addFlashAttribute("status", result.status)
         redirect.addFlashAttribute("qr", result.qr)
-        redirect.addFlashAttribute("contents", fhir.encodeResourceToString(result.contents))
-        redirect.addFlashAttribute("issuer", json.writeValueAsString(result.issuer))
-        redirect.addFlashAttribute("unpacked", json.readTree(result.unpacked).toPrettyString())
+        if (result.contents != null)
+            redirect.addFlashAttribute("contents", fhir.encodeResourceToString(result.contents))
+        if (result.issuer != null)
+            redirect.addFlashAttribute("issuer", json.writeValueAsString(result.issuer))
+        if (result.unpacked != null)
+            redirect.addFlashAttribute("unpacked", json.readTree(result.unpacked).toPrettyString())
 
         return RedirectView("showCredential")
     }
