@@ -14,6 +14,9 @@ import org.springframework.web.multipart.MultipartFile
 import org.who.ddccverifier.QRDecoder
 import org.who.ddccverifier.trust.CompoundRegistry
 import org.who.ddccverifier.trust.TrustRegistryFactory
+import java.awt.Color
+import java.awt.Graphics2D
+import java.awt.image.BufferedImage
 import java.io.ByteArrayInputStream
 import javax.imageio.ImageIO
 import kotlin.String
@@ -52,7 +55,7 @@ class RestController {
         }
 
         val binaryBitmap = BinaryBitmap(HybridBinarizer(
-            BufferedImageLuminanceSource(image)
+            BufferedImageLuminanceSource(addBordertoImage(image))
         ))
 
         val qrContents = try {
@@ -62,5 +65,29 @@ class RestController {
         }
 
         return this.verify(QRContents(qrContents.text))
+    }
+
+    fun addBordertoImage(source: BufferedImage, color: Color = Color.WHITE, borderLeft: Int = 50, borderTop: Int = 50): BufferedImage {
+        val borderedImageWidth: Int = source.width + borderLeft * 2
+        val borderedImageHeight: Int = source.height + borderTop * 2
+        val img = BufferedImage(borderedImageWidth, borderedImageHeight, source.type)
+        img.createGraphics()
+        val g = img.graphics as Graphics2D
+        g.color = color
+        g.fillRect(0, 0, borderedImageWidth, borderedImageHeight)
+        g.drawImage(
+            source,
+            borderLeft,
+            borderTop,
+            source.width + borderLeft,
+            source.height + borderTop,
+            0,
+            0,
+            source.width,
+            source.height,
+            Color.BLACK,
+            null
+        )
+        return img
     }
 }

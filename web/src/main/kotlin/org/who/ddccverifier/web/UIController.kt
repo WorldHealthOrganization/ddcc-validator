@@ -31,11 +31,11 @@ class UIController {
             return RedirectView("showCredential");
         }
 
-        var fhir = FhirContext.forCached(FhirVersionEnum.R4)
+        val fhir = FhirContext.forCached(FhirVersionEnum.R4)
             .newJsonParser()
             .setPrettyPrint(true);
 
-        var json = json.enable(SerializationFeature.INDENT_OUTPUT);
+        val json = json.enable(SerializationFeature.INDENT_OUTPUT);
 
         redirect.addFlashAttribute("status", result.status)
         redirect.addFlashAttribute("qr", result.qr)
