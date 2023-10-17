@@ -99,12 +99,17 @@ class QRVerifyTest: BaseTrustRegistryTest() {
 
     @Test
     fun verifyDCCIndonesia() {
-        verify("EUIndonesiaContents.txt", "EUIndonesiaFHIRBundle.json")
+        verify("EUIndonesiaContents.txt", "EUIndonesiaFHIRBundle.json", QRDecoder.Status.TERMINATED_KEYS)
     }
 
     @Test
     fun verifyDCCUruguay() {
         verify("EUUruguayContents.txt", "EUUruguayFHIRBundle.json", QRDecoder.Status.ISSUER_NOT_TRUSTED)
+    }
+
+    @Test
+    fun verifyDCCUruguay2() {
+        verify("EUUruguay2Contents.txt", "EUUruguay2FHIRBundle.json")
     }
 
     @Test

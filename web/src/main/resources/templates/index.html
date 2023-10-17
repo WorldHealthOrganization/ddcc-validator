@@ -11,7 +11,7 @@
 
     <!-- Upload  -->
     <form method="POST" id="file-upload-form" class="uploader" action="/upload" enctype="multipart/form-data">
-        <input id="file-upload" type="file" name="file" accept="image/*" />
+        <input id="file-upload" type="file" name="file" accept="image/*,application/pdf" />
 
         <label for="file-upload" id="file-drag">
             <img id="file-image" src="#" alt="Preview" class="hidden">
@@ -109,7 +109,7 @@
             // console.log(fileType);
             var imageName = file.name;
 
-            var isGood = (/\.(?=gif|jpg|png|jpeg)/gi).test(imageName);
+            var isGood = (/\.(?=gif|jpg|png|jpeg|pdf)/gi).test(imageName);
             if (isGood) {
               document.getElementById('start').classList.add("hidden");
               document.getElementById('response').classList.remove("hidden");

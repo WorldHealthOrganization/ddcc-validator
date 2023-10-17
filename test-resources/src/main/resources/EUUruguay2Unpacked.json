@@ -1,0 +1,31 @@
+{
+  "1": "UY",
+  "4": 1678306622,
+  "6": 1670530622,
+  "-260": {
+    "1": {
+      "v": [
+        {
+          "ci": "URN:UVCI:01:UY:10002661:20221208171456620",
+          "co": "UY",
+          "dn": 3,
+          "dt": "2021-09-02",
+          "is": "Ministerio de Salud Pública",
+          "ma": "ORG-100030215",
+          "mp": "EU/1/20/1528",
+          "sd": 3,
+          "tg": "840539006",
+          "vp": "1119349007"
+        }
+      ],
+      "dob": "1977-07-27",
+      "nam": {
+        "fn": "VANRRELL ESCALANTE",
+        "gn": "MICHELL ANDRES",
+        "fnt": "VANRRELL<ESCALANTE",
+        "gnt": "MICHELL<ANDRES"
+      },
+      "ver": "1.3.0"
+    }
+  }
+}

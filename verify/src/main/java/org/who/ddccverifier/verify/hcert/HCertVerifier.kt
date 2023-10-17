@@ -12,6 +12,7 @@ import org.who.ddccverifier.trust.TrustRegistry
 import org.who.ddccverifier.verify.hcert.dcc.DccMapper
 import org.who.ddccverifier.verify.hcert.dcc.logical.CWT
 import org.who.ddccverifier.verify.hcert.dcc.logical.WHOLogicalModel
+import org.who.ddccverifier.verify.hcert.dcc.logical.WHO_CWT
 import org.who.ddccverifier.verify.hcert.who.WhoMapper
 import java.security.PublicKey
 import java.util.*
@@ -96,21 +97,42 @@ class HCertVerifier (private val registry: TrustRegistry) {
 
     val EU_DCC_CODE = -260
 
-    fun toFhir(hcertPayload: CBORObject): Bundle {
+    fun toFhir(hcertPayload: CBORObject): Bundle? {
         if (hcertPayload[EU_DCC_CODE] != null)
-            return DccMapper().run(
+            try {
+                return DccMapper().run(
+                    jacksonObjectMapper().readValue(
+                        hcertPayload.ToJSONString(),
+                        CWT::class.java
+                    )
+                )
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+
+        try {
+            return WhoMapper().run(
                 jacksonObjectMapper().readValue(
                     hcertPayload.ToJSONString(),
-                    CWT::class.java
+                    WHOLogicalModel::class.java
                 )
-            )
+            );
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
 
-        return WhoMapper().run(
+        try {
             jacksonObjectMapper().readValue(
                 hcertPayload.ToJSONString(),
-                WHOLogicalModel::class.java
-            )
-        );
+                WHO_CWT::class.java
+            ).data?.cert?.let {
+                return WhoMapper().run(it);
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        return null
     }
 
     fun unpackAndVerify(qr: String): QRDecoder.VerificationResult {
@@ -120,9 +142,10 @@ class HCertVerifier (private val registry: TrustRegistry) {
         val signedMessage = decodeSignedMessage(deflatedBytes) ?: return QRDecoder.VerificationResult(
             QRDecoder.Status.INVALID_SIGNING_FORMAT, null, null, qr, null)
 
-        val unpacked = getContent(signedMessage).ToJSONString()
+        val contentsCBOR = getContent(signedMessage)
+        val unpacked = contentsCBOR.ToJSONString()
 
-        val contents = toFhir(getContent(signedMessage))
+        val contents = toFhir(contentsCBOR) ?: return QRDecoder.VerificationResult(QRDecoder.Status.NOT_SUPPORTED, null, null, qr, unpacked)
 
         val kid = getKID(signedMessage) ?: return QRDecoder.VerificationResult(QRDecoder.Status.KID_NOT_INCLUDED, contents, null, qr, unpacked)
         val issuer = resolveIssuer(kid) ?: return QRDecoder.VerificationResult(QRDecoder.Status.ISSUER_NOT_TRUSTED, contents, null, qr, unpacked)

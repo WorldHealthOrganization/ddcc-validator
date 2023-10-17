@@ -1,5 +1,6 @@
 package org.who.ddccverifier.verify.hcert.dcc.logical
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.core.TreeNode
 import com.fasterxml.jackson.databind.DeserializationContext
@@ -9,7 +10,36 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.hl7.fhir.r4.model.*
 import org.who.ddccverifier.verify.BaseModel
+import org.who.ddccverifier.verify.shc.DecimalToDataTimeDeserializer
 import kotlin.reflect.full.declaredMemberProperties
+
+
+class WHO_CWT (
+    @JsonProperty("1")
+    val iss: StringType?,   // Issuer
+    @JsonProperty("2")
+    val sub: StringType?,   // Subject
+    @JsonProperty("3")
+    val aud: StringType?,   // Audience
+    @JsonProperty("4")
+    @JsonDeserialize(using = DecimalToDataTimeDeserializer::class)
+    val exp: DateTimeType?, // expiration
+    @JsonProperty("5")
+    @JsonDeserialize(using = DecimalToDataTimeDeserializer::class)
+    val nbf: DateTimeType?, // not before date
+    @JsonProperty("6")
+    @JsonDeserialize(using = DecimalToDataTimeDeserializer::class)
+    val iat: DateTimeType?, // issued at date
+    @JsonProperty("7")
+    val id: StringType?,   // Audience
+    @JsonProperty("-260")
+    val data: WHO_HCERT?,      // Certificate
+): BaseModel()
+
+class WHO_HCERT(
+    @JsonProperty("1")
+    val cert: WHOLogicalModel?          // Cert
+): BaseModel()
 
 class WHOLogicalModel (
     val meta: Meta?,
