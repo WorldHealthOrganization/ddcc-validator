@@ -32,8 +32,8 @@ class DDCCTrustRegistry : TrustRegistry {
         const val PROD_KEY_ID = "$baseDID:prod:u:k"
         const val TEST_KEY_ID = "$baseDID:test:u:k"
 
-        const val PROD_DID = "$baseDID:prod:u:ml:e"
-        const val TEST_DID = "$baseDID:test:u:ml:e"
+        const val PROD_DID = "https://tng-cdn-uat.who.int/trustlist/did.json"  //this is UAT not PROD!!! 
+        const val TEST_DID = "https://tng-cdn-dev.who.int/trustlist/did.json"
 
         val PRODUCTION_REGISTRY = TrustRegistry.RegistryEntity(TrustRegistry.Scope.PRODUCTION, URI(PROD_DID), null)
         val ACCEPTANCE_REGISTRY =  TrustRegistry.RegistryEntity(TrustRegistry.Scope.ACCEPTANCE_TEST, URI(TEST_DID), null)
